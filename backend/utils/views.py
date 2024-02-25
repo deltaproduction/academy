@@ -1,40 +1,24 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model, authenticate
 
-from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.generics import GenericAPIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from utils.api_auth.helpers import set_token_cookie
 
 User = get_user_model()
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ["url", "username", "email", "groups"]
+class LoginView(GenericAPIView):
+    @staticmethod
+    def post(request, *args, **kwargs):
+        user = authenticate(request, **request.data)
 
+        response = Response({"username": user.username})
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ["url", "name"]
+        refresh_token = RefreshToken.for_user(user)
 
+        set_token_cookie(response, refresh_token)
+        set_token_cookie(response, refresh_token.access_token)
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-
-    queryset = User.objects.all().order_by("-date_joined")
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        return response
