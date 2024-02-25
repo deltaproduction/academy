@@ -20,6 +20,7 @@ export default function Register() {
     location.reload()
   }
 
+  // Если у sign_in есть параметр next то нужно его передать в sign_up
   return <div>
     <form action={onFormSubmit}>
       <div>Вход</div>
