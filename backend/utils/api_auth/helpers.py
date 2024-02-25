@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.utils.timezone import make_aware
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 
@@ -17,7 +18,7 @@ def set_token_cookie(response, token):
         response.set_cookie(
             key=cookie_name,
             value=str(token),
-            expires=datetime.fromtimestamp(token.payload["exp"]),
+            expires=make_aware(datetime.fromtimestamp(token.payload["exp"])),
             httponly=True,
             samesite="strict"
         )
