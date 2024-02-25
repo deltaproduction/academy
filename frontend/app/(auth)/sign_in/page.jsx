@@ -17,6 +17,7 @@ export default function Register() {
       method: 'POST',
       body: formData
     })
+    location.reload()
   }
 
   return <div>

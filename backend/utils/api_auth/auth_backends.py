@@ -13,3 +13,6 @@ class JWTCookieAuthentication(BaseAuthentication):
                 return User.objects.get(id=user_id), request.access_token
             except User.DoesNotExist:
                 pass
+
+    def authenticate_header(self, request):
+        return 'JWT'
