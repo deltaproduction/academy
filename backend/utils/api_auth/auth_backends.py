@@ -9,7 +9,7 @@ class JWTCookieAuthentication(BaseAuthentication):
     def authenticate(self, request):
         if isinstance(request.access_token, AccessToken):
             try:
-                user_id = request.access_token.payload.get("user_id")
+                user_id = request.access_token.payload.get("user")['id']
                 return User.objects.get(id=user_id), request.access_token
             except User.DoesNotExist:
                 pass

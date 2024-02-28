@@ -1,6 +1,5 @@
 'use client'
 
-import PageContent from "@/app/components/PageContent";
 import ContentBlock from "@/app/components/ContentBlock";
 import NamedFormField from "@/app/components/NamedFormField";
 
@@ -25,7 +24,7 @@ function CodeBlock(props) {
 
 export default function ClassesPage() {
     return (
-        <PageContent>
+        <>
             <ContentBlock
                 title="Информация о классе"
                 value="Код класса:"
@@ -48,6 +47,6 @@ export default function ClassesPage() {
                 data={17}
             >
             </ContentBlock>
-        </PageContent>
+        </>
     );
 }

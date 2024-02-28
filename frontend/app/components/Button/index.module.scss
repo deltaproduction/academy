@@ -1,4 +1,4 @@
-.blueButton {
+.button {
   cursor: pointer;
   background: #ebf1f3;
   border: none;
@@ -8,6 +8,11 @@
   color: #7395a3;
   border-radius: 10px;
   user-select: none;
+
+  &--blue {
+    background: #ebf1f3;
+    color: #7395a3;
+  }
 
   &:hover {
     opacity: 0.9;

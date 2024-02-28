@@ -9,3 +9,17 @@
   display: flex;
   height: 100%;
 }
+
+.contentBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0;
+  padding: 18px 46px;
+  width: 50%;
+
+  h1 {
+    margin: 0;
+  }
+}
+

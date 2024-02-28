@@ -1,25 +1,33 @@
-import React  from "react";
-import Link from "next/link";
+'use client'
 
-import FormItem from "@/app/components/FormItem";
-import Links from "@/app/components/Links";
+import React from "react";
+
+import FormItem     from "@/app/components/FormItem";
+import Links        from "@/app/components/Links";
 import FormRowSided from "@/app/components/FormRowSided";
-import BlueButton from "@/app/components/BlueButton";
-
-import styles from "@/app/(auth)/auth.module.scss";
-
+import Button       from "@/app/components/Button";
 
 export default function LoginPage() {
-    return (
-        <main>
-            <h1>Вход</h1>
+  const onFormSubmit = async formData => {
+    await fetch('/api/sign_in/', {
+      method: 'POST',
+      body: formData
+    })
+    location.reload()
+  }
 
-            <FormItem title="E-mail:" name="email" type="email" />
-            <FormItem title="Пароль:" name="password" type="password" />
-            <FormRowSided
-                leftSide={<Links type="login" />}
-                rightSide={<BlueButton text="Войти" />}
-            />
-        </main>
+  return (
+    <main>
+      <h1 className="h3">Вход</h1>
+
+      <form action={onFormSubmit}>
+        <FormItem title="E-mail:" name="email" type="email"/>
+        <FormItem title="Пароль:" name="password" type="password"/>
+        <FormRowSided
+          leftSide={<Links type="login"/>}
+          rightSide={<Button type="submit" text="Войти"/>}
+        />
+      </form>
+    </main>
   );
 }
