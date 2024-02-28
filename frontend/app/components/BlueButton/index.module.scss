@@ -1,0 +1,19 @@
+.blueButton {
+  cursor: pointer;
+  background: #ebf1f3;
+  border: none;
+  padding: 8px 30px;
+  font-family: var(--font-inter);
+  font-size: 0.9em;
+  color: #7395a3;
+  border-radius: 10px;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}

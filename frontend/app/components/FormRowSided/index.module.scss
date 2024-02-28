@@ -1,0 +1,16 @@
+.formRowSided {
+  display: flex;
+  justify-content: space-between;
+}
+
+.leftSide {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.rightSide {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}

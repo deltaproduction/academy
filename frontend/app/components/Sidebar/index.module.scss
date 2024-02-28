@@ -1,0 +1,55 @@
+.mainSidebarBlock {
+  background: #fafafa;
+  height: 100%;
+  width: 380px;
+  font-family: var(--font-inter);
+  padding: 8px 0;
+  box-sizing: border-box;
+}
+
+.mainSidebarHeaderTitleBlock {
+  font-weight: 600;
+  font-size: 1.4em;
+}
+
+.mainSidebarPlusButtonBlock {
+  cursor: pointer;
+  background: url('images/plus.svg');
+  background-size: 85%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 12px;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+}
+
+.mainSidebarHeaderBlock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 50px;
+}
+
+.mainSidebarItemBlock {
+  padding: 12px 50px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f6f6f6;
+  }
+
+  &:active, &.active {
+    background: #f7f7f7;
+  }
+}
+
+.sidebarItemsBlock {
+  padding-top: 10px;
+}
+

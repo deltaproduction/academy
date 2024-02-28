@@ -1,0 +1,51 @@
+.authBlockWrapper {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 80px;
+  position: relative;
+  bottom: 30px;
+}
+
+.logo {
+  background: url("/logo.svg");
+  background-size: 100%;
+  width: 214px;
+  height: 48px;
+  background-repeat: no-repeat;
+}
+
+.globalLinksBlock {
+  position: absolute;
+  bottom: 10px;
+  left: 20px;
+}
+
+.globalLinks {
+  display: flex;
+  font-family: var(--font-inter);
+  color: #676767;
+
+  li {
+    margin: 10px;
+    font-size: 0.8em;
+  }
+
+  li:first-of-type {
+    list-style: none;
+  }
+}
+
+.link {
+  color: #787878;
+}
+
+.authBlock {
+  background: #ffffff;
+  padding: 40px 55px;
+  box-shadow: 0px 3.03601px 10.8537px -4.55402px rgba(0, 0, 0, 0.09);
+  font-family: var(--font-inter);
+}
+

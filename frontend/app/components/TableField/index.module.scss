@@ -1,0 +1,19 @@
+.tableFieldBlock {
+  display: flex;
+  padding: 14px 18px;
+  border-top-left-radius: 5px;
+  color: #4B4B4B;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.sortIcon {
+  width: 13px;
+  height: 22px;
+  background: url("images/sort.svg");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position-y: center;
+  cursor: pointer;
+}
