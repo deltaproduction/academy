@@ -1,0 +1,29 @@
+.classCodeBlock {
+  cursor: pointer;
+  display: flex;
+}
+
+.classCodeBlockDigit {
+  border-right: 1px solid #E2E2E2;
+  border-top: 1px solid #E2E2E2;
+  border-bottom: 1px solid #E2E2E2;
+  padding: 3px 7px;
+  font-size: 1.6em;
+  font-family: var(--font-inter);
+  font-weight: 200;
+  min-width: 16px;
+  text-align: center;
+  user-select: none;
+  color: black;
+
+  &:first-of-type {
+    border-left: 1px solid #E2E2E2;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  &:last-of-type {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}

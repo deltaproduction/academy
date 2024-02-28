@@ -4,12 +4,16 @@ import { API_HOST }     from "@/lib/constants";
 
 
 const loginRequiredPathMasks = [
-  '/test_page'
+  '/classes', '/courses'
 ]
 
-const authPathMasks = [
-  '/sign_in', '/sign_up'
+const authInPathMasks = [
+  '/login', '/register'
 ]
+
+const logOutPath = '/logout'
+
+const signInRedirectPath = '/classes'
 
 const checkPath = (pathname, masks) => {
   return !!masks.filter(_ => pathname.startsWith(_)).length
@@ -21,6 +25,13 @@ export async function middleware(request) {
 
   const url = new URL(request.url)
 
+  if (checkPath(pathname, [logOutPath])) {
+    const response = NextResponse.redirect(new URL('/login', request.url))
+    response.cookies.delete('access_token')
+    response.cookies.delete('refresh_token')
+    return response
+  }
+
   if (checkPath(pathname, loginRequiredPathMasks)) {
     const profileRes = await fetch(API_HOST + '/api/profile', {headers: headers()})
 
@@ -31,14 +42,14 @@ export async function middleware(request) {
         return response
       }
     } else {
-      return NextResponse.redirect(new URL('/sign_in' + '?next=' + url.pathname, request.url))
+      return NextResponse.redirect(new URL('/login' + '?next=' + url.pathname, request.url))
     }
   }
 
-  if (checkPath(pathname, authPathMasks)) {
+  if (checkPath(pathname, authInPathMasks)) {
     const profileRes = await fetch(API_HOST + '/api/profile', {headers: headers()})
     if (profileRes.ok) {
-      const response = NextResponse.redirect(new URL(url.searchParams.get('next') || '/', request.url))
+      const response = NextResponse.redirect(new URL(url.searchParams.get('next') || signInRedirectPath, request.url))
       if (profileRes.headers.getSetCookie()) {
         profileRes.headers.getSetCookie().forEach(cookie => response.headers.set('Set-Cookie', cookie))
         return response

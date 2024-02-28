@@ -11,6 +11,12 @@ from utils.api_auth.helpers import set_token_cookie
 User = get_user_model()
 
 
+def get_user_refresh_token(user):
+    refresh_token = RefreshToken()
+    refresh_token['user'] = UserSerializer(user).data
+    return refresh_token
+
+
 @api_view(['POST'])
 def sign_up_view(request):
     serializer = SignUpSerializer(data=request.data)
@@ -21,7 +27,7 @@ def sign_up_view(request):
 
     response = Response(UserSerializer(user).data)
 
-    refresh_token = RefreshToken.for_user(user)
+    refresh_token = get_user_refresh_token(user)
 
     set_token_cookie(response, refresh_token)
     set_token_cookie(response, refresh_token.access_token)
@@ -36,9 +42,11 @@ def sign_in_view(request):
 
     user = serializer.user
 
-    response = Response(UserSerializer(user).data)
+    user_serialized_data = UserSerializer(user).data
 
-    refresh_token = RefreshToken.for_user(user)
+    response = Response(user_serialized_data)
+
+    refresh_token = get_user_refresh_token(user)
 
     set_token_cookie(response, refresh_token)
     set_token_cookie(response, refresh_token.access_token)
