@@ -15,6 +15,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
 
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
+    surname = models.CharField(_("surname"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), blank=True, unique=True)
     is_staff = models.BooleanField(
@@ -50,12 +51,20 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         Return the first_name plus the last_name, with a space in between.
         """
-        full_name = "%s %s" % (self.first_name, self.last_name)
+        full_name = "%s %s %s" % (self.surname, self.first_name, self.last_name)
+        return full_name.strip()
+
+    def get_initials(self):
+        """
+        Return the first_name plus the last_name, with a space in between.
+        """
+        full_name = "%s %s. %s." % (self.surname, self.first_name[0], self.last_name[0])
         return full_name.strip()
 
     def get_short_name(self):
         """Return the short name for the user."""
-        return self.first_name
+        short_name = "%s %s" % (self.surname, self.first_name)
+        return short_name.strip()
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
