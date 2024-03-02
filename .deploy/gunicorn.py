@@ -1,7 +1,7 @@
 import multiprocessing
 
 name = 'academy'
-bind = '0.0.0.0:31700'
+bind = '0.0.0.0:8000'
 proc_name = 'django_academy'
 daemon = False
 errorlog = '/var/log/academy/gunicorn_error.log'
