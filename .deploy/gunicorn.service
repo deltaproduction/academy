@@ -1,0 +1,14 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+PIDFile=/var/run/academy/academy-gunicorn.pid
+Type=simple
+WorkingDirectory=/opt/academy/src/backend
+ExecStart=pipenv run gunicorn -c /opt/academy/src/.deploy/gunicorn.py app.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
