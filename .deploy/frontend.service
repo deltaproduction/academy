@@ -1,0 +1,14 @@
+[Unit]
+Description=frontend nectjs daemon
+After=network.target
+
+[Service]
+PIDFile=/var/run/academy/academy-frontend.pid
+Type=simple
+WorkingDirectory=/opt/academy/src/frontend
+ExecStart=/usr/bin/npm run start
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target
