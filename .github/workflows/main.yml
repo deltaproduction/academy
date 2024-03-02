@@ -1,18 +1,16 @@
 name: CI
 on:
-   # События, которые запускают jobs
     push:
       branches:
       - dev
 
 jobs:
-    # Название job вы можете назвать как угодно
-    my_deploy_job:
-      name: deploy to staging
+    deploy_prod:
+      name: deploy to prod
       runs-on: ubuntu-18.04
 
       steps:
-      - name: SSH Command
+      - name: Run deploy.sh
         uses: D3rHase/ssh-command-action@v0.2.2
         with:
           host: ${{secrets.HOST}}
@@ -20,5 +18,4 @@ jobs:
           user: ${{secrets.USER}}
           private_key: ${{secrets.PRIVATE_KEY}}
           command: cd /opt/academy/ && bash deploy.sh
-
-            
+ 
