@@ -3,7 +3,7 @@ on:
    # События, которые запускают jobs
     push:
       branches:
-      - master
+      - dev
 
 jobs:
     # Название job вы можете назвать как угодно
