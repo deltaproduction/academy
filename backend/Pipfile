@@ -8,6 +8,7 @@ django = "*"
 django-rest-framework = "*"
 djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

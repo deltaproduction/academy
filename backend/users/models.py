@@ -1,4 +1,5 @@
 from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import PermissionsMixin, BaseUserManager
 from django.core.mail import send_mail
 from django.db import models
@@ -6,14 +7,36 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("The given email must be set")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.password = make_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email=None, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_superuser=True.")
+
+        return self._create_user(email, password, **extra_fields)
+
+
 class User(AbstractBaseUser, PermissionsMixin):
-    """
-    An abstract base class implementing a fully featured User model with
-    admin-compliant permissions.
-
-    Username and password are required. Other fields are optional.
-    """
-
     first_name = models.CharField(_("first name"), max_length=150, blank=True)
     last_name = models.CharField(_("last name"), max_length=150, blank=True)
     middle_name = models.CharField(_("surname"), max_length=150, blank=True)
@@ -33,7 +56,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
-    objects = BaseUserManager()
+    objects = UserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
@@ -48,24 +71,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.email = self.__class__.objects.normalize_email(self.email)
 
     def get_full_name(self):
-        """
-        Return the first_name plus the last_name, with a space in between.
-        """
         full_name = "%s %s %s" % (self.middle_name, self.first_name, self.last_name)
         return full_name.strip()
 
     def get_initials(self):
-        """
-        Return the first_name plus the last_name, with a space in between.
-        """
         full_name = "%s %s. %s." % (self.middle_name, self.first_name[0], self.last_name[0])
         return full_name.strip()
 
     def get_short_name(self):
-        """Return the short name for the user."""
         short_name = "%s %s" % (self.middle_name, self.first_name)
         return short_name.strip()
 
     def email_user(self, subject, message, from_email=None, **kwargs):
-        """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
