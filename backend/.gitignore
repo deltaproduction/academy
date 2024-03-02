@@ -2,3 +2,4 @@
 *.sqlite3
 app/local_settings.py
 academy.conf
+collected_static
