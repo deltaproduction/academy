@@ -1,54 +1,51 @@
+from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
-from users.models import User
+User = get_user_model()
 
 
-class Course:
+class Course(models.Model):
     tutor = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(_("title"), max_length=150, blank=True)
-    public = models.BooleanField(_("public"), default=False)
+    title = models.CharField("Заголовок", max_length=150, blank=True)
+    public = models.BooleanField("Опубликован", default=False)
 
     class Meta:
-        verbose_name = _("course")
-        verbose_name_plural = _("courses")
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
 
 
-class Theme:
+class Topic(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    title = models.CharField(_("title"), max_length=150, blank=True)
+    title = models.CharField("Заголовок", max_length=150, blank=True)
     deadline = models.DateTimeField()
-    type = models.PositiveSmallIntegerField(_("type"))
+    type = models.PositiveSmallIntegerField("Тип")
 
     class Meta:
-        verbose_name = _("theme")
-        verbose_name_plural = _("themes")
+        verbose_name = "Тема"
+        verbose_name_plural = "Темы"
 
 
-class Task:
-    theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
-    title = models.CharField(_("title"), max_length=150, blank=True)
-    text = models.CharField(_("text"), max_length=150, blank=True)
-    autocheck = models.BooleanField(_("autocheck"), default=False)
-    stdin = models.TextField(_("stdin"))
-    stdout = models.TextField(_("stdout"))
-    samples = models.TextField(_("samples"))
-    tests = models.TextField(_("tests"))
+class Task(models.Model):
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    title = models.CharField("Заголовок", max_length=150, blank=True)
+    text = models.CharField("Текст", max_length=150, blank=True)
+    autocheck = models.BooleanField("autocheck", default=False)
+    stdin = models.TextField("stdin")
+    stdout = models.TextField("stdout")
+    samples = models.TextField("samples")
+    tests = models.TextField("tests")
 
     class Meta:
-        verbose_name = _("task")
-        verbose_name_plural = _("tasks")
+        verbose_name = "Задание"
+        verbose_name_plural = "Задания"
 
 
-class Solution:
+class Solution(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    code = models.TextField(_("code"))
-    status = models.PositiveSmallIntegerField(_("status"))
+    code = models.TextField("code")
+    status = models.PositiveSmallIntegerField("status")
 
     class Meta:
-        verbose_name = _("solution")
-        verbose_name_plural = _("solutions")
-
-
-
+        verbose_name = "Решение"
+        verbose_name_plural = "Решения"

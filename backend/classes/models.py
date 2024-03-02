@@ -1,18 +1,18 @@
+from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 
 from courses.models import Course
-from users.models import User
+
+User = get_user_model()
 
 
-class Class:
-    tutor = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.SET_NULL)
-    title = models.CharField(_("title"), max_length=150, blank=True)
-    teacher_name = models.CharField(_("teacher name"), max_length=150, blank=True)
-    code = models.CharField(_("code"), max_length=7, blank=True)
+class Class(models.Model):
+    tutor = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    course = models.ForeignKey(Course, null=True, on_delete=models.SET_NULL)
+    title = models.CharField("Заголовок", max_length=150, blank=True)
+    teacher_name = models.CharField("ФИО Учителя", max_length=150, blank=True)
+    code = models.CharField("Код", max_length=7, blank=True)
 
     class Meta:
-        verbose_name = _("class")
-        verbose_name_plural = _("classes")
-
+        verbose_name = "Класс"
+        verbose_name_plural = "Классы"
