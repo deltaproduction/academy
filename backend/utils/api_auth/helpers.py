@@ -20,5 +20,5 @@ def set_token_cookie(response, token):
             value=str(token),
             expires=make_aware(datetime.fromtimestamp(token.payload["exp"])),
             httponly=True,
-            samesite="strict"
+            samesite="strict",
         )

@@ -1,13 +1,28 @@
+from configparser import RawConfigParser
 from datetime import timedelta
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-$roi)kqh4ewl3@m65g2yee_1_7g#&qiz#_bwa^fvzb#0o$w4xf'
+config = RawConfigParser()
 
-DEBUG = True
+config_path_prod = BASE_DIR / 'academy.conf'
 
-ALLOWED_HOSTS = []
+if config_path_prod.exists() and config_path_prod.is_file():
+    config.read(config_path_prod)
+
+SECRET_KEY = config.get('default', 'SECRET_KEY', fallback='secret_key')
+
+DEBUG = config.getboolean('default', 'DEBUG', fallback=False)
+
+_allowed_hosts = config.get('default', 'ALLOWED_HOSTS', fallback=None)
+
+ALLOWED_HOSTS = _allowed_hosts.split(' ') if _allowed_hosts else []
+
+_csrf_trusted_origins = config.get('default', 'CSRF_TRUSTED_ORIGINS', fallback=None)
+
+CSRF_TRUSTED_ORIGINS = _csrf_trusted_origins.split(' ') if _csrf_trusted_origins else ALLOWED_HOSTS
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,6 +38,8 @@ INSTALLED_APPS = [
 
     'utils',
     'users',
+    'classes',
+    'courses',
 ]
 
 MIDDLEWARE = [
@@ -59,8 +76,16 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': config.get('database', 'DATABASE_BACKEND', fallback='django.db.backends.mysql'),
+        'NAME': config.get('database', 'DATABASE_NAME', fallback='academy'),
+        'USER': config.get('database', 'DATABASE_USER', fallback='academy'),
+        'PASSWORD': config.get('database', 'DATABASE_PASSWORD', fallback='password'),
+        'HOST': config.get('database', 'DATABASE_HOST', fallback='127.0.0.1'),
+        'PORT': config.getint('database', 'DATABASE_PORT', fallback=3306),
+        'OPTIONS': {
+            'charset': 'utf8',
+        },
+        'TEST_CHARSET': 'utf8',
     }
 }
 

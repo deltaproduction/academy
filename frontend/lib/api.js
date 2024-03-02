@@ -1,15 +1,12 @@
 import { API_HOST } from "@/lib/constants";
-import { redirect } from "next/navigation";
+import { headers }  from "next/headers";
 
-export const apiUrl = url => {
-  return API_HOST + '/api' + url;
-}
 
 export const fetchApi = async (url, options) => {
+  url = `${url.startsWith('http') ? '' : API_HOST}${url.startsWith('/') ? '' : '/'}${url}`
+  return await fetch(url, options)
+}
 
-  const res = await fetch(url, options)
-  if (res.status === 401) {
-    redirect('/sign_in')
-  }
-  return {...await res.json(), status: res.status}
+export const getProfileData = async (options) => {
+  return await fetchApi('/api/profile', options)
 }

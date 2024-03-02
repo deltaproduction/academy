@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { headers }      from "next/headers";
-import { API_HOST }     from "@/lib/constants";
+import { fetchApi }     from "@/lib/api";
 
 
 const loginRequiredPathMasks = [
@@ -33,7 +33,7 @@ export async function middleware(request) {
   }
 
   if (checkPath(pathname, loginRequiredPathMasks)) {
-    const profileRes = await fetch(API_HOST + '/api/profile', {headers: headers()})
+    const profileRes = await fetchApi('/api/profile', {headers: headers()})
 
     if (profileRes.ok) {
       if (profileRes.headers.getSetCookie()) {
@@ -47,7 +47,7 @@ export async function middleware(request) {
   }
 
   if (checkPath(pathname, authInPathMasks)) {
-    const profileRes = await fetch(API_HOST + '/api/profile', {headers: headers()})
+    const profileRes = await fetchApi('/api/profile', {headers: headers()})
     if (profileRes.ok) {
       const response = NextResponse.redirect(new URL(url.searchParams.get('next') || signInRedirectPath, request.url))
       if (profileRes.headers.getSetCookie()) {
