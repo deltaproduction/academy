@@ -2,7 +2,7 @@ import { headers }  from 'next/headers'
 import { API_HOST } from "@/lib/constants";
 
 
-function camelizeObjectKeys(obj) {
+export function camelizeObjectKeys(obj) {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }

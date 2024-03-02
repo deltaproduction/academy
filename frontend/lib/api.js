@@ -1,10 +1,6 @@
 import { API_HOST } from "@/lib/constants";
 import { redirect } from "next/navigation";
 
-export const apiUrl = url => {
-  return API_HOST + '/api' + url;
-}
-
 export const fetchApi = async (url, options) => {
 
   const res = await fetch(url, options)
