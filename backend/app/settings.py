@@ -23,9 +23,6 @@ _csrf_trusted_origins = config.get('default', 'CSRF_TRUSTED_ORIGINS', fallback=N
 
 CSRF_TRUSTED_ORIGINS = _csrf_trusted_origins.split(' ') if _csrf_trusted_origins else ALLOWED_HOSTS
 
-_auth_cookie_domains = config.get('default', 'CSRF_TRUSTED_ORIGINS', fallback=None)
-
-AUTH_COOKIE_DOMAINS = _auth_cookie_domains.split(' ') if _auth_cookie_domains else [None]
 
 INSTALLED_APPS = [
     'django.contrib.admin',

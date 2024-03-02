@@ -15,12 +15,10 @@ def set_token_cookie(response, token):
     assert cookie_name is not None, 'Token must be an instance of RefreshToken or AccessToken'
 
     if response.cookies.get(cookie_name) is None:
-        for domain in settings.AUTH_COOKIE_DOMAINS:
-            response.set_cookie(
-                key=cookie_name,
-                value=str(token),
-                expires=make_aware(datetime.fromtimestamp(token.payload["exp"])),
-                httponly=True,
-                samesite="strict",
-                domain=domain
-            )
+        response.set_cookie(
+            key=cookie_name,
+            value=str(token),
+            expires=make_aware(datetime.fromtimestamp(token.payload["exp"])),
+            httponly=True,
+            samesite="strict",
+        )
