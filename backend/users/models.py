@@ -37,10 +37,10 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    first_name = models.CharField(_("first name"), max_length=150, blank=True)
-    last_name = models.CharField(_("last name"), max_length=150, blank=True)
-    middle_name = models.CharField(_("surname"), max_length=150, blank=True)
-    email = models.EmailField(_("email address"), blank=True, unique=True)
+    first_name = models.CharField("Имя", max_length=150, blank=True)
+    last_name = models.CharField("Фамилия", max_length=150, blank=True)
+    middle_name = models.CharField("Отчество", max_length=150, blank=True)
+    email = models.EmailField("Email", blank=True, unique=True)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,

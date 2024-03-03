@@ -3,19 +3,20 @@
 import ContentBlock   from "@/app/components/ContentBlock";
 import NamedFormField from "@/app/components/NamedFormField";
 
-import styles from "./classes.module.scss";
+import styles  from "./page.module.scss";
 
-function CodeBlock({code}) {
-  return (
-    <div className={styles.classCodeBlock} onClick={() => {
-      navigator.clipboard.writeText(code)
-    }}>
-      {code.split('').map((letter, i) => <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>)}
-    </div>
-  );
-}
 
 export default function ClassesPage() {
+  function CodeBlock({code}) {
+    return (
+      <div className={styles.classCodeBlock} onClick={() => {
+        navigator.clipboard.writeText(code)
+      }}>
+        {code.split('').map((letter, i) => <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>)}
+      </div>
+    );
+  }
+
   return (
     <>
       <ContentBlock

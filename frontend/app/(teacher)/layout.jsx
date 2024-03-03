@@ -1,17 +1,14 @@
-import styles             from "./layout.module.scss";
+import { getProfileData } from "@/lib/api";
 import Header             from "@/app/components/Header";
 import Sidebar            from "@/app/components/Sidebar";
-import { getProfileData } from "@/lib/api";
-import { camelize }       from "@/lib/utils";
-import { headers }        from "next/headers";
 
+import styles from "./layout.module.scss";
 
 export default async function Layout({children}) {
-  const response = await getProfileData(headers());
-  const userProfile = camelize(await response.json())
+  const response = await getProfileData();
   return (
     <>
-      <Header user={userProfile}/>
+      <Header user={response.camelized}/>
 
       <div className={styles.contentPage}>
         <Sidebar title={"Классы"}/>

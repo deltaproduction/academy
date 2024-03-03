@@ -5,10 +5,12 @@ body {
 
 body, html {
   height: 100%;
+  font-family: "JetBrains Mono", serif;
 }
 
-button {
-
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .h3 {
