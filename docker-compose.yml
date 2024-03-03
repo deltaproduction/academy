@@ -3,11 +3,11 @@ version: '3.4'
 
 services:
   nginx:
-    image: nginx:stable
+    image: nginx:1.20.1
     container_name: academy-nginx
     volumes:
-      - ./.deploy/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./.deploy/nginx/conf.d/nginx_rules.conf:/etc/nginx/conf.d/nginx_rules.conf
+      - ./.deploy/nginx/dev/nginx.conf:/etc/nginx/conf.d/academy.conf
+      - ./.deploy/nginx/conf.d/nginx_server_extra:/etc/nginx/conf.d/nginx_server_extra
       - ./backend/collected_static:/opt/academy/src/backend/collected_static
     ports:
       - "80:80"
