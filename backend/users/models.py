@@ -84,3 +84,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Student(User):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Teacher(User):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
