@@ -1,8 +1,8 @@
 from rest_framework import routers
 
-from classes.views import ClassViewSet
+from classes.views import GroupViewSet
 
 router = routers.SimpleRouter()
-router.register(r'classes', ClassViewSet)
+router.register(r'groups', GroupViewSet)
 
 urlpatterns = router.urls

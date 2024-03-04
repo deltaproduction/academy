@@ -2,13 +2,13 @@ from random import randrange
 
 from rest_framework import serializers
 
-from classes.models import Class
+from classes.models import Group
 
 
-class ClassCodeDefault:
+class GroupCodeDefault:
     def __call__(self):
         code = randrange(1000000, 9999999)
-        if Class.objects.filter(code=code).exists():
+        if Group.objects.filter(code=code).exists():
             return self()
         return code
 
@@ -16,10 +16,10 @@ class ClassCodeDefault:
         return '%s()' % self.__class__.__name__
 
 
-class ClassSerializer(serializers.ModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     def __generate_code(self):
         code = randrange(1000000, 9999999)
-        if Class.objects.filter(code=code).exists():
+        if Group.objects.filter(code=code).exists():
             return self.__generate_code()
         return code
 
@@ -29,6 +29,6 @@ class ClassSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     class Meta:
-        model = Class
+        model = Group
         fields = ['title', 'course', 'tutor', 'code']
         read_only_fields = ['tutor', 'code']

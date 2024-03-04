@@ -1,8 +1,5 @@
 from django.db import models
 
-from classes.models import Class
-from users.models import Teacher, Student
-
 
 class Course(models.Model):
     DRAFT = 0
@@ -12,11 +9,11 @@ class Course(models.Model):
         (PUBLISHED, 'Опубликован')
     )
 
-    author = models.ForeignKey(Teacher, on_delete=models.PROTECT)
+    author = models.ForeignKey('users.Teacher', on_delete=models.PROTECT)
 
     title = models.CharField('Заголовок', max_length=150)
     state = models.PositiveSmallIntegerField('Опубликован', choices=STATE_CHOICES, default=DRAFT)
-    description = models.TextField("Описание", max_length=1000)
+    description = models.TextField("Описание", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Курс'
@@ -33,11 +30,11 @@ class Topic(models.Model):
         (INDEPENDENT_WORK, 'Самостоятельная работа'),
     )
 
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
 
     title = models.CharField('Заголовок', max_length=150, blank=True)
     type = models.PositiveSmallIntegerField('Тип', choices=TYPE_CHOICES, default=EDUCATIONAL)
-    description = models.TextField("Описание", max_length=1000)
+    description = models.TextField("Описание", null=True, blank=True)
 
     start = models.DateTimeField('Дата окончания', null=True, blank=True)
     end = models.DateTimeField('Дата окончания', null=True, blank=True)
@@ -53,8 +50,8 @@ class Task(models.Model):
     title = models.CharField('Заголовок', max_length=150, blank=True)
     text = models.TextField('Текст', blank=True)
 
-    format_in_text = models.TextField("Формат входных данных")
-    format_out_text = models.TextField("Формат выходных данных")
+    format_in_text = models.TextField("Формат входных данных", null=True, blank=True)
+    format_out_text = models.TextField("Формат выходных данных", null=True, blank=True)
 
     # autocheck = models.BooleanField('Авто-проверка', default=False)
     # stdin = models.TextField('stdin')
@@ -68,8 +65,8 @@ class Task(models.Model):
 
 
 class ClassCourse(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    class_field = models.ForeignKey(Class, on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    class_field = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
     is_deleted = models.BooleanField("Удален", default=False)
 
     class Meta:
@@ -78,7 +75,7 @@ class ClassCourse(models.Model):
 
 
 class TestCase(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey('courses.Task', on_delete=models.CASCADE)
     stdin = models.CharField("Входные данные", max_length=256)
     stdout = models.CharField("Выходные данные", max_length=256)
     timelimit = models.IntegerField("Ограничение по времени")
@@ -101,8 +98,8 @@ class ClassCourseTopic(models.Model):
 
 
 class Attempt(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+    task = models.ForeignKey('courses.Task', on_delete=models.CASCADE)
     code = models.TextField("Код решения")
     status = models.PositiveSmallIntegerField("Статус попытки")
 

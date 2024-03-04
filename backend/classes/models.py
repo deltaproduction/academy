@@ -1,27 +1,36 @@
 from django.db import models
 
-from courses.models import Course
-from users.models import Student, Teacher
 
-
-class Class(models.Model):
+class Group(models.Model):
     title = models.CharField("Заголовок", max_length=150)
-    tutor = models.ForeignKey(Teacher, on_delete=models.PROTECT)
-    course = models.ForeignKey(Course, null=True, blank=True, on_delete=models.PROTECT)
+    tutor = models.ForeignKey('users.Teacher', on_delete=models.PROTECT)
+    course = models.ForeignKey('courses.Course', null=True, blank=True, on_delete=models.PROTECT)
     code = models.IntegerField("Код", unique=True)
     teacher_name = models.CharField("ФИО Учителя", max_length=150, blank=True)
 
-    students = models.ManyToManyField(Student, through='classes.StudentClass', blank=True)
+    students = models.ManyToManyField('users.Student', through='classes.GroupStudent', related_name='student_groups')
+    courses = models.ManyToManyField('courses.Course', through='classes.GroupCourses', related_name='course_groups')
 
     class Meta:
         verbose_name = "Класс"
         verbose_name_plural = "Классы"
 
 
-class StudentClass(models.Model):
-    user = models.ForeignKey(Student, on_delete=models.CASCADE)
-    class_ = models.ForeignKey(Class, null=True, on_delete=models.PROTECT)
+class GroupStudent(models.Model):
+    group = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
+    student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Класс ученика"
-        verbose_name_plural = "Классы учеников"
+        verbose_name = "Ученик класса"
+        verbose_name_plural = "Ученики классов"
+        unique_together = ("group", "student")
+
+
+class GroupCourses(models.Model):
+    group = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Курс класса"
+        verbose_name_plural = "Курсы классов"
+        unique_together = ("group", "course")
