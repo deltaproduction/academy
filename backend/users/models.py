@@ -41,6 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField("Фамилия", max_length=150, blank=True)
     middle_name = models.CharField("Отчество", max_length=150, blank=True)
     email = models.EmailField("Email", blank=True, unique=True)
+
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
@@ -84,3 +85,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Student(User):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Teacher(User):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

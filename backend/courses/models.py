@@ -1,7 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 
-User = get_user_model()
+from classes.models import Class
+from users.models import Teacher, Student
 
 
 class Course(models.Model):
@@ -12,10 +12,11 @@ class Course(models.Model):
         (PUBLISHED, 'Опубликован')
     )
 
-    author = models.ForeignKey(User, on_delete=models.PROTECT)
+    author = models.ForeignKey(Teacher, on_delete=models.PROTECT)
 
     title = models.CharField('Заголовок', max_length=150)
     state = models.PositiveSmallIntegerField('Опубликован', choices=STATE_CHOICES, default=DRAFT)
+    description = models.TextField("Описание", max_length=1000)
 
     class Meta:
         verbose_name = 'Курс'
@@ -36,6 +37,7 @@ class Topic(models.Model):
 
     title = models.CharField('Заголовок', max_length=150, blank=True)
     type = models.PositiveSmallIntegerField('Тип', choices=TYPE_CHOICES, default=EDUCATIONAL)
+    description = models.TextField("Описание", max_length=1000)
 
     start = models.DateTimeField('Дата окончания', null=True, blank=True)
     end = models.DateTimeField('Дата окончания', null=True, blank=True)
@@ -46,11 +48,14 @@ class Topic(models.Model):
 
 
 class Task(models.Model):
-
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
 
     title = models.CharField('Заголовок', max_length=150, blank=True)
     text = models.TextField('Текст', blank=True)
+
+    format_in_text = models.TextField("Формат входных данных")
+    format_out_text = models.TextField("Формат выходных данных")
+
     # autocheck = models.BooleanField('Авто-проверка', default=False)
     # stdin = models.TextField('stdin')
     # stdout = models.TextField('stdout')
@@ -62,12 +67,45 @@ class Task(models.Model):
         verbose_name_plural = 'Задания'
 
 
-class Solution(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
-    code = models.TextField('code')
-    status = models.PositiveSmallIntegerField('status')
+class ClassCourse(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    class_field = models.ForeignKey(Class, on_delete=models.CASCADE)
+    is_deleted = models.BooleanField("Удален", default=False)
 
     class Meta:
-        verbose_name = 'Решение'
-        verbose_name_plural = 'Решения'
+        verbose_name = "Курс класса"
+        verbose_name_plural = "Курсы класса"
+
+
+class TestCase(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    stdin = models.CharField("Входные данные", max_length=256)
+    stdout = models.CharField("Выходные данные", max_length=256)
+    timelimit = models.IntegerField("Ограничение по времени")
+    ram_limit = models.IntegerField("Ограничение по памяти")
+
+    class Meta:
+        verbose_name = "Тест-кейс"
+        verbose_name_plural = "Тест-кейсы"
+
+
+class ClassCourseTopic(models.Model):
+    class_course = models.ForeignKey(ClassCourse, on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    opened = models.BooleanField("Открыт", default=False)
+    deadline_at = models.DateTimeField("Дедлайн до")
+
+    class Meta:
+        verbose_name = "Тема курса класса"
+        verbose_name_plural = "Темы курса класса"
+
+
+class Attempt(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    code = models.TextField("Код решения")
+    status = models.PositiveSmallIntegerField("Статус попытки")
+
+    class Meta:
+        verbose_name = "Попытка"
+        verbose_name_plural = "Попытки"
