@@ -18,8 +18,7 @@ function FormField({label, ...props}) {
   </div>
 }
 
-export default function Class({groupData = {}}) {
-  const [group, setGroup] = useState(groupData)
+export default function Class({group = {}}) {
   const [editMode, setEditMode] = useState(!group.id);
 
   const {id, code, title, students, teacherName} = group
@@ -45,7 +44,7 @@ export default function Class({groupData = {}}) {
   return (
     <div className={styles.container}>
       {!id && <h1>Создание нового класса</h1>}
-      <div >
+      <div>
         <div className={styles.title}>
           <h1>Информация о классе {
             editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>
