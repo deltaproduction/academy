@@ -30,8 +30,8 @@ export const createGroup = async (formData) => {
 }
 
 export const updateGroup = async (id, formData) => {
-  return await fetchApi('/api/groups/${id}/', {
-    method: 'POST',
+  return await fetchApi(`/api/groups/${id}/`, {
+    method: 'PUT',
     body: formData
   })
 }

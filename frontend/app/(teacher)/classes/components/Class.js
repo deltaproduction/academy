@@ -28,14 +28,16 @@ export default function Class({groupData = {}}) {
 
   const onFormSubmit = async formData => {
     if (group.id) {
-      const response = await updateGroup(id, formData)
+      const response = await updateGroup(group.id, formData)
+      const updatedClass = await response.json()
+      updateContext({classes: classes.map(({id, title}) => group.id === id ? updatedClass : {id, title})})
       setEditMode(!response.ok)
       return
     }
     const response = await createGroup(formData)
-    const {id, title} = await response.json()
+    const createdClass = await response.json()
 
-    updateContext({classes: [...classes, {id, title}]})
+    updateContext({classes: [...classes, createdClass]})
 
     redirect(`/classes/${id}/`)
   }
