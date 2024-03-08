@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
-import { Edit, Save } from '@mui/icons-material';
+import { Edit, Undo } from '@mui/icons-material';
 
 import { createGroup, updateGroup } from "@/lib/api";
 import { useAppContext }            from "@/app/components/ContextProvider";
@@ -44,12 +44,11 @@ export default function Class({groupData = {}}) {
 
   return (
     <div className={styles.container}>
-      <form action={onFormSubmit}>
+      {!id && <h1>Создание нового класса</h1>}
+      <div >
         <div className={styles.title}>
           <h1>Информация о классе {
-            editMode ?
-              <button className={styles.titleAction} type="submit"><Save/></button> :
-              <Edit onClick={() => setEditMode(!editMode)}/>
+            editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>
           }</h1>
           {!!code && <div className={styles.classCodeContainer}>
             <div>Код класса:</div>
@@ -60,13 +59,14 @@ export default function Class({groupData = {}}) {
             </div>
           </div>}
         </div>
-        <div>
+        <form action={onFormSubmit}>
           <FormField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
           <FormField label="Классный руководитель" name="teacher_name" defaultValue={teacherName} disabled={!editMode}/>
-        </div>
-      </form>
+          {!!editMode && <button className={styles.titleAction} type="submit">Сохранить</button>}
+        </form>
+      </div>
 
-      <div>
+      {!!students && <div>
         <div className={styles.title}>
           <h1>Список класса</h1>
           <div className={styles.classCodeContainer}>
@@ -74,7 +74,7 @@ export default function Class({groupData = {}}) {
           </div>
         </div>
         {students.map(student => <div key={student}>{student.firstName} {student.lastName}</div>)}
-      </div>
+      </div>}
     </div>
   );
 }
