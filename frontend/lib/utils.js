@@ -3,6 +3,7 @@ import { API_HOST } from "@/lib/constants";
 import { fetchApi } from "@/lib/api";
 
 export function camelize(obj) {
+  return obj;
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }

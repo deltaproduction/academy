@@ -3,6 +3,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
+from users.models import Student
+
 User = get_user_model()
 
 
@@ -10,6 +12,18 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'email', 'groups']
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    middle_name = serializers.CharField(source='user.middle_name')
+    email = serializers.CharField(source='user.email')
+    groups = serializers.CharField(source='user.groups')
+
+    class Meta:
+        model = Student
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'groups']
 
 
 class SignUpSerializer(serializers.ModelSerializer):

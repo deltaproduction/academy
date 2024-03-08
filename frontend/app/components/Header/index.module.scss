@@ -13,10 +13,13 @@
   gap: 100px;
 }
 
-.headerBlock {
-  padding: 15px 50px;
+.wrapper {
   background: #FCFCFC;
   border-bottom: 1px solid #F9F9F9;
+}
+
+.headerBlock {
+  height: var(--header-height);
   display: flex;
   justify-content: space-between;
   align-items: center;

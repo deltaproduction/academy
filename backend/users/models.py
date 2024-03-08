@@ -88,8 +88,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Student(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
+    is_active = models.BooleanField(default=True)
 
 
 class Teacher(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
+    is_active = models.BooleanField(default=True)

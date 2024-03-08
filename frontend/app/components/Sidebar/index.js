@@ -1,43 +1,28 @@
+import classNames from "classnames";
+
+
 import styles from "./index.module.scss";
+import Link   from "next/link";
 
-const SidebarItem = (props) => {
-    return (
-        <div
-            className={
-                `
-                    ${styles.mainSidebarItemBlock} 
-                    ${props.active ? styles.active : null}
-                `
-            }
-        >{props.content}</div>
-    );
+export const SidebarItem = ({children, href, active}) => {
+  return (
+    <div className={classNames(styles.item, {[styles.active]: active})}>
+      {!!href && <Link href={href} className={styles.itemLink}/>}
+      {children}
+    </div>
+  );
 }
 
-const MainSidebar = (props) => {
-    return (
-        <>
-            <div className={styles.mainSidebarBlock}>
-                <div className={styles.mainSidebarHeaderBlock}>
-                    <div className={styles.mainSidebarHeaderTitleBlock}>{props.title}</div>
-                    <div className={styles.mainSidebarPlusButtonBlock}></div>
-                </div>
-
-                <div className={styles.sidebarItemsBlock}>
-                    <SidebarItem content="hey" active/>
-                    <SidebarItem content="hey"/>
-                </div>
-            </div>
-        </>
-    );
+export const Sidebar = ({children, newItemHref, title}) => {
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.headerTitle}>{title}</div>
+        {!!newItemHref && <Link href={newItemHref} className={styles.plusButton}></Link>}
+      </div>
+      <div className={styles.items}>
+        {children}
+      </div>
+    </div>
+  );
 }
-
-export default function Sidebar(props) {
-    return (
-        <>
-            <div>
-                <MainSidebar title={props.title}/>
-            </div>
-        </>
-    );
-}
-

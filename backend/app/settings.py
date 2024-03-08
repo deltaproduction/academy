@@ -141,7 +141,7 @@ REST_FRAMEWORK = {
         'utils.api_auth.auth_backends.JWTCookieAuthentication',
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
+        'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
     ),
 }
 

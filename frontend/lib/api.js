@@ -1,23 +1,37 @@
-import { headers } from "next/headers";
-
-import { camelize } from "@/lib/utils";
 import { API_HOST } from "@/lib/constants";
 
 
-export const fetchApi = async (url, options) => {
-  if (!options && typeof window === 'undefined') {
-    options = headers()
+export const fetchApi = async (url, options = {}) => {
+  if (!options.headers && typeof window === 'undefined') {
+    const {headers} = await import('next/headers')
+    options.headers = headers()
   }
   url = `${url.startsWith('http') ? '' : API_HOST}${url.startsWith('/') ? '' : '/'}${url}`
-  const response = await fetch(url, options)
-  response.camelized = camelize(await response.json())
-  return response
+  return await fetch(url, options)
 }
 
-export const getProfileData = async (options) => {
-  return await fetchApi('/api/profile', options)
+export const getProfileData = async () => {
+  return await fetchApi('/api/profile/')
 }
 
-export const getClassesList = async (options) => {
-  return await fetchApi('/api/classes', options)
+export const getGroupsList = async () => {
+  return await fetchApi('/api/groups/')
+}
+
+export const getGroupDetail = async (id) => {
+  return await fetchApi(`/api/groups/${id}/`)
+}
+
+export const createGroup = async (formData) => {
+  return await fetchApi('/api/groups/', {
+    method: 'POST',
+    body: formData
+  })
+}
+
+export const updateGroup = async (id, formData) => {
+  return await fetchApi('/api/groups/${id}/', {
+    method: 'POST',
+    body: formData
+  })
 }

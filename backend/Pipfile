@@ -10,6 +10,8 @@ djangorestframework-simplejwt = "*"
 django-cors-headers = "*"
 mysqlclient = "*"
 gunicorn = "*"
+install = "*"
+djangorestframework-camel-case = "*"
 
 [dev-packages]
 

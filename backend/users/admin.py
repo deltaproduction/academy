@@ -4,7 +4,19 @@ from django.contrib.auth.admin import UserAdmin as UserAdmin_
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AdminPasswordChangeForm
 from django.utils.translation import gettext_lazy as _
 
+from users.models import Teacher, Student
+
 User = get_user_model()
+
+
+class TeacherInline(admin.TabularInline):
+    model = Teacher
+    extra = 0
+
+
+class StudentInline(admin.TabularInline):
+    model = Student
+    extra = 0
 
 
 @admin.register(User)
@@ -37,6 +49,7 @@ class UserAdmin(UserAdmin_):
             },
         ),
     )
+    inlines = (TeacherInline, StudentInline)
     form = UserChangeForm
     add_form = UserCreationForm
     change_password_form = AdminPasswordChangeForm

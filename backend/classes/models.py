@@ -4,7 +4,6 @@ from django.db import models
 class Group(models.Model):
     title = models.CharField("Заголовок", max_length=150)
     tutor = models.ForeignKey('users.Teacher', on_delete=models.PROTECT)
-    course = models.ForeignKey('courses.Course', null=True, blank=True, on_delete=models.PROTECT)
     code = models.IntegerField("Код", unique=True)
     teacher_name = models.CharField("ФИО Учителя", max_length=150, blank=True)
 

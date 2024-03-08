@@ -1,0 +1,93 @@
+.container {
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 30px 0;
+
+  h1 {
+    display: flex;
+    gap: 16px;
+    font-size: 1.3em;
+    font-weight: 600;
+  }
+
+  h1 &Action {
+    all: unset;
+    height: 24px;
+  }
+}
+
+
+.classCodeContainer {
+  color: #7b7b7b;
+  margin-left: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 10px;
+}
+
+
+.classCodeBlock {
+  cursor: pointer;
+  display: flex;
+}
+
+.classCodeBlockDigit {
+  border-right: 1px solid #E2E2E2;
+  border-top: 1px solid #E2E2E2;
+  border-bottom: 1px solid #E2E2E2;
+  padding: 3px 7px;
+  font-size: 1.6em;
+  font-family: var(--font-inter);
+  font-weight: 200;
+  min-width: 16px;
+  text-align: center;
+  user-select: none;
+  color: black;
+
+  &:first-of-type {
+    border-left: 1px solid #E2E2E2;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  &:last-of-type {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}
+
+
+.formField {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 10px 0;
+  gap: 32px;
+
+  input {
+    width: 650px;
+
+    &:disabled {
+      color: black;
+    }
+  }
+}
+
+.formItemInput {
+  background: rgb(240 240 240 / 42%);
+  border: none;
+  border-bottom: 1px solid #ccdbe4;
+  box-sizing: border-box;
+  height: 30px;
+  width: 100%;
+  outline: none;
+  font-family: var(--font-inter);
+  padding-left: 12px;
+}
