@@ -1,12 +1,13 @@
 import classNames from "classnames";
 
 
-import styles from "./index.module.scss";
-import Link   from "next/link";
+import styles          from "./index.module.scss";
+import Link            from "next/link";
+import { usePathname } from "next/navigation";
 
-export const SidebarItem = ({children, href, active}) => {
+export const SidebarItem = ({children, href}) => {
   return (
-    <div className={classNames(styles.item, {[styles.active]: active})}>
+    <div className={classNames(styles.item, {[styles.active]: usePathname() === href})}>
       {!!href && <Link href={href} className={styles.itemLink}/>}
       {children}
     </div>
