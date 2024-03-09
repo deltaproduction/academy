@@ -40,4 +40,4 @@ class GroupDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ['id', 'title', 'courses', 'students', 'tutor', 'teacher_name', 'code']
-        read_only_fields = ['id', 'tutor', 'code']
+        read_only_fields = ['id', 'courses', 'students', 'tutor', 'code']
