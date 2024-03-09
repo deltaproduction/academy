@@ -1,0 +1,19 @@
+:root {
+    --header-height: 70px;
+    --content-height: calc(100% - var(--header-height) - 1px)
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body, body > div, html, .body {
+    height: 100%;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}

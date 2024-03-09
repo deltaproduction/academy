@@ -2,35 +2,46 @@ import { API_HOST } from "@/lib/constants";
 
 
 export const fetchApi = async (url, options = {}) => {
-  if (!options.headers && typeof window === 'undefined') {
-    const {headers} = await import('next/headers')
-    options.headers = headers()
+  const {req, res, ...init} = options
+
+  if (req) {
+    init.headers = req.headers;
   }
+
   url = `${url.startsWith('http') ? '' : API_HOST}${url.startsWith('/') ? '' : '/'}${url}`
-  return await fetch(url, options)
+
+  const response = await fetch(url, init)
+
+  if (res) {
+    response.headers.getSetCookie().forEach(cookie => res.appendHeader("Set-Cookie", cookie))
+  }
+
+  return response
 }
 
-export const getProfileData = async () => {
-  return await fetchApi('/api/profile/')
+export const getProfileData = async (options) => {
+  return await fetchApi('/api/profile/', options)
 }
 
-export const getGroupsList = async () => {
-  return await fetchApi('/api/groups/')
+export const getGroupsList = async (options) => {
+  return await fetchApi('/api/groups/', options)
 }
 
-export const getGroupDetail = async (id) => {
-  return await fetchApi(`/api/groups/${id}/`)
+export const getGroupDetail = async (id, options) => {
+  return await fetchApi(`/api/groups/${id}/`, options)
 }
 
-export const createGroup = async (formData) => {
+export const createGroup = async (formData, options) => {
   return await fetchApi('/api/groups/', {
+    ...options,
     method: 'POST',
     body: formData
   })
 }
 
-export const updateGroup = async (id, formData) => {
+export const updateGroup = async (id, formData, options) => {
   return await fetchApi(`/api/groups/${id}/`, {
+    ...options,
     method: 'PUT',
     body: formData
   })
