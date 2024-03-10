@@ -1,8 +1,4 @@
-import { redirect } from "next/navigation";
-
-import { useAppContext }                 from "@/components/ContextProvider";
-import { getGroupsList, getProfileData } from "@/lib/api";
-
+import { getGroupsList } from "@/lib/api";
 
 export async function getServerSideProps({query: {next = '/'}, req, res}) {
   const response = await getGroupsList({req, res})

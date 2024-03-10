@@ -1,9 +1,12 @@
 import { ContextProvider } from "@/components/ContextProvider";
 import ClassesSidebar      from "@/components/Classes/ClassesSidebar";
 
-import styles                                            from './ClassesLayout.module.scss'
-import AppLayout                                         from "@/layouts/AppLayout";
-import { getGroupDetail, getGroupsList, getProfileData } from "@/lib/api";
+import { getGroupsList, getProfileData } from "@/lib/api";
+
+
+import AppLayout from "@/layouts/AppLayout";
+
+import styles from './ClassesLayout.module.scss'
 
 
 export async function getClassesServersideProps({req, res}) {

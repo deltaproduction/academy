@@ -46,3 +46,27 @@ export const updateGroup = async (id, formData, options) => {
     body: formData
   })
 }
+
+export const getCoursesList = async (options) => {
+  return await fetchApi('/api/courses/', options)
+}
+
+export const getCourseDetail = async (id, options) => {
+  return await fetchApi(`/api/courses/${id}/`, options)
+}
+
+export const createCourse = async (formData, options) => {
+  return await fetchApi('/api/courses/', {
+    ...options,
+    method: 'POST',
+    body: formData
+  })
+}
+
+export const updateCourse = async (id, formData, options) => {
+  return await fetchApi(`/api/courses/${id}/`, {
+    ...options,
+    method: 'PUT',
+    body: formData
+  })
+}
