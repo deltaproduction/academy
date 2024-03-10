@@ -6,17 +6,6 @@ from classes.models import Group
 from users.serializers import UserSerializer, StudentSerializer
 
 
-class GroupCodeDefault:
-    def __call__(self):
-        code = randrange(1000000, 9999999)
-        if Group.objects.filter(code=code).exists():
-            return self()
-        return code
-
-    def __repr__(self):
-        return '%s()' % self.__class__.__name__
-
-
 class GroupListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
