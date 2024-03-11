@@ -1,9 +1,9 @@
 import Header from "@/components/Header";
 
-export default function AppLayout({children}) {
+export default function AppLayout({profile, children}) {
   return (
     <>
-      <Header/>
+      <Header profile={profile}/>
       {children}
     </>
   );

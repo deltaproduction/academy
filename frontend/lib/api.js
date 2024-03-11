@@ -1,4 +1,4 @@
-import { API_HOST } from "@/lib/constants";
+import { API_HOST }  from "@/lib/constants";
 
 
 export const fetchApi = async (url, options = {}) => {
@@ -13,7 +13,24 @@ export const fetchApi = async (url, options = {}) => {
   const response = await fetch(url, init)
 
   if (res) {
-    response.headers.getSetCookie().forEach(cookie => res.appendHeader("Set-Cookie", cookie))
+    const setCookie = response.headers.getSetCookie()
+
+    const existsSetCookies = {}
+
+    const resSetCookie = res.getHeaders('Set-Cookie')['set-cookie']
+
+    resSetCookie && resSetCookie.forEach((cookie, index) => {
+      existsSetCookies[cookie.split(';')[0].split('=')[0]] = index
+    })
+
+    setCookie.forEach(cookie => {
+      const [key, value] = cookie.split(';')[0].split('=');
+      if (existsSetCookies.hasOwnProperty(key)) {
+        res.getHeaders('Set-Cookie')[existsSetCookies[key]] = cookie
+      } else {
+        res.appendHeader("Set-Cookie", cookie)
+      }
+    })
   }
 
   return response
@@ -28,11 +45,15 @@ class ModelApi {
     this.url = url;
   }
 
-  list = async (options) => {
-    return await fetchApi(this.url, options)
+  list = async ({queryParams, ...options}) => {
+    let searchParams = ''
+    if (queryParams) {
+      searchParams = '?' + new URLSearchParams(queryParams)
+    }
+    return await fetchApi(this.url + searchParams, options)
   }
 
-  detail = async (id, options) => {
+  retrieve = async (id, options) => {
     return await fetchApi(`${this.url}${id}/`, options)
   }
 
@@ -54,6 +75,7 @@ class ModelApi {
 }
 
 export const ClassesApi = new ModelApi('/api/groups/')
+
 export const CoursesApi = new ModelApi('/api/courses/')
 
 export const TopicsApi = new ModelApi('/api/topics/')

@@ -6,7 +6,7 @@ export async function getServerSideProps({query: {id}, req, res}) {
   try {
     const props = await getClassesServersideProps({req, res})
 
-    const response = await ClassesApi.detail(id, {req, res})
+    const response = await ClassesApi.retrieve(id, {req, res})
     if (response.status === 404) {
       return {notFound: true}
     }

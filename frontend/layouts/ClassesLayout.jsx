@@ -26,13 +26,13 @@ export async function getClassesServersideProps({req, res}) {
 
 export default function ClassesLayout({children, classes, profile}) {
   return (
-    <ContextProvider context={{classes, profile}}>
-      <AppLayout>
-        <div className={styles.container}>
+    <AppLayout profile={profile}>
+      <div className={styles.container}>
+        <ContextProvider context={{classes}}>
           <ClassesSidebar/>
           {children}
-        </div>
-      </AppLayout>
-    </ContextProvider>
+        </ContextProvider>
+      </div>
+    </AppLayout>
   );
 }

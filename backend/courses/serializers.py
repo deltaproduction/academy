@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from courses.models import Course
+from courses.models import Course, Topic
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -20,4 +20,8 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'author']
 
 
-
+class TopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topic
+        fields = ['id', 'course', 'title', 'type', 'description', 'state', 'start', 'end']
+        read_only_fields = ['id']
