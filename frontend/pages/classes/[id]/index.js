@@ -1,12 +1,12 @@
-import { getGroupDetail }                           from "@/lib/api";
-import Class                                        from "@/components/Classes/Class";
+import { ClassesApi } from "@/lib/api";
+import Class          from "@/components/Classes/Class";
 import ClassesLayout, { getClassesServersideProps } from "@/layouts/ClassesLayout";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {
     const props = await getClassesServersideProps({req, res})
 
-    const response = await getGroupDetail(id, {req, res})
+    const response = await ClassesApi.detail(id, {req, res})
     if (response.status === 404) {
       return {notFound: true}
     }

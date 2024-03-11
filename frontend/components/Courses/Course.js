@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { Edit, Undo } from '@mui/icons-material';
 
-import { createCourse, updateCourse } from "@/lib/api";
+import { CoursesApi } from "@/lib/api";
 import { useAppContext }              from "@/components/ContextProvider";
 
 import { CharField, SelectField } from "@/components/Fields";
@@ -20,22 +20,34 @@ export default function Course({course = {}}) {
 
   const {courses, updateContext} = useAppContext()
 
-  const onFormSubmit = async (e) => {
+  const onCourseFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
     if (course.id) {
-      const response = await updateCourse(course.id, formData)
+      const response = await CoursesApi.update(course.id, formData)
       const updatedCourse = await response.json()
       updateContext({courses: courses.map(({id, title}) => course.id === id ? updatedCourse : {id, title})})
       setEditMode(!response.ok)
       return
     }
-    const response = await createCourse(formData)
+    const response = await CoursesApi.create(formData)
     const {id, title} = await response.json()
 
     updateContext({courses: [...courses, {id, title}]})
 
-    router.push(`/courses/${id}/`)
+    await router.push(`/courses/${id}/`)
+  }
+
+  const onTopicFormSubmit = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+
+    // const response = await createCourse(formData)
+    // const {id, title} = await response.json()
+
+
+
+
   }
 
   return (
@@ -47,7 +59,7 @@ export default function Course({course = {}}) {
             editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>
           }</h1>
         </div>
-        <form onSubmit={onFormSubmit}>
+        <form onSubmit={onCourseFormSubmit}>
           <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
           <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
           <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
@@ -55,6 +67,14 @@ export default function Course({course = {}}) {
             <option value="1">Опубликован</option>
           </SelectField>
           {!!editMode && <button className={styles.titleAction} type="submit">Сохранить</button>}
+        </form>
+      </div>
+      <div>
+        <div className={styles.title}>
+          <h1>Список тем</h1>
+        </div>
+        <form onSubmit="">
+
         </form>
       </div>
     </div>

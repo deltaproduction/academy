@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 
 import { Edit, Undo } from '@mui/icons-material';
 
-import { createGroup, updateGroup } from "@/lib/api";
-import { useAppContext }            from "@/components/ContextProvider";
+import { ClassesApi }    from "@/lib/api";
+import { useAppContext } from "@/components/ContextProvider";
 
 import styles from "./Class.module.scss";
 
@@ -29,13 +29,13 @@ export default function Class({group = {}}) {
     e.preventDefault()
     const formData = new FormData(e.target)
     if (group.id) {
-      const response = await updateGroup(group.id, formData)
+      const response = await ClassesApi.update(group.id, formData)
       const updatedClass = await response.json()
       updateContext({classes: classes.map(({id, title}) => group.id === id ? updatedClass : {id, title})})
       setEditMode(!response.ok)
       return
     }
-    const response = await createGroup(formData)
+    const response = await ClassesApi.create(formData)
     const {id, title} = await response.json()
 
     updateContext({classes: [...classes, {id, title}]})

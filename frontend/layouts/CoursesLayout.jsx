@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/AppLayout";
 
-import { getCoursesList, getProfileData } from "@/lib/api";
+import { CoursesApi, getProfileData } from "@/lib/api";
 import { ContextProvider }                from "@/components/ContextProvider";
 import CoursesSidebar                     from "@/components/Courses/CoursesSidebar";
 
@@ -16,7 +16,7 @@ export async function getCoursesServersideProps({req, res}) {
     throw {redirect: {destination: `/login/?next=${req.url}`, permanent: false}}
   }
 
-  response = await getCoursesList({req, res})
+  response = await CoursesApi.list({req, res})
   props.courses = await response.json()
 
   return props

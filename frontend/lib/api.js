@@ -23,50 +23,37 @@ export const getProfileData = async (options) => {
   return await fetchApi('/api/profile/', options)
 }
 
-export const getGroupsList = async (options) => {
-  return await fetchApi('/api/groups/', options)
+class ModelApi {
+  constructor(url) {
+    this.url = url;
+  }
+
+  list = async (options) => {
+    return await fetchApi(this.url, options)
+  }
+
+  detail = async (id, options) => {
+    return await fetchApi(`${this.url}${id}/`, options)
+  }
+
+  create = async (formData, options) => {
+    return await fetchApi(this.url, {
+      ...options,
+      method: 'POST',
+      body: formData
+    })
+  }
+
+  update = async (id, formData, options) => {
+    return await fetchApi(`${this.url}${id}/`, {
+      ...options,
+      method: 'PUT',
+      body: formData
+    })
+  }
 }
 
-export const getGroupDetail = async (id, options) => {
-  return await fetchApi(`/api/groups/${id}/`, options)
-}
+export const ClassesApi = new ModelApi('/api/groups/')
+export const CoursesApi = new ModelApi('/api/courses/')
 
-export const createGroup = async (formData, options) => {
-  return await fetchApi('/api/groups/', {
-    ...options,
-    method: 'POST',
-    body: formData
-  })
-}
-
-export const updateGroup = async (id, formData, options) => {
-  return await fetchApi(`/api/groups/${id}/`, {
-    ...options,
-    method: 'PUT',
-    body: formData
-  })
-}
-
-export const getCoursesList = async (options) => {
-  return await fetchApi('/api/courses/', options)
-}
-
-export const getCourseDetail = async (id, options) => {
-  return await fetchApi(`/api/courses/${id}/`, options)
-}
-
-export const createCourse = async (formData, options) => {
-  return await fetchApi('/api/courses/', {
-    ...options,
-    method: 'POST',
-    body: formData
-  })
-}
-
-export const updateCourse = async (id, formData, options) => {
-  return await fetchApi(`/api/courses/${id}/`, {
-    ...options,
-    method: 'PUT',
-    body: formData
-  })
-}
+export const TopicsApi = new ModelApi('/api/topics/')

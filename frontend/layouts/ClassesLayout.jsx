@@ -1,7 +1,7 @@
 import { ContextProvider } from "@/components/ContextProvider";
 import ClassesSidebar      from "@/components/Classes/ClassesSidebar";
 
-import { getGroupsList, getProfileData } from "@/lib/api";
+import { getProfileData, ClassesApi } from "@/lib/api";
 
 
 import AppLayout from "@/layouts/AppLayout";
@@ -18,7 +18,7 @@ export async function getClassesServersideProps({req, res}) {
     throw {redirect: {destination: `/login/?next=${req.url}`, permanent: false}}
   }
 
-  response = await getGroupsList({req, res})
+  response = await ClassesApi.list({req, res})
   props.groups = await response.json()
 
   return props
