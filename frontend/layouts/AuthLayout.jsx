@@ -15,14 +15,6 @@ export default function AuthLayout({children}) {
           </div>
         </div>
       </div>
-      <div className={styles.globalLinksBlock}>
-        <ul className={styles.globalLinks}>
-          <li><a href="/" className={styles.link}>Пользовательское соглашение</a></li>
-          <li><a href="/" className={styles.link}>Техническая документация</a></li>
-          <li><a href="/" className={styles.link}>О платформе Delta Academy</a></li>
-          <li><a href="https://delta.com.ru" className={styles.link}>Официальный сайт Delta</a></li>
-        </ul>
-      </div>
     </div>
   );
 }

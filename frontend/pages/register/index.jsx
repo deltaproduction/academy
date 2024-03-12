@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
   return (
     <AuthLayout>
-      <h1 className="h3">Создание аккаунта</h1>
+      <h1 class="h3">Создание аккаунта</h1>
       <RoleButtons/>
       <form action={onFormSubmit}>
         <FormItem title="Имя:" name="first_name" type="text"/>
@@ -48,7 +48,9 @@ export default function RegisterPage() {
         <FormItem title="Отчество:" name="middle_name" type="text"/>
         <FormItem title="E-mail:" name="email" type="email"/>
         <FormItem title="Пароль:" name="password" type="password"/>
-        <FormItem title="Повторите пароль:" name="confirm_password" type="password"/>
+        <FormItem title={
+            <>Повторите<br/>пароль:</>
+        } name="confirm_password" type="password"/>
         <FormRowSided
           leftSide={<Links type="register"/>}
           rightSide={<Button type="submit" text="Создать"/>}

@@ -5,6 +5,8 @@
 .blockTitleMed {
   font-size: 1.3em;
   font-weight: 600;
+  display: flex;
+  gap: 16px;
 }
 
 .titleBlock {
@@ -25,3 +27,17 @@
   gap: 8px;
   height: 10px;
 }
+
+.editButton {
+  opacity: 0.8;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.6;
+  }
+
+  &:active {
+    opacity: 0.5;
+  }
+}
+

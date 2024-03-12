@@ -23,7 +23,10 @@ export default function CoursesLayout({children, courses, profile}) {
       <div className={styles.container}>
         <ContextProvider context={{courses}}>
           <CoursesSidebar/>
-          {children}
+
+          <div className={styles.contentBlock}>
+            {children}
+          </div>
         </ContextProvider>
       </div>
     </AppLayout>

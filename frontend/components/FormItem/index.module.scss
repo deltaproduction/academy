@@ -10,14 +10,16 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  width: 70%;
+  width: 67%;
 }
 
 .formItem {
   display: flex;
   align-items: center;
-  width: 400px;
+  width: 460px;
   margin: 40px 0;
+  justify-content: space-between;
+  line-height: 1.6;
 }
 
 .formItemInput {

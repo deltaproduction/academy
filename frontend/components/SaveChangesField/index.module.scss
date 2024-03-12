@@ -1,0 +1,27 @@
+.field {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 10px 0 10px 0;
+  padding-top: 12px;
+}
+
+.saveButton {
+  cursor: pointer;
+  background: #f6f6f6;
+  border: none;
+  padding: 8px 30px;
+  font-family: var(--font-inter);
+  font-size: 0.9em;
+  color: #838383;
+  border-radius: 10px;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}

@@ -9,6 +9,9 @@ import { useAppContext }                        from "@/components/ContextProvid
 
 import styles            from "./index.module.scss";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
+import ContentBlock, {DataTitle} from "@/components/ContentBlock";
+import NamedFormField from "@/components/NamedFormField";
+import SaveChangesField from "@/components/SaveChangesField";
 
 export async function getServerSideProps({query: {course}, req, res}) {
   try {
@@ -80,7 +83,34 @@ const Course = ({layoutProps, ...props}) => {
     }
   }
 
-  return <CoursesLayout {...layoutProps}>
+  return (
+      <CoursesLayout {...layoutProps}>
+        <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
+          <div>
+            <form onSubmit={onCourseFormSubmit}>
+              <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
+              <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
+
+              <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
+                <option value="0">Черновик</option>
+                <option value="1">Опубликован</option>
+              </SelectField>
+              {!!editMode && <SaveChangesField />}
+            </form>
+          </div>
+        </ContentBlock>
+      </CoursesLayout>);
+}
+
+Course.defaultProps = {
+  course: {},
+  topics: [],
+}
+
+export default Course
+
+
+/*<CoursesLayout {...layoutProps}>
     <div className={styles.container}>
       {!id && <h1>Создание нового курса</h1>}
       <div>
@@ -131,12 +161,4 @@ const Course = ({layoutProps, ...props}) => {
 
       </div>}
     </div>
-  </CoursesLayout>
-}
-
-Course.defaultProps = {
-  course: {},
-  topics: [],
-}
-
-export default Course
+  </CoursesLayout>*/

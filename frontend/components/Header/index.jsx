@@ -4,9 +4,10 @@ import Logo from '@/components/logo.svg'
 
 
 import styles from "./index.module.scss";
+import Link from "next/link";
 
 
-export default function Header({profile: {firstName, lastName}}) {
+export function Header1({profile: {firstName, lastName}}) {
   return (
     <div className={styles.wrapper}>
       <div className="container">
@@ -36,3 +37,34 @@ export default function Header({profile: {firstName, lastName}}) {
     </div>
   );
 }
+
+export default function Header({profile: {firstName, lastName}}) {
+  return (
+      <div className={styles.headerBlock}>
+        <div>
+          <div className={styles.logo}></div>
+        </div>
+        <div>
+          <div className={styles.menuBlockWrapper}>
+            <Link href={"check"} className={styles.greyLink}>Задачи на проверку</Link>
+            <Link href={"/courses"} className={styles.greyLink}>Курсы</Link>
+            <Link href={"/classes"} className={styles.greyLink}>Классы</Link>
+          </div>
+        </div>
+        <div>
+          <div className={styles.userBlockWrapper}>
+            <div>
+              <Link href="" className={styles.lkLink} title="Личный кабинет">
+                {firstName + ' ' + (lastName ? lastName[0] + '.' : '')}
+              </Link>
+            </div>
+            <div>
+              <Link href="/logout" className={classNames(styles.greyLink, styles.logoutLink)}>Выйти</Link>
+            </div>
+          </div>
+        </div>
+
+      </div>
+  );
+}
+

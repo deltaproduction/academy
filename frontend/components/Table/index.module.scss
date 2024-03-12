@@ -1,0 +1,70 @@
+.tableFieldBlock {
+  display: flex;
+  padding: 14px 18px;
+  border-top-left-radius: 5px;
+  color: #4B4B4B;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.sortIcon {
+  width: 13px;
+  height: 22px;
+  background: url("images/sort.svg");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position-y: center;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+}
+
+.tableRow {
+  display: flex;
+  justify-content: space-around;
+  background: #fdfdfd;
+}
+
+.tableRow:hover {
+  background: #f8f8f8;
+}
+
+.tableRow:last-of-type {
+  border-radius: 0 0 8px 8px;
+}
+
+.tableRow .tableFieldBlock {
+  font-weight: normal;
+}
+
+.tableFirstRow {
+  display: flex;
+  justify-content: space-around;
+  background: #fafafa;
+  border-radius: 8px 8px 0 0;
+  user-select: none;
+}
+
+.rating {
+  font-weight: 500;
+}
+
+.rating.red {
+  color: #BE0000;
+}
+
+.rating.green {
+  color: #00BE08
+}
+
+.rating.yellow {
+  color: #BE8900;
+}
+

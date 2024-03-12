@@ -1,10 +1,11 @@
 .logo {
-  height: 36px;
-
-  &Wrapper {
-    width: 180px;
-    text-align: center;
-  }
+  width: 160px;
+  height: 20px;
+  padding: 10px;
+  background-image: url("images/logo.svg");
+  background-size: 90%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .menuBlockWrapper {
@@ -18,7 +19,9 @@
 }
 
 .headerBlock {
-  height: var(--header-height);
+  padding: 15px 50px;
+  background: #FCFCFC;
+  border-bottom: 1px solid #F9F9F9;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -47,7 +50,24 @@
   }
 }
 
-.personalAreaLink {
+.lkLink {
+  font-family: var(--font-inter);
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+
+  &:hover {
+    color: #515151;
+    opacity: 0.8;
+  }
+
+  &:active {
+    color: #515151;
+    opacity: 0.7;
+  }
+}
+
+.logoutLink {
   color: #515151;
   font-size: 0.9em;
 }
