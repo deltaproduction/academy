@@ -90,13 +90,13 @@ export default function Class({group = {}}) {
     router.push(`/classes/${id}/`)
   }
 
-  // удалить потом!
-  students = [
-    {firstName: "john", lastName: "smith", email: "o@o.ru", average: 10, rating: 21.3},
-    {firstName: "john", lastName: "smith", email: "o@o.ru", average: 4, rating: 213.3},
-    {firstName: "john", lastName: "smith", email: "o@o.ru", average: 1, rating: 212.3},
-    {firstName: "john", lastName: "smith", email: "o@o.ru", average: 343, rating: 211.3}
-  ];
+  // // удалить потом!
+  // students = [
+  //   {firstName: "john", lastName: "smith", email: "o@o.ru", average: 10, rating: 21.3},
+  //   {firstName: "john", lastName: "smith", email: "o@o.ru", average: 4, rating: 213.3},
+  //   {firstName: "john", lastName: "smith", email: "o@o.ru", average: 1, rating: 212.3},
+  //   {firstName: "john", lastName: "smith", email: "o@o.ru", average: 343, rating: 211.3}
+  // ];
 
   return (<>
     <ContentBlock
@@ -104,7 +104,7 @@ export default function Class({group = {}}) {
         title={id ? "Информация о классе" : "Новый класс"}
 
         between value="Код класса: "
-        data={<CodeBlock code="2885775" />}>
+        data={<CodeBlock code={code} />}>
       <div>
         <form onSubmit={onFormSubmit}>
           <FormField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>

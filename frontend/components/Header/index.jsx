@@ -4,9 +4,9 @@ import styles from "./index.module.scss";
 import Link from "next/link";
 
 
-export default function Header({menu, profile: {firstName, lastName}}) {
+export default function Header({menu, profile: {firstName, lastName}, fixed}) {
   return (
-      <div className={styles.headerBlock}>
+      <div className={classNames(styles.headerBlock, fixed ? styles.fixed : null)}>
         <div>
           <div className={styles.logo}></div>
         </div>
