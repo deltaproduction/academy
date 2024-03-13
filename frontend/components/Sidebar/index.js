@@ -14,9 +14,10 @@ export const SidebarItem = ({children, href}) => {
   );
 }
 
-export const Sidebar = ({children, newItemHref, title}) => {
+export const Sidebar = ({children, newItemHref, backLink, backTitle, title}) => {
   return (
     <div className={styles.container}>
+      {!!backLink && <a className={styles.backLink} href={backLink}>{backTitle || 'Назад'}</a>}
       <div className={styles.header}>
         <div className={styles.headerTitle}>{title}</div>
         {!!newItemHref && <a href={newItemHref} className={styles.plusButton} title={"Добавить класс"}></a>}
