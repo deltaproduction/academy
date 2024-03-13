@@ -8,7 +8,7 @@ import Link from "next/link";
 export const SidebarItem = ({children, href}) => {
   return (
     <div className={classNames(styles.item, {[styles.active]: usePathname() === href})}>
-      {!!href && <Link href={href} className={styles.itemLink}/>}
+      {!!href && <a href={href} className={styles.itemLink}/>}
       {children}
     </div>
   );
@@ -19,7 +19,7 @@ export const Sidebar = ({children, newItemHref, title}) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className={styles.headerTitle}>{title}</div>
-        {!!newItemHref && <Link href={newItemHref} className={styles.plusButton} title={"Добавить класс"}></Link>}
+        {!!newItemHref && <a href={newItemHref} className={styles.plusButton} title={"Добавить класс"}></a>}
       </div>
       <div className={styles.items}>
         {children}
