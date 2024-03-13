@@ -1,17 +1,14 @@
-import { useState }   from "react";
-import { useRouter }  from "next/router";
-import { Edit, Undo } from "@mui/icons-material";
+import { useState }  from "react";
+import { useRouter } from "next/router";
 
 import { CoursesApi, TopicsApi }                from "@/lib/api";
 import CoursesLayout, { getCoursesLayoutProps } from "@/layouts/CoursesLayout";
 import { CharField, SelectField }               from "@/components/Fields";
 import { useAppContext }                        from "@/components/ContextProvider";
 
-import styles            from "./index.module.scss";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
-import ContentBlock, {DataTitle} from "@/components/ContentBlock";
-import NamedFormField from "@/components/NamedFormField";
-import SaveChangesField from "@/components/SaveChangesField";
+import ContentBlock      from "@/components/ContentBlock";
+import SaveChangesField  from "@/components/SaveChangesField";
 
 export async function getServerSideProps({query: {course}, req, res}) {
   try {
@@ -84,22 +81,22 @@ const Course = ({layoutProps, ...props}) => {
   }
 
   return (
-      <CoursesLayout {...layoutProps}>
-        <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
-          <div>
-            <form onSubmit={onCourseFormSubmit}>
-              <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
-              <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
+    <CoursesLayout {...layoutProps}>
+      <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
+        <div>
+          <form onSubmit={onCourseFormSubmit}>
+            <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
+            <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
 
-              <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
-                <option value="0">Черновик</option>
-                <option value="1">Опубликован</option>
-              </SelectField>
-              {!!editMode && <SaveChangesField />}
-            </form>
-          </div>
-        </ContentBlock>
-      </CoursesLayout>);
+            <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
+              <option value="0">Черновик</option>
+              <option value="1">Опубликован</option>
+            </SelectField>
+            {!!editMode && <SaveChangesField/>}
+          </form>
+        </div>
+      </ContentBlock>
+    </CoursesLayout>);
 }
 
 Course.defaultProps = {

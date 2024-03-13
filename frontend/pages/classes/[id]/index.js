@@ -1,10 +1,12 @@
-import { ClassesApi } from "@/lib/api";
-import Class          from "@/components/Classes/Class";
+import { ClassesApi }                               from "@/lib/api";
+import Class                                        from "@/components/Classes/Class";
 import ClassesLayout, { getClassesServersideProps } from "@/layouts/ClassesLayout";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {
     const props = await getClassesServersideProps({req, res})
+
+    if (id === 'new') return {props}
 
     const response = await ClassesApi.retrieve(id, {req, res})
     if (response.status === 404) {
@@ -18,7 +20,7 @@ export async function getServerSideProps({query: {id}, req, res}) {
   }
 }
 
-export default function ClassDetail({profile, group, groups}) {
+export default function ClassDetail({profile, group = {}, groups}) {
   return <ClassesLayout classes={groups} profile={profile}>
     <Class group={group}/>
   </ClassesLayout>
