@@ -1,6 +1,19 @@
 .container {
-  margin: 0 auto;
-  padding: 0 48px;
+  display: flex;
+  height: var(--content-height);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  margin: 0;
+  padding: 18px 46px;
+  width: 50%;
+
+  h1 {
+    margin: 0;
+  }
 }
 
 .title {

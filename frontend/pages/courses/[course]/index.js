@@ -1,18 +1,28 @@
-import { useState }  from "react";
-import { useRouter } from "next/router";
-
-import { CoursesApi, TopicsApi }                from "@/lib/api";
-import CoursesLayout, { getCoursesLayoutProps } from "@/layouts/CoursesLayout";
-import { CharField, SelectField }               from "@/components/Fields";
-import { useAppContext }                        from "@/components/ContextProvider";
-
+import { useState }      from "react";
+import { useRouter }     from "next/router";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
-import ContentBlock      from "@/components/ContentBlock";
-import SaveChangesField  from "@/components/SaveChangesField";
+
+
+import { CoursesApi, TopicsApi }     from "@/lib/api";
+import { getProfileServerSideProps } from "@/lib/utils";
+
+import AppLayout                  from "@/layouts/AppLayout";
+import { CharField, SelectField } from "@/components/Fields";
+import { Sidebar, SidebarItem }   from "@/components/Sidebar";
+import ContentBlock               from "@/components/ContentBlock";
+import SaveChangesField           from "@/components/SaveChangesField";
+
+
+import styles from "./index.module.scss";
+
 
 export async function getServerSideProps({query: {course}, req, res}) {
   try {
-    const props = await getCoursesLayoutProps({req, res})
+    const {props} = await getProfileServerSideProps({req, res})
+
+    const response = await CoursesApi.list({req, res})
+
+    props.courses = await response.json()
 
     if (course === 'new') return {props}
 
@@ -34,18 +44,29 @@ export async function getServerSideProps({query: {course}, req, res}) {
   }
 }
 
-const Course = ({layoutProps, ...props}) => {
-  const {course} = props
+const Layout = ({courses, profile, children}) => {
+  return <AppLayout profile={profile}>
+    <div className={styles.container}>
+      <Sidebar title="Курсы" newItemHref='/courses/new/'>
+        {courses.map(({id, title}) => (
+          <SidebarItem key={id} href={`/courses/${id}/`}>{title}</SidebarItem>)
+        )}
+      </Sidebar>
+      <div className={styles.content}>
+        {children}
+      </div>
+    </div>
+  </AppLayout>
+}
+
+const Course = (props) => {
+  const {profile, course, courses: courses_, topics} = props;
+
   const [editMode, setEditMode] = useState(!course.id);
-  const [addTopicMode, setAddTopicMode] = useState(false);
-  const [topics, setTopics] = useState(props.topics);
 
   const router = useRouter()
 
-  const {id, title, description, state} = course
-
-
-  const {courses, updateContext} = useAppContext()
+  const [courses, setCourses] = useState(courses_)
 
   const onCourseFormSubmit = async (e) => {
     e.preventDefault()
@@ -53,42 +74,28 @@ const Course = ({layoutProps, ...props}) => {
     if (course.id) {
       const response = await CoursesApi.update(course.id, formData)
       const updatedCourse = await response.json()
-      updateContext({courses: courses.map(({id, title}) => course.id === id ? updatedCourse : {id, title})})
+      setCourses(courses.map(({id, title}) => course.id === id ? updatedCourse : {id, title}))
       setEditMode(!response.ok)
       return
     }
     const response = await CoursesApi.create(formData)
     const {id, title} = await response.json()
 
-    updateContext({courses: [...courses, {id, title}]})
+    setCourses([...courses, {id, title}])
 
     await router.push(`/courses/${id}/`)
   }
 
-  const onTopicFormSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-
-    formData.append('course', course.id)
-
-    const response = await TopicsApi.create(formData)
-    if (response.ok) {
-      const topic = await response.json()
-      setTopics(topics.concat([topic]))
-      e.target.reset()
-      setAddTopicMode(false)
-    }
-  }
-
   return (
-    <CoursesLayout {...layoutProps}>
+    <Layout courses={courses} profile={profile}>
       <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
         <div>
           <form onSubmit={onCourseFormSubmit}>
-            <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
-            <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
+            <CharField label="Название курса" name="title" defaultValue={course.title} disabled={!editMode}/>
+            <CharField label="Описание курса" name="description" defaultValue={course.description}
+                       disabled={!editMode}/>
 
-            <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
+            <SelectField label="Статус" name="state" defaultValue={course.state} disabled={!editMode}>
               <option value="0">Черновик</option>
               <option value="1">Опубликован</option>
             </SelectField>
@@ -96,7 +103,15 @@ const Course = ({layoutProps, ...props}) => {
           </form>
         </div>
       </ContentBlock>
-    </CoursesLayout>);
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+      <a href={`/courses/${course.id}/topics/`}>Раздел уроков</a>
+      <a href={`/courses/${course.id}/topics/new/`}>Добавить тему</a>
+      {
+        topics.map(({id, title}) => <div key={id}>
+          <a href={`/courses/${course.id}/topics/${id}`}>{title}</a>
+        </div>)
+      }
+    </Layout>);
 }
 
 Course.defaultProps = {
@@ -132,7 +147,7 @@ export default Course
         </div>}
         {
           topics.map(({id, title}) => <div key={id}>
-            <a href={`/courses/${course.id}/${id}`}>{title}</a>
+            <a href={`/courses/${course.id}/topics/${id}`}>{title}</a>
           </div>)
         }
         {
