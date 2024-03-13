@@ -20,12 +20,12 @@ export default function Header({menu, profile: {firstName, lastName}, fixed}) {
         <div>
           <div className={styles.userBlockWrapper}>
             <div>
-              <Link href="" className={styles.lkLink} title="Личный кабинет">
+              <a href="" className={styles.lkLink} title="Личный кабинет">
                 {firstName + ' ' + (lastName ? lastName[0] + '.' : '')}
-              </Link>
+              </a>
             </div>
             <div>
-              <Link href="/logout" className={classNames(styles.greyLink, styles.logoutLink)}>Выйти</Link>
+              <a href="/logout" className={classNames(styles.greyLink, styles.logoutLink)}>Выйти</a>
             </div>
           </div>
         </div>

@@ -26,7 +26,7 @@ export default function LoginPage({next}) {
       method: 'POST',
       body: formData
     })
-    await router.push(next)
+    location.href = next
   }
 
   return (
