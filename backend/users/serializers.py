@@ -3,15 +3,21 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
-from users.models import Student
+from users.models import Student, Teacher
 
 User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.SerializerMethodField(method_name='get_role')
+
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'email', 'groups']
+        fields = ['id', 'first_name', 'last_name', 'email', 'groups', 'role']
+
+    @staticmethod
+    def get_role(user):
+        return 'teacher' if Teacher.objects.filter(user=user).exists() else 'student'
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -29,10 +35,11 @@ class StudentSerializer(serializers.ModelSerializer):
 class SignUpSerializer(serializers.ModelSerializer):
     password = serializers.CharField(validators=[validate_password])
     confirm_password = serializers.CharField()
+    role = serializers.ChoiceField(choices=['student', 'teacher'])
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'password', 'confirm_password']
+        fields = ['first_name', 'last_name', 'email', 'password', 'confirm_password', 'role']
 
     def validate(self, attrs):
         if attrs['confirm_password'] != attrs['password']:
@@ -40,6 +47,16 @@ class SignUpSerializer(serializers.ModelSerializer):
         del attrs['confirm_password']
         attrs['password'] = make_password(attrs['password'])
         return attrs
+
+    def create(self, validated_data):
+        role = validated_data['role'].lower()
+        del validated_data['role']
+        user = super().create(validated_data)
+        if role == 'teacher':
+            Teacher.objects.create(user=user, is_active=True)
+        if role == 'student':
+            Student.objects.create(user=user, is_active=True)
+        return user
 
 
 class SignInSerializer(serializers.Serializer):

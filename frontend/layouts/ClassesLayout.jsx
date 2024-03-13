@@ -30,7 +30,6 @@ export default function ClassesLayout({children, classes, profile}) {
       <div className={styles.container}>
         <ContextProvider context={{classes}}>
           <ClassesSidebar/>
-
           <div className={styles.contentBlock}>
             {children}
           </div>

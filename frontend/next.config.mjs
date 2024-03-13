@@ -10,6 +10,7 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
   },
+  productionBrowserSourceMaps: true,
   redirects: async () => ([
     {
       source: '/',

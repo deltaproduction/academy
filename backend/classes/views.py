@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from classes.models import Group
 from classes.serializers import GroupListSerializer, GroupDetailSerializer
+from users.models import Teacher, Student
 
 
 class GroupViewSet(ModelViewSet):
@@ -15,8 +16,8 @@ class GroupViewSet(ModelViewSet):
         return GroupDetailSerializer
 
     def get_queryset(self):
-        if self.request.user.teacher:
+        if Teacher.objects.filter(user=self.request.user).exists():
             return self.queryset.filter(tutor=self.request.user.teacher)
-        if self.request.user.student:
+        if Student.objects.filter(user=self.request.user).exists():
             return self.queryset.filter(students=self.request.user.student)
         return self.queryset.none()
