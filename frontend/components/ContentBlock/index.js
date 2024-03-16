@@ -1,46 +1,31 @@
-import styles from "./index.module.scss";
-import {Edit, Undo} from "@mui/icons-material";
+import styles         from "./index.module.scss";
+import { Edit, Undo } from "@mui/icons-material";
 
 export const DataTitle = (props) => {
-    if (props.data)
-        return <div className={styles.contentBlockDataTitle}>
-            <div>{props.value}</div>
-            <div>{props.data}</div>
-        </div>;
-
-    return null;
-}
-
-export const EditButton = (props) => {
-    let editMode = props.editMode;
-    let setEditMode = props.setEditMode;
-
-    return <div className={styles.editButton}>
-        {editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>}
+  if (props.data)
+    return <div className={styles.contentBlockDataTitle}>
+      <div>{props.value}</div>
+      <div>{props.data}</div>
     </div>;
+
+  return null;
 }
 
-export default function ContentBlock(PropsWithChildren) {
-    let between = PropsWithChildren.between;
+export default function ContentBlock({children, title, between, editMode, setEditMode, value, data}) {
+  return (
+    <div className={styles.contentBlock}>
+      <div className={`${styles.titleBlock} ${between ? styles.between : null}`}>
+        <h1 className={styles.blockTitleMed}>{title}
 
-    let setEditMode = PropsWithChildren.setEditMode;
-    let editMode = PropsWithChildren.editMode;
+          {!!setEditMode && <div className={styles.editButton}>
+            {editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>}
+          </div>}
 
-    return (
-        <div className={styles.contentBlock}>
-            <div className={`${styles.titleBlock} ${between ? styles.between : null}`}>
-                <h1 className={styles.blockTitleMed}>{PropsWithChildren.title}
-
-                    { setEditMode ? <EditButton
-                        editMode={editMode}
-                        setEditMode={setEditMode}
-                    /> : null}
-
-                </h1>
-                <DataTitle value={PropsWithChildren.value} data={PropsWithChildren.data} />
-            </div>
-            {PropsWithChildren.children}
-        </div>
-    );
+        </h1>
+        <DataTitle value={value} data={data}/>
+      </div>
+      {children}
+    </div>
+  );
 }
 

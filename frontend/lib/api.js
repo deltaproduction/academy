@@ -68,7 +68,7 @@ class ModelApi {
   update = async (id, formData, options) => {
     return await fetchApi(`${this.url}${id}/`, {
       ...options,
-      method: 'PUT',
+      method: 'PATCH',
       body: formData
     })
   }

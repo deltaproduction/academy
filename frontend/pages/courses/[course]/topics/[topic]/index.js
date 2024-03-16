@@ -7,7 +7,11 @@ import { Sidebar, SidebarItem } from "@/components/Sidebar";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
-import styles from "./index.module.scss";
+import styles                     from "./index.module.scss";
+import { CharField, SelectField } from "@/components/Fields";
+import SaveChangesField           from "@/components/SaveChangesField";
+import { useState }               from "react";
+import ContentBlock               from "@/components/ContentBlock";
 
 
 export async function getServerSideProps({query: {topic, course}, req, res}) {
@@ -42,7 +46,7 @@ const Layout = ({topics, profile, children, course}) => {
   return <AppLayout profile={profile}>
     <div className={styles.container}>
       <Sidebar
-        title="Темы"
+        title="Уроки"
         newItemHref={`/courses/${course.id}/topics/new/`}
         backLink={`/courses/${course.id}/`}
         backTitle={`< ${course.title}`}
@@ -58,9 +62,44 @@ const Layout = ({topics, profile, children, course}) => {
   </AppLayout>
 }
 
-const Topic = ({profile, topics, course, topic}) => {
+const Topic = ({profile, topics, course, topic: {id, title, type, description, state} = {}}) => {
+  const [editMode, setEditMode] = useState(!id);
+
+  const onTopicFormSubmit = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+
+    let response;
+
+    if (id) {
+      response = await TopicsApi.update(id, formData)
+    } else {
+      formData.append('course', course.id)
+      response = await TopicsApi.create(formData)
+    }
+
+    if (response.ok) {
+      const topic = await response.json()
+      if (id) {
+        location.href = `/courses/${course.id}/topics/${topic.id}/`
+      } else {
+        location.reload()
+      }
+    }
+  }
+
   return <Layout profile={profile} topics={topics} course={course}>
-    {!!topic && topic.title}
+    <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация об уроке">
+      <form onSubmit={onTopicFormSubmit}>
+        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode}/>
+        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode}/>
+        <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
+          <option value="0">Закрыт</option>
+          <option value="1">Опубликован</option>
+        </SelectField>
+        {!!editMode && <SaveChangesField/>}
+      </form>
+    </ContentBlock>
   </Layout>
 }
 

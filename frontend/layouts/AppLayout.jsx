@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 
 export default function AppLayout({profile, children}) {
-  console.log(profile)
   return (
     <>
       <Header
