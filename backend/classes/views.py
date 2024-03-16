@@ -36,6 +36,7 @@ def create_group_student(request):
     group_student = GroupStudentCreateSerializer(data={
         "group": get_object_or_404(Group, code=request.data.get("code")).pk,
         "student": student.pk,
+        "main": True,
     })
     group_student.is_valid(raise_exception=True)
     student.groupstudent_set.update(main=False)
