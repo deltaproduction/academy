@@ -1,14 +1,11 @@
 from django.urls import path
 from rest_framework import routers
 
-from courses.views import CourseViewSet, TopicsViewSet, GroupTopicsListView
+from courses.views import CourseViewSet, TopicsViewSet, GroupTopicsViewSet
 
 router = routers.SimpleRouter()
 router.register(r'courses', CourseViewSet)
 router.register(r'topics', TopicsViewSet)
+router.register(r'class_topics', GroupTopicsViewSet)
 
-urlpatterns = [
-    path(r'class_topics/', GroupTopicsListView.as_view()),
-    path(r'class_topics/<int:class_id>/', GroupTopicsListView.as_view())
-]
-urlpatterns += router.urls
+urlpatterns = router.urls

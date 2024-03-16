@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from courses.models import Course, Topic
+from courses.models import Course, Task, Topic
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -24,4 +24,19 @@ class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
         fields = ['id', 'course', 'title', 'type', 'description', 'state', 'start', 'end']
+        read_only_fields = ['id']
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'topic', 'title']
+
+
+class GroupTopicSerializer(serializers.ModelSerializer):
+    tasks = TaskSerializer(many=True, source="task_set")
+
+    class Meta:
+        model = Topic
+        fields = ['id', 'course', 'title', 'type', 'description', 'state', 'start', 'end', 'tasks']
         read_only_fields = ['id']

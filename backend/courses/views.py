@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
-from rest_framework.generics import ListAPIView, get_object_or_404
+from rest_framework.generics import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 
 from classes.models import Group, GroupStudent
 from courses.models import Course, Topic
-from courses.serializers import CourseListSerializer, CourseDetailSerializer, TopicSerializer
+from courses.serializers import CourseListSerializer, CourseDetailSerializer, GroupTopicSerializer, TopicSerializer
 
 User = get_user_model()
 
@@ -41,14 +41,18 @@ class TopicsViewSet(ModelViewSet):
         return queryset
 
 
-class GroupTopicsListView(ListAPIView):
+class GroupTopicsViewSet(ModelViewSet):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = GroupTopicSerializer
 
     def get_queryset(self):
+        group = self.request.query_params.get('class')
+        course = self.request.query_params.get('course')
 
-        if class_id := self.kwargs.get('class_id'):
-            group = get_object_or_404(Group, id=class_id)
+        if course:
+            queryset = self.queryset.filter(course=course)
+        elif group:
+            group = get_object_or_404(Group, id=group)
             queryset = self.queryset.filter(course=group.groupcourse.course)
         else:
             main_group = GroupStudent.objects.get(student=self.request.user.student, main=True).group
