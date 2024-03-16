@@ -62,7 +62,7 @@ const Layout = ({topics, profile, children, course}) => {
   </AppLayout>
 }
 
-const Topic = ({profile, topics, course, topic: {id, title, type, description, state} = {}}) => {
+const Topic = ({profile, topics, course, topic: {id, title, type, description, tasks, state} = {}}) => {
   const [editMode, setEditMode] = useState(!id);
 
   const onTopicFormSubmit = async (e) => {
@@ -93,6 +93,11 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, s
       <form onSubmit={onTopicFormSubmit}>
         <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode}/>
         <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode}/>
+        <SelectField label="Тип урока" name="type" defaultValue={type} disabled={!editMode}>
+          <option value="0">Учебный урок</option>
+          <option value="1">Классная работа</option>
+          <option value="2">Самостоятельная работа</option>
+        </SelectField>
         <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
           <option value="0">Закрыт</option>
           <option value="1">Опубликован</option>
@@ -100,6 +105,16 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, s
         {!!editMode && <SaveChangesField/>}
       </form>
     </ContentBlock>
+
+    {!!id && <>
+      <a href={`/courses/${course.id}/topics/${id}/tasks/`}>Раздел задачи</a>
+      <a href={`/courses/${course.id}/topics/${id}/tasks/new/`}>Добавить задачу</a>
+      {tasks.map(({id: taskId, title}) => <div key={id}>
+        <a href={`/courses/${course.id}/topics/${id}/tasks/${taskId}/`}>{title}</a>
+      </div>)}
+    </>
+
+    }
   </Layout>
 }
 

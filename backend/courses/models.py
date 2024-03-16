@@ -54,7 +54,7 @@ class Topic(models.Model):
 
 
 class Task(models.Model):
-    topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE)
+    topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE, related_name='tasks')
 
     title = models.CharField('Заголовок', max_length=150, blank=True)
     text = models.TextField('Текст', blank=True)

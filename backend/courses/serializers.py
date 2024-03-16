@@ -20,17 +20,25 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'author']
 
 
-class TopicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Topic
-        fields = ['id', 'course', 'title', 'type', 'description', 'state', 'start', 'end']
-        read_only_fields = ['id']
-
-
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
+        fields = ['id', 'topic', 'title', 'text', 'format_in_text', 'format_out_text']
+
+
+class TaskListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
         fields = ['id', 'topic', 'title']
+
+
+class TopicSerializer(serializers.ModelSerializer):
+    tasks = TaskListSerializer(many=True)
+
+    class Meta:
+        model = Topic
+        fields = ['id', 'course', 'title', 'tasks', 'type', 'description', 'state', 'start', 'end']
+        read_only_fields = ['id']
 
 
 class GroupTopicSerializer(serializers.ModelSerializer):

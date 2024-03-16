@@ -3,8 +3,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 
 from classes.models import Group, GroupStudent
-from courses.models import Course, Topic
-from courses.serializers import CourseListSerializer, CourseDetailSerializer, GroupTopicSerializer, TopicSerializer
+from courses.models import Course, Topic, Task
+from courses.serializers import CourseListSerializer, CourseDetailSerializer, GroupTopicSerializer, TopicSerializer, \
+    TaskSerializer, TaskListSerializer
 
 User = get_user_model()
 
@@ -36,6 +37,28 @@ class TopicsViewSet(ModelViewSet):
 
             if course:
                 queryset = queryset.filter(course=course)
+        except User.teacher.RelatedObjectDoesNotExist:
+            return self.queryset.none()
+        return queryset
+
+
+class TasksViewSet(ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TaskListSerializer
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        try:
+            queryset = self.queryset.filter(topic__course__author=self.request.user.teacher)
+
+            topic = self.request.query_params.get('topic')
+
+            if topic:
+                queryset = queryset.filter(topic=topic)
         except User.teacher.RelatedObjectDoesNotExist:
             return self.queryset.none()
         return queryset

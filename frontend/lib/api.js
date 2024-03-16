@@ -1,4 +1,4 @@
-import { API_HOST }  from "@/lib/constants";
+import { API_HOST } from "@/lib/constants";
 
 
 export const fetchApi = async (url, options = {}) => {
@@ -79,3 +79,5 @@ export const ClassesApi = new ModelApi('/api/groups/')
 export const CoursesApi = new ModelApi('/api/courses/')
 
 export const TopicsApi = new ModelApi('/api/topics/')
+
+export const TasksApi = new ModelApi('/api/tasks/')
