@@ -2,7 +2,7 @@ from random import randrange
 
 from rest_framework import serializers
 
-from classes.models import Group
+from classes.models import Group, GroupStudent
 from users.serializers import UserSerializer, StudentSerializer
 
 
@@ -30,3 +30,9 @@ class GroupDetailSerializer(serializers.ModelSerializer):
         model = Group
         fields = ['id', 'title', 'courses', 'students', 'tutor', 'teacher_name', 'code']
         read_only_fields = ['id', 'courses', 'students', 'tutor', 'code']
+
+
+class GroupStudentCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GroupStudent
+        fields = ['group', 'student']

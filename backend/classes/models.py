@@ -18,6 +18,7 @@ class Group(models.Model):
 class GroupStudent(models.Model):
     group = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+    main = models.BooleanField("Основной", default=True)
 
     class Meta:
         verbose_name = 'Ученик класса'
