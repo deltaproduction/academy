@@ -15,7 +15,7 @@ export async function getServerSideProps({req, res}) {
     return {props}
 }
 
-function Layout({children, classes, profile}) {
+function Layout({children, profile}) {
   return (
     <AppLayout profile={profile}>
       <div>
@@ -33,7 +33,7 @@ function Layout({children, classes, profile}) {
 }
 
 
-export default function ClassesList({groups, profile, code}) {
+export default function ClassesList({groups, profile}) {
   const onFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -44,7 +44,7 @@ export default function ClassesList({groups, profile, code}) {
     location.reload();
   }
 
-  return (<Layout classes={groups} profile={profile}>
+  return (<Layout profile={profile}>
     <form onSubmit={onFormSubmit}>
       <FormItem title="Код класса:" name="code" type="number"/>
       <FormRowSided
