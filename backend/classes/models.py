@@ -27,8 +27,9 @@ class GroupStudent(models.Model):
 
 
 class GroupCourse(models.Model):
-    group = models.OneToOneField('classes.Group', on_delete=models.CASCADE)
+    group = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
     course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    active = models.BooleanField('Активен')
 
     class Meta:
         verbose_name = 'Курс класса'

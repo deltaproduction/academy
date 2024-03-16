@@ -1,19 +1,25 @@
 import { CoursesApi, TopicsApi }     from "@/lib/api";
-import { getProfileServerSideProps } from "@/lib/utils";
+import { getTeacherServerSideProps } from "@/lib/utils";
 
-import { isPlainObject }        from "next/dist/shared/lib/is-plain-object";
 import AppLayout                from "@/layouts/AppLayout";
-import styles                   from "@/pages/courses/[course]/index.module.scss";
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
+
+import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
+
+
+import styles from "./index.module.scss";
+
 
 export async function getServerSideProps({query: {topic, course}, req, res}) {
   try {
-    const {props} = await getProfileServerSideProps({req, res})
+    const {props} = await getTeacherServerSideProps({req, res})
 
     let response = await TopicsApi.list({queryParams: {course}, req, res})
     props.topics = await response.json()
 
-    props.courseId = course
+    response = await CoursesApi.retrieve(course, {req, res})
+
+    props.course = await response.json()
 
     if (topic === 'new') return {props}
 
@@ -24,10 +30,6 @@ export async function getServerSideProps({query: {topic, course}, req, res}) {
     props.topic = await response.json()
 
     if (props.topic.course !== parseInt(course)) return {notFound: true}
-
-    response = await CoursesApi.retrieve(course, {req, res})
-
-    props.course = await response.json()
 
     return {props}
   } catch (e) {

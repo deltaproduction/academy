@@ -1,5 +1,5 @@
-import React         from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
+import { useRouter }       from "next/router";
 
 import { getProfileData } from "@/lib/api";
 
@@ -18,15 +18,19 @@ export async function getServerSideProps({query: {next = '/'}, req, res}) {
 }
 
 export default function LoginPage({next}) {
-  const router = useRouter()
+  const [errors, setErrors] = useState('')
   const onFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
-    await fetch('/api/sign_in/', {
+    const response = await fetch('/api/sign_in/', {
       method: 'POST',
       body: formData
     })
-    location.href = next
+    if (response.ok) {
+      location.href = next
+    } else {
+      setErrors(JSON.stringify(await response.json()))
+    }
   }
 
   return (
@@ -35,6 +39,7 @@ export default function LoginPage({next}) {
       <form onSubmit={onFormSubmit}>
         <FormItem title="E-mail:" name="email" type="email"/>
         <FormItem title="Пароль:" name="password" type="password"/>
+        {!!errors && errors}
         <FormRowSided
           leftSide={<Links type="login"/>}
           rightSide={<Button type="submit" text="Войти"/>}

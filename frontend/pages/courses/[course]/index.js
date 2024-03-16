@@ -4,7 +4,7 @@ import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
 import { CoursesApi, TopicsApi }     from "@/lib/api";
-import { getProfileServerSideProps } from "@/lib/utils";
+import { getTeacherServerSideProps } from "@/lib/utils";
 
 import AppLayout                  from "@/layouts/AppLayout";
 import { CharField, SelectField } from "@/components/Fields";
@@ -18,7 +18,7 @@ import styles from "./index.module.scss";
 
 export async function getServerSideProps({query: {course}, req, res}) {
   try {
-    const {props} = await getProfileServerSideProps({req, res})
+    const {props} = await getTeacherServerSideProps({req, res})
 
     const response = await CoursesApi.list({req, res})
 

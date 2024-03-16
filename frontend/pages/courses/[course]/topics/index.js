@@ -1,7 +1,7 @@
 import { TopicsApi } from "@/lib/api";
 
 export async function getServerSideProps({query: {course}, req, res}) {
-  const response = await TopicsApi.list({req, res})
+  const response = await TopicsApi.list({queryParams: {course},req, res})
   if (response.ok) {
     const topics = await response.json()
     return {

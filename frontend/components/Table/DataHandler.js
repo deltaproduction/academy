@@ -16,7 +16,7 @@ function RatingHandler(string) {
     let color = string <= 10 ? styles.red: (string < 50 ? styles.yellow : styles.green);
     return (
         <div className={`${styles.rating} ${color}`}>
-            {string}%
+            {string ? string + '%' : '-'}
         </div>
     );
 }

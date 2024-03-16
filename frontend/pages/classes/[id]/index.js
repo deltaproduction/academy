@@ -2,7 +2,7 @@ import { useState }  from "react";
 import { useRouter } from "next/router";
 
 import { ClassesApi }                from "@/lib/api";
-import { getProfileServerSideProps } from "@/lib/utils";
+import { getTeacherServerSideProps } from "@/lib/utils";
 
 import AppLayout from "@/layouts/AppLayout";
 
@@ -17,7 +17,7 @@ import styles from "./index.module.scss";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {
-    const {props} = await getProfileServerSideProps({req, res})
+    const {props} = await getTeacherServerSideProps({req, res})
 
     const classesListRes = await ClassesApi.list({req, res})
     props.groups = await classesListRes.json()
