@@ -57,7 +57,11 @@ const Layout = ({profile, tasks, topic, children}) => {
   </AppLayout>
 }
 
-const defaultCode = 'def main():\n  pass'
+const defaultCode = 'a = int(input())\n' +
+  'b = int(input())\n' +
+  'c = int(input())\n' +
+  '\n' +
+  'print(a + b + c)'
 
 const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, formatOutText} = {}}) => {
   const [code, setCode] = useState(defaultCode)
@@ -72,6 +76,8 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
       setResult(await result.json())
     }
   }
+
+  const resultCreatedAt = new Date(result.createdAt)
 
   return <Layout profile={profile} topic={topic} tasks={tasks}>
     <h1>{title}</h1>
@@ -99,9 +105,10 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
         value={code}
         onChange={setCode}
       />
-      <SubmitButton onClick={onCodeSubmit} text="Проверить"/>
+      <SubmitButton onClick={onCodeSubmit} text="Сдать"/>
     </div>
     <div>
+      {resultCreatedAt.toLocaleString()}
       {result.status === 0 && <div>
         Успешно
       </div>}
@@ -122,6 +129,7 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
       {result.status === 3 && <div>
         Превышен лимит по времени: {result.testCase.timelimit}c
       </div>}
+      {result.status === 4 && <div>Отправлено на проверку</div>}
     </div>
   </Layout>
 }

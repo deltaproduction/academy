@@ -18,6 +18,9 @@ export async function getServerSideProps({query: {class_id, topic_id}, req, res}
     props.topics = await topicsRes.json()
 
     const topicRes = await TopicsApi.retrieve(topic_id, {req, res})
+    if (topicRes.status === 404) {
+      return {notFound: true}
+    }
     props.topic = await topicRes.json()
 
     return {props}

@@ -60,6 +60,12 @@ class Topic(models.Model):
 
 
 class Task(models.Model):
+    NO = 0
+    YES = 1
+    AUTOREVIEW_CHOICES = (
+        (NO, 'нет'),
+        (YES, 'да'),
+    )
     topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE, related_name='tasks')
 
     title = models.CharField('Заголовок', max_length=150, blank=True)
@@ -68,11 +74,8 @@ class Task(models.Model):
     format_in_text = models.TextField('Формат входных данных', null=True, blank=True)
     format_out_text = models.TextField('Формат выходных данных', null=True, blank=True)
 
-    # autocheck = models.BooleanField('Авто-проверка', default=False)
-    # stdin = models.TextField('stdin')
-    # stdout = models.TextField('stdout')
-    # samples = models.TextField('samples')
-    # tests = models.TextField('tests')
+    autoreview = models.PositiveSmallIntegerField('Авто-проверка', choices=AUTOREVIEW_CHOICES,
+                                                  default=NO)
 
     def __str__(self):
         return f'{self.title} {self.topic}'
@@ -101,11 +104,13 @@ class Attempt(models.Model):
     INVALID_RESULT = 1
     SYNTAX_ERROR = 2
     TIMEOUT_ERROR = 3
+    ON_REVIEW = 4
     STATUS_CHOICES = (
         (SUCCESS, 'Успешно'),
         (INVALID_RESULT, 'Неверный ответ'),
         (SYNTAX_ERROR, 'Не валидный код'),
         (TIMEOUT_ERROR, 'Превышен лимит по времени'),
+        (ON_REVIEW, 'На проверке'),
     )
 
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
@@ -114,7 +119,9 @@ class Attempt(models.Model):
     output = models.TextField('Результат решения', blank=True)
     status = models.PositiveSmallIntegerField('Статус попытки', choices=STATUS_CHOICES)
     test_case = models.ForeignKey('courses.TestCase', on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = 'Попытка'
         verbose_name_plural = 'Попытки'
+        unique_together = ('student', 'task')

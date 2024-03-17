@@ -29,11 +29,11 @@ class CourseViewSet(ModelViewSet):
             return queryset
 
         try:
-            queryset = queryset.filter(course_groups__students=self.request.user.student)
+            queryset = queryset.filter(groups__students=self.request.user.student)
 
             group = self.request.query_params.get('group')
             if group:
-                queryset = queryset.filter(course_groups=group)
+                queryset = queryset.filter(groups=group)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:
@@ -62,7 +62,7 @@ class TopicsViewSet(ModelViewSet):
             return queryset
 
         try:
-            queryset = queryset.filter(course__course_groups__students=self.request.user.student)
+            queryset = queryset.filter(course__groups__students=self.request.user.student)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:
@@ -118,7 +118,7 @@ class TasksViewSet(ModelViewSet):
             return queryset
 
         try:
-            queryset = queryset.filter(topic__course__course_groups__students=self.request.user.student)
+            queryset = queryset.filter(topic__course__groups__students=self.request.user.student)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:

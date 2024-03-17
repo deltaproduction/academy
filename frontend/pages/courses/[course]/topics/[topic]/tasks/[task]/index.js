@@ -7,11 +7,11 @@ import { Sidebar, SidebarItem } from "@/components/Sidebar";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
-import styles                   from "./index.module.scss";
-import { CharField, TextField } from "@/components/Fields";
-import SubmitButton             from "@/components/SaveChangesField";
-import { useState }  from "react";
-import ContentBlock  from "@/components/ContentBlock";
+import styles                                from "./index.module.scss";
+import { CharField, SelectField, TextField } from "@/components/Fields";
+import SubmitButton                          from "@/components/SaveChangesField";
+import { useState }                          from "react";
+import ContentBlock                          from "@/components/ContentBlock";
 
 
 export async function getServerSideProps({query: {topic, task}, req, res}) {
@@ -73,10 +73,11 @@ const Task = ({
                 tasks,
                 topic,
                 testCases: testCases_,
-                task: {id, title, text, formatInText, formatOutText} = {}
+                task: {id, title, text, formatInText, formatOutText, autoreview: autoreview_} = {}
               }) => {
 
   const [testCases, setTestCases] = useState(testCases_)
+  const [autoreview, setAutoreview] = useState(autoreview_)
   const onTaskFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -128,27 +129,37 @@ const Task = ({
         <CharField label="Описание" name="text" defaultValue={text}/>
         <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}/>
         <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}/>
+        <SelectField label="Автоматическая проверка" name="autoreview"
+                     onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
+          <option value="0">Нет</option>
+          <option value="1">Да</option>
+        </SelectField>
         <SubmitButton/>
       </form>
 
     </ContentBlock>
-    <ContentBlock title="Тест кейсы">
-      {testCases.map(({id, stdin, stdout}) => (
-        <div key={id}>
-          <div style={{display:'flex', gap:'20px', alignItems: 'center'}}>
-            <pre>{stdin}</pre> {"->"} <pre>{stdout}</pre>
-            <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
-          </div>
+    {
+      !!autoreview && <ContentBlock title="Тест кейсы">
+        {testCases.map(({id, stdin, stdout}) => (
+          <div key={id}>
+            <div style={{display: 'flex', gap: '20px', alignItems: 'center'}}>
+              <pre>{stdin}</pre>
+              {"->"}
+              <pre>{stdout}</pre>
+              <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
+            </div>
 
-        </div>
-      ))}
-      <form onSubmit={onTestCaseFormSubmit}>
-        <TextField label="Входные аргументы" name="stdin"/>
-        <TextField label="Ожидаемый результат" name="stdout"/>
-        <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)" name="timelimit"/>
-        <SubmitButton text="Добавить"/>
-      </form>
-    </ContentBlock>
+          </div>
+        ))}
+        <form onSubmit={onTestCaseFormSubmit}>
+          <TextField label="Входные аргументы" name="stdin"/>
+          <TextField label="Ожидаемый результат" name="stdout"/>
+          <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)" name="timelimit"/>
+          <SubmitButton text="Добавить"/>
+        </form>
+      </ContentBlock>
+    }
+
   </Layout>
 }
 

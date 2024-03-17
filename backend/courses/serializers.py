@@ -24,7 +24,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'topic', 'title', 'text', 'format_in_text', 'format_out_text']
+        fields = ['id', 'topic', 'title', 'text', 'format_in_text', 'format_out_text', 'autoreview']
 
 
 class TaskListSerializer(serializers.ModelSerializer):
@@ -52,38 +52,46 @@ class TestCaseSerializer(serializers.ModelSerializer):
 class AttemptSerializer(serializers.ModelSerializer):
     test_case = TestCaseSerializer(read_only=True)
 
-    def create(self, validated_data):
-        if 'test_case' in validated_data:
-            del validated_data['test_case']
+    def save(self, **kwargs):
+        task = self.validated_data['task']
+        student = self.context['request'].user.student
+        attempt = Attempt.objects.filter(task=task, student=student)
+        if attempt.exists():
+            self.instance = attempt.first()
 
-        validated_data['student'] = self.context['request'].user.student
-        for test_case in TestCase.objects.filter(task_id=validated_data['task']).all():
-            try:
-                success, output = run_code_with_timeout(
-                    validated_data['code'], test_case.stdin, test_case.timelimit
-                )
-            except TimeoutExpired:
-                validated_data['status'] = Attempt.TIMEOUT_ERROR
-                validated_data['output'] = 'Timeout error'
-                validated_data['test_case'] = test_case
-                return super().create(validated_data)
+        kwargs['student'] = student
+        kwargs['status'] = Attempt.ON_REVIEW
+        kwargs['output'] = ''
+        kwargs['test_case'] = None
+
+        if task.autoreview:
+            for test_case in TestCase.objects.filter(task_id=task).all():
+                try:
+                    success, output = run_code_with_timeout(
+                        self.validated_data['code'], test_case.stdin, test_case.timelimit
+                    )
+                except TimeoutExpired:
+                    kwargs['status'] = Attempt.TIMEOUT_ERROR
+                    kwargs['output'] = 'Timeout error'
+                    kwargs['test_case'] = test_case
+                    break
+                else:
+                    if not success:
+                        kwargs['status'] = Attempt.SYNTAX_ERROR
+                        kwargs['output'] = output
+                        kwargs['test_case'] = test_case
+                        break
+                    elif output != test_case.stdout:
+                        kwargs['status'] = Attempt.INVALID_RESULT
+                        kwargs['output'] = output
+                        kwargs['test_case'] = test_case
+                        break
             else:
-                if not success:
-                    validated_data['status'] = Attempt.SYNTAX_ERROR
-                    validated_data['output'] = output
-                    validated_data['test_case'] = test_case
-                    return super().create(validated_data)
-                if output != test_case.stdout:
-                    validated_data['status'] = Attempt.INVALID_RESULT
-                    validated_data['output'] = output
-                    validated_data['test_case'] = test_case
-                    return super().create(validated_data)
+                kwargs['status'] = Attempt.SUCCESS
 
-        validated_data['status'] = Attempt.SUCCESS
-
-        return super().create(validated_data)
+        return super().save(**kwargs)
 
     class Meta:
         model = Attempt
-        fields = ['id', 'task', 'code', 'output', 'status', 'test_case']
-        read_only_fields = ['id', 'output', 'status', 'test_case']
+        fields = ['id', 'task', 'code', 'output', 'status', 'test_case', 'created_at']
+        read_only_fields = ['id', 'output', 'status', 'test_case', 'created_at']
