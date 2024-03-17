@@ -1,13 +1,12 @@
 import styles from "./index.module.scss";
 import classNames from "classnames";
+import React from "react";
 
 export default function FormItem({title, name, type, errors, ...props}) {
     let error;
 
-    if (errors) {
-        let errorsArray = JSON.parse(errors);
-        error = errorsArray[name];
-    }
+    if (errors)
+        error = errors[name];
 
     return (
         <div className={styles.formItem}>
@@ -23,6 +22,7 @@ export default function FormItem({title, name, type, errors, ...props}) {
                         error ? styles.errorField : null)}
                 />
             </div>
+            {errors.password ? <>{title}: {errors.password}</> : null}
         </div>
     )
 }

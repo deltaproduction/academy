@@ -10,6 +10,7 @@ import Button       from "@/components/Button";
 import AuthLayout   from "@/layouts/AuthLayout";
 
 import styles from "./login.module.scss";
+import {CharField} from "@/components/Fields";
 
 export async function getServerSideProps({query: {next = '/'}, req, res}) {
   const response = await getProfileData({req, res})
@@ -31,28 +32,19 @@ export default function LoginPage({next}) {
     if (response.ok) {
       location.href = next
     } else if (response.status === 400) {
-      setErrors(JSON.stringify(await response.json()));
+      setErrors(await response.json());
     }
-    console.log(errors ? Array.from(JSON.parse(errors)) : null);
   }
 
   return (
     <AuthLayout>
       <h1 className="h3">Вход</h1>
       <form onSubmit={onFormSubmit}>
-        <FormItem title="E-mail:" name="email" type="email" errors={errors} />
-        <FormItem title="Пароль:" name="password" type="password" errors={errors}/>
 
-        {
-          errors ?
-              <div className={styles.errorsBlock}>
-                <ul>
-                  {JSON.parse(errors).email ? <li>E-mail: {JSON.parse(errors).email}</li> : null}
-                  {JSON.parse(errors).password ? <li>Пароль: {JSON.parse(errors).password}</li> : null}
-                </ul>
-              </div>
-              : null
-        }
+        <div className={styles.formFieldsWrapper}>
+          <CharField label="E-mail" name="email" type="email" errors={errors} />
+          <CharField label="Пароль" name="password" type="password" errors={errors}/>
+        </div>
 
         <FormRowSided
           leftSide={<Links type="login"/>}
