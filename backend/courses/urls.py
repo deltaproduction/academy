@@ -1,4 +1,3 @@
-from django.urls import path
 from rest_framework import routers
 
 from courses.views import CourseViewSet, TopicsViewSet, GroupTopicsViewSet, TasksViewSet
