@@ -1,17 +1,15 @@
-import { AttemptsApi, fetchApi, TasksApi, TopicsApi } from "@/lib/api";
-import { getStudentServerSideProps }                  from "@/lib/utils";
-
-import AppLayout                from "@/layouts/AppLayout";
-import { Sidebar, SidebarItem } from "@/components/Sidebar";
-
+import { useState }      from "react";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
+import { python }        from '@codemirror/lang-python';
+import CodeMirror        from '@uiw/react-codemirror';
 
+import { AttemptsApi, TasksApi, TopicsApi } from "@/lib/api";
+import { getStudentServerSideProps }        from "@/lib/utils";
+import AppLayout                            from "@/layouts/AppLayout";
+import { Sidebar, SidebarItem }             from "@/components/Sidebar";
+import SubmitButton                         from "@/components/SaveChangesField";
 
-import styles       from "./index.module.scss";
-import CodeMirror   from '@uiw/react-codemirror';
-import { python }   from '@codemirror/lang-python';
-import { useState } from "react";
-import SubmitButton from "@/components/SaveChangesField";
+import styles from "./index.module.scss";
 
 
 export async function getServerSideProps({query: {topic_id, task_id}, req, res}) {
