@@ -33,7 +33,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
 
 class TopicSerializer(serializers.ModelSerializer):
-    tasks = TaskListSerializer(many=True)
+    tasks = TaskListSerializer(many=True, read_only=True)
 
     class Meta:
         model = Topic
