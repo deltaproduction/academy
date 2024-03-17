@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Course(models.Model):
@@ -119,7 +120,7 @@ class Attempt(models.Model):
     output = models.TextField('Результат решения', blank=True)
     status = models.PositiveSmallIntegerField('Статус попытки', choices=STATUS_CHOICES)
     test_case = models.ForeignKey('courses.TestCase', on_delete=models.CASCADE, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(null=True)
 
     class Meta:
         verbose_name = 'Попытка'

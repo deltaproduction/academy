@@ -27,3 +27,7 @@ export async function getTeacherServerSideProps({req, res}) {
 export async function getStudentServerSideProps({req, res}) {
   return getProfileServerSideProps({req, res, role: 'student'})
 }
+
+export function formatDateTime(str) {
+  return (new Date(str)).toLocaleString("ru")
+}

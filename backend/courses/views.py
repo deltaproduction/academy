@@ -130,3 +130,30 @@ class TasksViewSet(ModelViewSet):
 class AttemptsViewSet(ModelViewSet):
     queryset = Attempt.objects.all()
     serializer_class = AttemptSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        statuses = self.request.query_params.get('statuses')
+
+        if statuses:
+            queryset = queryset.filter(status__in=statuses.split(','))
+
+        try:
+            queryset = queryset.filter(
+                task__topic__course__author=self.request.user.teacher,
+                task__autoreview=Task.NO
+            )
+        except User.teacher.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        try:
+            queryset = queryset.filter(student=self.request.user.student)
+        except User.student.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        return queryset.none()

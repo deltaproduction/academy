@@ -8,7 +8,7 @@ export default function AppLayout({profile, children}) {
         menu={profile.role === 'teacher' ? [
           ["Классы", "/classes"],
           ["Курсы", "/courses"],
-          ["Задачи на проверку", "check"]
+          ["Задачи на проверку", "/attempts"]
         ] : [
           ["Классы", "/classes"],
         ]}
