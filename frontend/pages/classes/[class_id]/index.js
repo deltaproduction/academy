@@ -1,16 +1,16 @@
 import { useState }  from "react";
 import { useRouter } from "next/router";
 
-import { ClassesApi }                from "@/lib/api";
+import { ClassesApi, CoursesApi }    from "@/lib/api";
 import { getProfileServerSideProps } from "@/lib/utils";
 
 import AppLayout from "@/layouts/AppLayout";
 
-import { Sidebar, SidebarItem } from "@/components/Sidebar";
-import ContentBlock             from "@/components/ContentBlock";
-import SubmitButton             from "@/components/SaveChangesField";
-import Table                    from "@/components/Table";
-import { CharField }            from "@/components/Fields";
+import { Sidebar, SidebarItem }   from "@/components/Sidebar";
+import ContentBlock               from "@/components/ContentBlock";
+import SubmitButton               from "@/components/SaveChangesField";
+import Table                      from "@/components/Table";
+import { CharField, SelectField } from "@/components/Fields";
 
 import styles from "./index.module.scss";
 
@@ -25,6 +25,9 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
 
     const classesListRes = await ClassesApi.list({req, res})
     props.groups = await classesListRes.json()
+
+    const coursesListRes = await CoursesApi.list({req, res})
+    props.courses = await coursesListRes.json()
 
     if (class_id === 'new') return {props}
 
@@ -41,8 +44,8 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
 }
 
 
-export default function ClassDetail({groups, profile, group = {}}) {
-  let {id, code, title, students, teacherName} = group;
+export default function ClassDetail({groups, profile, courses, group = {}}) {
+  let {id, code, title, course, students, teacherName} = group;
 
   const [editMode, setEditMode] = useState(!id);
 
@@ -118,6 +121,12 @@ export default function ClassDetail({groups, profile, group = {}}) {
           <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
           <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
                      disabled={!editMode}/>
+          <SelectField label="Курс обучения" name="course" defaultValue={course} disabled={!editMode}>
+            <option value="">
+              Выберите курс
+            </option>
+            {courses.map(({id, title}) => <option key={id} value={id}>{title}</option>)}
+          </SelectField>
           {!!editMode && <SubmitButton/>}
         </form>
       </div>

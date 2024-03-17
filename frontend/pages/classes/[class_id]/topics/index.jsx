@@ -13,7 +13,7 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
     const group = await classRes.json()
 
     if (group.course) {
-      const topicsRes = await TopicsApi.list({queryParams: {course: group.course.id}, req, res})
+      const topicsRes = await TopicsApi.list({queryParams: {course: group.course}, req, res})
       const topics = await topicsRes.json()
 
       if (topics.length) {

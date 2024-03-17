@@ -28,7 +28,7 @@ class GroupDetailSerializer(serializers.ModelSerializer):
         group_course = obj.group_courses.filter(active=True).first()
         if not group_course:
             return None
-        return CourseDetailSerializer(instance=group_course.course).data
+        return group_course.course.id if group_course else None
 
     def create(self, validated_data):
         validated_data['code'] = self.__generate_code()
