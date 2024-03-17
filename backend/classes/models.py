@@ -8,7 +8,7 @@ class Group(models.Model):
     teacher_name = models.CharField('ФИО Учителя', max_length=150, blank=True)
 
     students = models.ManyToManyField('users.Student', through='classes.GroupStudent', related_name='student_groups')
-    courses = models.ManyToManyField('courses.Course', through='classes.GroupCourse', related_name='course_groups')
+    course = models.ForeignKey('courses.Course', related_name='groups', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f'{self.title} {self.code}'

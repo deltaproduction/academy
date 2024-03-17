@@ -44,8 +44,10 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
 }
 
 
-export default function ClassDetail({groups, profile, courses, group = {}}) {
-  let {id, code, title, course, students, teacherName} = group;
+export default function ClassDetail({groups, profile, courses, group:group_ = {}}) {
+  const [group, setGroup] = useState(group_)
+
+  const {id, code, title, course, students, teacherName} = group;
 
   const [editMode, setEditMode] = useState(!id);
 
@@ -98,6 +100,7 @@ export default function ClassDetail({groups, profile, courses, group = {}}) {
     if (group.id) {
       const response = await ClassesApi.update(group.id, formData)
       const updatedClass = await response.json()
+      setGroup(updatedClass)
       setClasses(classes.map(({id, title}) => group.id === id ? updatedClass : {id, title}))
       setEditMode(!response.ok)
       return

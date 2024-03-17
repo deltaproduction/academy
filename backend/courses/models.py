@@ -96,17 +96,6 @@ class TestCase(models.Model):
         verbose_name_plural = 'Тест-кейсы'
 
 
-class GroupCourseTopic(models.Model):
-    class_course = models.ForeignKey('classes.GroupCourse', on_delete=models.CASCADE)
-    topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE)
-    opened = models.BooleanField('Открыт', default=False)
-    deadline_at = models.DateTimeField('Дедлайн до')
-
-    class Meta:
-        verbose_name = 'Тема курса класса'
-        verbose_name_plural = 'Темы курса класса'
-
-
 class Attempt(models.Model):
     SUCCESS = 0
     INVALID_RESULT = 1
