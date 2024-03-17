@@ -107,9 +107,13 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
       </div>}
       {result.status === 1 && <div>
         Неверный результат:
-        <pre>Входные данные: {result.testCase.stdin}</pre>
-        <pre>Ожидание: {result.testCase.stdout}</pre>
-        <pre>Реальность: {result.output}</pre>
+        <div>Входные данные: <pre>{result.testCase.stdin}</pre></div>
+        <div>Ожидание:
+          <pre>{result.testCase.stdout}</pre>
+        </div>
+        <div>Реальность:
+          <pre>{result.output}</pre>
+        </div>
       </div>}
       {result.status === 2 && <div>
         <div>Ошибка:</div>

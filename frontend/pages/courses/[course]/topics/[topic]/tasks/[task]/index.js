@@ -7,9 +7,9 @@ import { Sidebar, SidebarItem } from "@/components/Sidebar";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
-import styles        from "./index.module.scss";
-import { CharField } from "@/components/Fields";
-import SubmitButton  from "@/components/SaveChangesField";
+import styles                   from "./index.module.scss";
+import { CharField, TextField } from "@/components/Fields";
+import SubmitButton             from "@/components/SaveChangesField";
 import { useState }  from "react";
 import ContentBlock  from "@/components/ContentBlock";
 
@@ -135,16 +135,17 @@ const Task = ({
     <ContentBlock title="Тест кейсы">
       {testCases.map(({id, stdin, stdout}) => (
         <div key={id}>
-          <div>
-            {stdin} {"->"} {stdout}
+          <div style={{display:'flex', gap:'20px', alignItems: 'center'}}>
+            <pre>{stdin}</pre> {"->"} <pre>{stdout}</pre>
+            <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
           </div>
-          <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
+
         </div>
       ))}
       <form onSubmit={onTestCaseFormSubmit}>
-        <CharField label="Входные аргументы" name="stdin"/>
-        <CharField label="Ожидаемый результат" name="stdout"/>
-        <CharField type="number" min="1" max="3" label="Ограничение по времени (с)" name="timelimit"/>
+        <TextField label="Входные аргументы" name="stdin"/>
+        <TextField label="Ожидаемый результат" name="stdout"/>
+        <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)" name="timelimit"/>
         <SubmitButton text="Добавить"/>
       </form>
     </ContentBlock>

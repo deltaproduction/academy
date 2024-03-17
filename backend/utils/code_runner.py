@@ -9,11 +9,11 @@ class CodeSyntaxError(BaseException):
     pass
 
 
-def run_code_with_timeout(code, args='', timeout=2):
+def run_code_with_timeout(code, stdin, timeout=2):
     try:
-        code += f'\nprint(main({args}))'
         result = subprocess.run(
             ['python', '-c', code],
+            input=stdin,
             capture_output=True,
             text=True,
             timeout=timeout
