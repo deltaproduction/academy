@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from courses.models import Course, Task, Topic
+from courses.models import Course, Task, Topic, TestCase
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -38,6 +38,13 @@ class TopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
         fields = ['id', 'course', 'title', 'tasks', 'type', 'description', 'state', 'start', 'end']
+        read_only_fields = ['id']
+
+
+class TestCaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TestCase
+        fields = ['id', 'task', 'stdin', 'stdout','timelimit']
         read_only_fields = ['id']
 
 

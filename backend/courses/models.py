@@ -87,7 +87,6 @@ class TestCase(models.Model):
     stdin = models.CharField('Входные данные', max_length=256)
     stdout = models.CharField('Выходные данные', max_length=256)
     timelimit = models.IntegerField('Ограничение по времени')
-    ram_limit = models.IntegerField('Ограничение по памяти')
 
     def __str__(self):
         return f'{self.task.title} - {self.id}'

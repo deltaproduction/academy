@@ -1,5 +1,5 @@
-import { TasksApi, TopicsApi }       from "@/lib/api";
-import { getTeacherServerSideProps } from "@/lib/utils";
+import { TasksApi, TestCasesApi, TopicsApi } from "@/lib/api";
+import { getTeacherServerSideProps }         from "@/lib/utils";
 
 import AppLayout                from "@/layouts/AppLayout";
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
@@ -7,11 +7,11 @@ import { Sidebar, SidebarItem } from "@/components/Sidebar";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
-import styles           from "./index.module.scss";
+import styles        from "./index.module.scss";
 import { CharField } from "@/components/Fields";
 import SubmitButton  from "@/components/SaveChangesField";
 import { useState }  from "react";
-import ContentBlock     from "@/components/ContentBlock";
+import ContentBlock  from "@/components/ContentBlock";
 
 
 export async function getServerSideProps({query: {topic, task}, req, res}) {
@@ -35,6 +35,10 @@ export async function getServerSideProps({query: {topic, task}, req, res}) {
     props.task = await response.json()
 
     if (props.task.topic !== parseInt(topic)) return {notFound: true}
+
+    response = await TestCasesApi.list({queryParams: {task}, req, res})
+
+    props.testCases = await response.json()
 
 
     return {props}
@@ -64,9 +68,15 @@ const Layout = ({profile, tasks, topic, children}) => {
   </AppLayout>
 }
 
-const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, formatOutText} = {}}) => {
-  const [editMode, setEditMode] = useState(!id);
+const Task = ({
+                profile,
+                tasks,
+                topic,
+                testCases: testCases_,
+                task: {id, title, text, formatInText, formatOutText} = {}
+              }) => {
 
+  const [testCases, setTestCases] = useState(testCases_)
   const onTaskFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -90,16 +100,52 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
     }
   }
 
+  const onTestCaseFormSubmit = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+
+    formData.append('task', id)
+
+    const response = await TestCasesApi.create(formData)
+    if (response.ok) {
+      const testCase = await response.json()
+      setTestCases(testCases.concat([testCase]))
+      e.target.reset()
+    }
+  }
+
+  const onTestCaseDelete = async (id) => {
+    const response = await TestCasesApi.delete(id)
+    if (response.ok) {
+      setTestCases(testCases.filter((testCase) => testCase.id !== id))
+    }
+  }
+
   return <Layout profile={profile} topic={topic} tasks={tasks}>
-    <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о задаче">
+    <ContentBlock title="Информация о задаче">
       <form onSubmit={onTaskFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode}/>
-        <CharField label="Описание" name="text" defaultValue={text} disabled={!editMode}/>
-        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
-                   disabled={!editMode}/>
-        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
-                   disabled={!editMode}/>
-        {!!editMode && <SubmitButton/>}
+        <CharField label="Заголовок" name="title" defaultValue={title}/>
+        <CharField label="Описание" name="text" defaultValue={text}/>
+        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}/>
+        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}/>
+        <SubmitButton/>
+      </form>
+
+    </ContentBlock>
+    <ContentBlock title="Тест кейсы">
+      {testCases.map(({id, stdin, stdout}) => (
+        <div key={id}>
+          <div>
+            {stdin} {"->"} {stdout}
+          </div>
+          <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
+        </div>
+      ))}
+      <form onSubmit={onTestCaseFormSubmit}>
+        <CharField label="Входные аргументы" name="stdin"/>
+        <CharField label="Ожидаемый результат" name="stdout"/>
+        <CharField type="number" min="1" max="3" label="Ограничение по времени (с)" name="timelimit"/>
+        <SubmitButton text="Добавить"/>
       </form>
     </ContentBlock>
   </Layout>

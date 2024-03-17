@@ -3,9 +3,9 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 
 from classes.models import Group, GroupStudent
-from courses.models import Course, Topic, Task
+from courses.models import Course, Topic, Task, TestCase
 from courses.serializers import CourseListSerializer, CourseDetailSerializer, GroupTopicSerializer, TopicSerializer, \
-    TaskSerializer, TaskListSerializer
+    TaskSerializer, TaskListSerializer, TestCaseSerializer
 
 User = get_user_model()
 
@@ -71,6 +71,28 @@ class TopicsViewSet(ModelViewSet):
         return queryset.none()
 
 
+class TestCasesViewSet(ModelViewSet):
+    queryset = TestCase.objects.all()
+    serializer_class = TestCaseSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        task = self.request.query_params.get('task')
+
+        if task:
+            queryset = queryset.filter(task=task)
+
+        try:
+            queryset = queryset.filter(task__topic__course__author=self.request.user.teacher)
+        except User.teacher.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        return queryset.none()
+
+
 class TasksViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -103,24 +125,3 @@ class TasksViewSet(ModelViewSet):
             return queryset
 
         return queryset.none()
-
-
-class GroupTopicsViewSet(ModelViewSet):
-    queryset = Topic.objects.all()
-    serializer_class = GroupTopicSerializer
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-
-        group = self.request.query_params.get('class')
-        course = self.request.query_params.get('course')
-
-        if course:
-            queryset = queryset.filter(course=course)
-        elif group:
-            group = get_object_or_404(Group, id=group)
-            queryset = queryset.filter(course=group.groupcourse.course)
-        else:
-            main_group = GroupStudent.objects.get(student=self.request.user.student, main=True).group
-            queryset = queryset.filter(course=main_group.groupcourse.course)
-        return queryset

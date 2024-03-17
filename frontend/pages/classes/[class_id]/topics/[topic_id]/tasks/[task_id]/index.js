@@ -59,11 +59,7 @@ const Layout = ({profile, tasks, topic, children}) => {
   </AppLayout>
 }
 
-const defaultCode =
-`def run():
-  a = input()
-  return int(a**2)
-`
+const defaultCode = 'def main():\n  pass'
 
 const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, formatOutText} = {}}) => {
   const [code, setCode] = useState(defaultCode)

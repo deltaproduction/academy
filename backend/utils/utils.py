@@ -55,7 +55,7 @@ def check_code(task_id, code):
 
     for case in test_cases:
         # TODO: удалить некрасивый eval, когда stdin/stdout будет храниться в json
-        stdin, stdout, timelimit = eval(f'"{case.stdin}"'), eval(f'"{case.stdout}"'), case.timelimit
+        stdin, stdout, timelimit = eval(f'"{case.in_args}"'), eval(f'"{case.stdout}"'), case.timelimit
 
         with open(tcs_file_path, "w", encoding="utf8") as tcs_file:
             tcs_file.write(stdin)
