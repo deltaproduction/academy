@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework.generics import get_object_or_404
 from rest_framework.viewsets import ModelViewSet
 
-from classes.models import Group, GroupStudent
-from courses.models import Course, Topic, Task, TestCase
-from courses.serializers import CourseListSerializer, CourseDetailSerializer, GroupTopicSerializer, TopicSerializer, \
-    TaskSerializer, TaskListSerializer, TestCaseSerializer
+from courses.models import Course, Topic, Task, TestCase, Attempt
+from courses.serializers import (
+    CourseListSerializer, CourseDetailSerializer, TopicSerializer,
+    TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer
+)
 
 User = get_user_model()
 
@@ -125,3 +125,8 @@ class TasksViewSet(ModelViewSet):
             return queryset
 
         return queryset.none()
+
+
+class AttemptsViewSet(ModelViewSet):
+    queryset = Attempt.objects.all()
+    serializer_class = AttemptSerializer

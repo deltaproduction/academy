@@ -1,5 +1,5 @@
-import { fetchApi, TasksApi, TopicsApi } from "@/lib/api";
-import { getStudentServerSideProps }     from "@/lib/utils";
+import { AttemptsApi, fetchApi, TasksApi, TopicsApi } from "@/lib/api";
+import { getStudentServerSideProps }                  from "@/lib/utils";
 
 import AppLayout                from "@/layouts/AppLayout";
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
@@ -67,8 +67,9 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
 
   const onCodeSubmit = async () => {
     const formData = new FormData()
+    formData.append('task', id)
     formData.append('code', code)
-    const result = await fetchApi(`/api/check_code/${id}/`, {method: 'POST', body: formData})
+    const result = await AttemptsApi.create(formData)
     if (result.ok) {
       setResult(await result.json())
     }
@@ -103,7 +104,21 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
       <SubmitButton onClick={onCodeSubmit} text="Проверить"/>
     </div>
     <div>
-      {JSON.stringify(result)}
+      {result.status === 0 && <div>
+        Успешно
+      </div>}
+      {result.status === 1 && <div>
+        Неверный результат:
+        <pre>Ожидание: {result.testCase.stdout}</pre>
+        <pre>Реальность: {result.output}</pre>
+      </div>}
+      {result.status === 2 && <div>
+        <div>Ошибка:</div>
+        <pre>{result.output}</pre>
+      </div>}
+      {result.status === 3 && <div>
+        Превышен лимит по времени: {result.testCase.timelimit}c
+      </div>}
     </div>
   </Layout>
 }

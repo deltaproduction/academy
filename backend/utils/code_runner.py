@@ -1,7 +1,7 @@
 import subprocess
 
 
-class TimeoutExpired(subprocess.TimeoutExpired):
+class TimeoutExpired(BaseException):
     pass
 
 
@@ -22,4 +22,4 @@ def run_code_with_timeout(code, args='', timeout=2):
             return False, result.stderr.strip()
         return True, result.stdout.strip()
     except subprocess.TimeoutExpired:
-        return False, "Timeout expired. Execution halted."
+        raise TimeoutExpired()

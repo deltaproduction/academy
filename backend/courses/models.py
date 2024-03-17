@@ -108,10 +108,23 @@ class GroupCourseTopic(models.Model):
 
 
 class Attempt(models.Model):
+    SUCCESS = 0
+    INVALID_RESULT = 1
+    SYNTAX_ERROR = 2
+    TIMEOUT_ERROR = 3
+    STATUS_CHOICES = (
+        (SUCCESS, 'Успешно'),
+        (INVALID_RESULT, 'Неверный ответ'),
+        (SYNTAX_ERROR, 'Не валидный код'),
+        (TIMEOUT_ERROR, 'Превышен лимит по времени'),
+    )
+
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
     task = models.ForeignKey('courses.Task', on_delete=models.CASCADE)
     code = models.TextField('Код решения')
-    status = models.PositiveSmallIntegerField('Статус попытки')
+    output = models.TextField('Результат решения', blank=True)
+    status = models.PositiveSmallIntegerField('Статус попытки', choices=STATUS_CHOICES)
+    test_case = models.ForeignKey('courses.TestCase', on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Попытка'
