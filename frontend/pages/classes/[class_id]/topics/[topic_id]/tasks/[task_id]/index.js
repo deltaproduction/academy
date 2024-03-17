@@ -107,6 +107,7 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
       </div>}
       {result.status === 1 && <div>
         Неверный результат:
+        <pre>Входные данные: {result.testCase.stdin}</pre>
         <pre>Ожидание: {result.testCase.stdout}</pre>
         <pre>Реальность: {result.output}</pre>
       </div>}
