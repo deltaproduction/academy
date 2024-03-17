@@ -19,10 +19,27 @@ class CourseViewSet(ModelViewSet):
         return CourseDetailSerializer
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
         try:
-            return self.queryset.filter(author=self.request.user.teacher)
+            queryset = queryset.filter(author=self.request.user.teacher)
         except User.teacher.RelatedObjectDoesNotExist:
-            return self.queryset.none()
+            pass
+        else:
+            return queryset
+
+        try:
+            queryset = queryset.filter(course_groups__students=self.request.user.student)
+
+            group = self.request.query_params.get('group')
+            if group:
+                queryset = queryset.filter(course_groups=group)
+        except User.student.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        return queryset.none()
 
 
 class TopicsViewSet(ModelViewSet):
@@ -30,16 +47,28 @@ class TopicsViewSet(ModelViewSet):
     serializer_class = TopicSerializer
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
+        course = self.request.query_params.get('course')
+
+        if course:
+            queryset = queryset.filter(course=course)
+
         try:
             queryset = self.queryset.filter(course__author=self.request.user.teacher)
-
-            course = self.request.query_params.get('course')
-
-            if course:
-                queryset = queryset.filter(course=course)
         except User.teacher.RelatedObjectDoesNotExist:
-            return self.queryset.none()
-        return queryset
+            pass
+        else:
+            return queryset
+
+        try:
+            queryset = self.queryset.filter(course__course_groups__students=self.request.user.student)
+        except User.student.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        return queryset.none()
 
 
 class TasksViewSet(ModelViewSet):
@@ -52,16 +81,28 @@ class TasksViewSet(ModelViewSet):
         return super().get_serializer_class()
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
+        topic = self.request.query_params.get('topic')
+
+        if topic:
+            queryset = queryset.filter(topic=topic)
+
         try:
             queryset = self.queryset.filter(topic__course__author=self.request.user.teacher)
-
-            topic = self.request.query_params.get('topic')
-
-            if topic:
-                queryset = queryset.filter(topic=topic)
         except User.teacher.RelatedObjectDoesNotExist:
-            return self.queryset.none()
-        return queryset
+            pass
+        else:
+            return queryset
+
+        try:
+            queryset = self.queryset.filter(topic__course__course_groups__students=self.request.user.student)
+        except User.student.RelatedObjectDoesNotExist:
+            pass
+        else:
+            return queryset
+
+        return queryset.none()
 
 
 class GroupTopicsViewSet(ModelViewSet):

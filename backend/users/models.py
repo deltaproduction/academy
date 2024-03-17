@@ -63,6 +63,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return f'{self.last_name} {self.first_name}'
+
     class Meta:
         verbose_name = _("user")
         verbose_name_plural = _("users")
@@ -91,7 +94,13 @@ class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
     is_active = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f'{self.user}'
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher')
     is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user}'

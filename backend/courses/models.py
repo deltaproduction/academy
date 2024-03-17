@@ -15,6 +15,9 @@ class Course(models.Model):
     state = models.PositiveSmallIntegerField('Опубликован', choices=STATE_CHOICES, default=DRAFT)
     description = models.TextField('Описание', null=True, blank=True)
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         verbose_name = 'Курс'
         verbose_name_plural = 'Курсы'
@@ -48,6 +51,9 @@ class Topic(models.Model):
     start = models.DateTimeField('Дата окончания', null=True, blank=True)
     end = models.DateTimeField('Дата окончания', null=True, blank=True)
 
+    def __str__(self):
+        return f'{self.title} {self.course.title}'
+
     class Meta:
         verbose_name = 'Тема'
         verbose_name_plural = 'Темы'
@@ -68,6 +74,9 @@ class Task(models.Model):
     # samples = models.TextField('samples')
     # tests = models.TextField('tests')
 
+    def __str__(self):
+        return f'{self.title} {self.topic}'
+
     class Meta:
         verbose_name = 'Задание'
         verbose_name_plural = 'Задания'
@@ -79,6 +88,9 @@ class TestCase(models.Model):
     stdout = models.CharField('Выходные данные', max_length=256)
     timelimit = models.IntegerField('Ограничение по времени')
     ram_limit = models.IntegerField('Ограничение по памяти')
+
+    def __str__(self):
+        return f'{self.task.title} - {self.id}'
 
     class Meta:
         verbose_name = 'Тест-кейс'

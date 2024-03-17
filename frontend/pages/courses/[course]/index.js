@@ -147,7 +147,7 @@ export default Course
         </div>}
         {
           topics.map(({id, title}) => <div key={id}>
-            <a href={`/courses/${course.id}/topics/${id}`}>{title}</a>
+            <a href={`/courses/${topics.id}/topics/${id}`}>{title}</a>
           </div>)
         }
         {

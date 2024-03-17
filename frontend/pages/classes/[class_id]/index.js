@@ -7,24 +7,28 @@ import { getProfileServerSideProps } from "@/lib/utils";
 import AppLayout from "@/layouts/AppLayout";
 
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
-import ContentBlock from "@/components/ContentBlock";
-import SubmitButton from "@/components/SaveChangesField";
-import Table        from "@/components/Table";
+import ContentBlock             from "@/components/ContentBlock";
+import SubmitButton             from "@/components/SaveChangesField";
+import Table                    from "@/components/Table";
 import { CharField }            from "@/components/Fields";
 
 import styles from "./index.module.scss";
 
 
-export async function getServerSideProps({query: {id}, req, res}) {
+export async function getServerSideProps({query: {class_id}, req, res}) {
   try {
     const {props} = await getProfileServerSideProps({req, res})
+
+    if (props.profile.isStudent && class_id !== 'new') {
+      return {redirect: {destination: `/classes/${class_id}/topics/`, permanent: false}}
+    }
 
     const classesListRes = await ClassesApi.list({req, res})
     props.groups = await classesListRes.json()
 
-    if (id === 'new') return {props}
+    if (class_id === 'new') return {props}
 
-    const classRes = await ClassesApi.retrieve(id, {req, res})
+    const classRes = await ClassesApi.retrieve(class_id, {req, res})
     if (classRes.status === 404) {
       return {notFound: true}
     }
@@ -104,42 +108,41 @@ export default function ClassDetail({groups, profile, group = {}}) {
   }
 
   return (<Layout classes={groups} profile={profile}>
-      <ContentBlock
-        setEditMode={setEditMode} editMode={editMode}
-        title={id ? "Информация о классе" : "Новый класс"}
-        between value="Код класса: "
-        data={!!code && <CodeBlock code={code}/>}>
-        <div>
-          <form onSubmit={onFormSubmit}>
-            <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
-            <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
-                       disabled={!editMode}/>
-            {!!editMode && <SubmitButton/>}
-          </form>
-        </div>
-      </ContentBlock>
-      {id ?
-        <ContentBlock title="Список класса" value="Учеников:" data={students.length}>
-          {
-            students.length ?
-              <Table
-                fields={
-                  [
-                    ["№", 8, "numberWithDot"],
-                    ["Фамилия и имя", 40, "text"],
-                    ["E-mail", 26, "text"],
-                    ["Ср. усп.", 13, "rating"],
-                    ["Баллы", 13, "number"]
-                  ]
-                }
-                data={generateStudentsData(students)}
-              />
-              : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
-          }
+    <ContentBlock
+      setEditMode={setEditMode} editMode={editMode}
+      title={id ? "Информация о классе" : "Новый класс"}
+      between value="Код класса: "
+      data={!!code && <CodeBlock code={code}/>}>
+      <div>
+        <form onSubmit={onFormSubmit}>
+          <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
+          <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
+                     disabled={!editMode}/>
+          {!!editMode && <SubmitButton/>}
+        </form>
+      </div>
+    </ContentBlock>
+    {id ?
+      <ContentBlock title="Список класса" value="Учеников:" data={students.length}>
+        {
+          students.length ?
+            <Table
+              fields={
+                [
+                  ["№", 8, "numberWithDot"],
+                  ["Фамилия и имя", 40, "text"],
+                  ["E-mail", 26, "text"],
+                  ["Ср. усп.", 13, "rating"],
+                  ["Баллы", 13, "number"]
+                ]
+              }
+              data={generateStudentsData(students)}
+            />
+            : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
+        }
 
-        </ContentBlock>
-        : null
-      }
-    </Layout>
-  );
+      </ContentBlock>
+      : null
+    }
+  </Layout>);
 }
