@@ -55,14 +55,14 @@ class TopicsViewSet(ModelViewSet):
             queryset = queryset.filter(course=course)
 
         try:
-            queryset = self.queryset.filter(course__author=self.request.user.teacher)
+            queryset = queryset.filter(course__author=self.request.user.teacher)
         except User.teacher.RelatedObjectDoesNotExist:
             pass
         else:
             return queryset
 
         try:
-            queryset = self.queryset.filter(course__course_groups__students=self.request.user.student)
+            queryset = queryset.filter(course__course_groups__students=self.request.user.student)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:
@@ -89,14 +89,14 @@ class TasksViewSet(ModelViewSet):
             queryset = queryset.filter(topic=topic)
 
         try:
-            queryset = self.queryset.filter(topic__course__author=self.request.user.teacher)
+            queryset = queryset.filter(topic__course__author=self.request.user.teacher)
         except User.teacher.RelatedObjectDoesNotExist:
             pass
         else:
             return queryset
 
         try:
-            queryset = self.queryset.filter(topic__course__course_groups__students=self.request.user.student)
+            queryset = queryset.filter(topic__course__course_groups__students=self.request.user.student)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:
@@ -110,15 +110,17 @@ class GroupTopicsViewSet(ModelViewSet):
     serializer_class = GroupTopicSerializer
 
     def get_queryset(self):
+        queryset = super().get_queryset()
+
         group = self.request.query_params.get('class')
         course = self.request.query_params.get('course')
 
         if course:
-            queryset = self.queryset.filter(course=course)
+            queryset = queryset.filter(course=course)
         elif group:
             group = get_object_or_404(Group, id=group)
-            queryset = self.queryset.filter(course=group.groupcourse.course)
+            queryset = queryset.filter(course=group.groupcourse.course)
         else:
             main_group = GroupStudent.objects.get(student=self.request.user.student, main=True).group
-            queryset = self.queryset.filter(course=main_group.groupcourse.course)
+            queryset = queryset.filter(course=main_group.groupcourse.course)
         return queryset
