@@ -8,9 +8,9 @@ import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
 import styles           from "./index.module.scss";
-import { CharField }    from "@/components/Fields";
-import SaveChangesField from "@/components/SaveChangesField";
-import { useState }     from "react";
+import { CharField } from "@/components/Fields";
+import SubmitButton  from "@/components/SaveChangesField";
+import { useState }  from "react";
 import ContentBlock     from "@/components/ContentBlock";
 
 
@@ -99,7 +99,7 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
                    disabled={!editMode}/>
         <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
                    disabled={!editMode}/>
-        {!!editMode && <SaveChangesField/>}
+        {!!editMode && <SubmitButton/>}
       </form>
     </ContentBlock>
   </Layout>

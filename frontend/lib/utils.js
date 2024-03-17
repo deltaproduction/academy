@@ -9,6 +9,9 @@ export async function getProfileServerSideProps({req, res, role}) {
       throw {notFound: true}
     }
 
+    profile.isTeacher = profile.role === 'teacher'
+    profile.isStudent = profile.role === 'student'
+
     return {
       props: {profile}
     }

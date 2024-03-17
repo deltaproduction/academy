@@ -1,9 +1,9 @@
 import styles from "./index.module.scss";
 
-export default function SaveChangesField(props) {
+export default function SubmitButton({text="Сохранить изменения"}) {
     return (
         <div className={styles.field}>
-            <button type="submit" className={styles.saveButton}>Сохранить изменения</button>
+            <button type="submit" className={styles.saveButton}>{text}</button>
         </div>
     );
 }

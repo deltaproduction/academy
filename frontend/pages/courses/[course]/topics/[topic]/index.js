@@ -9,7 +9,7 @@ import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 import styles                     from "./index.module.scss";
 import { CharField, SelectField } from "@/components/Fields";
-import SaveChangesField           from "@/components/SaveChangesField";
+import SubmitButton               from "@/components/SaveChangesField";
 import { useState }               from "react";
 import ContentBlock               from "@/components/ContentBlock";
 
@@ -102,7 +102,7 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
           <option value="0">Закрыт</option>
           <option value="1">Опубликован</option>
         </SelectField>
-        {!!editMode && <SaveChangesField/>}
+        {!!editMode && <SubmitButton/>}
       </form>
     </ContentBlock>
 

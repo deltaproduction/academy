@@ -1,6 +1,7 @@
 from random import randrange
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from classes.models import Group, GroupStudent
 from users.serializers import UserSerializer, StudentSerializer
@@ -9,7 +10,7 @@ from users.serializers import UserSerializer, StudentSerializer
 class GroupListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ['id', 'title']
+        fields = ['id', 'title', 'code']
 
 
 class GroupDetailSerializer(serializers.ModelSerializer):
@@ -33,6 +34,25 @@ class GroupDetailSerializer(serializers.ModelSerializer):
 
 
 class GroupStudentCreateSerializer(serializers.ModelSerializer):
+    group = serializers.CharField()
+
+    def validate_group(self, value):
+        group = Group.objects.filter(code=value)
+        if not group.exists():
+            raise ValidationError("Класса с таким кодом не существует")
+
+        group = group.first()
+        if GroupStudent.objects.filter(
+            student=self.context['request'].user.student,
+            group=group
+        ).exists():
+            raise ValidationError("Вы уже зачислены этот класс")
+        return group
+
+    def create(self, validated_data):
+        validated_data['student'] = self.context['request'].user.student
+        return super().create(validated_data)
+
     class Meta:
         model = GroupStudent
-        fields = ['group', 'student']
+        fields = ['group']

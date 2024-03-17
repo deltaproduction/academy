@@ -2,14 +2,14 @@ import { useState }  from "react";
 import { useRouter } from "next/router";
 
 import { ClassesApi }                from "@/lib/api";
-import { getTeacherServerSideProps } from "@/lib/utils";
+import { getProfileServerSideProps } from "@/lib/utils";
 
 import AppLayout from "@/layouts/AppLayout";
 
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
-import ContentBlock             from "@/components/ContentBlock";
-import SaveChangesField         from "@/components/SaveChangesField";
-import Table                    from "@/components/Table";
+import ContentBlock from "@/components/ContentBlock";
+import SubmitButton from "@/components/SaveChangesField";
+import Table        from "@/components/Table";
 import { CharField }            from "@/components/Fields";
 
 import styles from "./index.module.scss";
@@ -17,7 +17,7 @@ import styles from "./index.module.scss";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {
-    const {props} = await getTeacherServerSideProps({req, res})
+    const {props} = await getProfileServerSideProps({req, res})
 
     const classesListRes = await ClassesApi.list({req, res})
     props.groups = await classesListRes.json()
@@ -36,39 +36,6 @@ export async function getServerSideProps({query: {id}, req, res}) {
   }
 }
 
-function Layout({children, classes, profile}) {
-  return (
-    <AppLayout profile={profile}>
-      <div className={styles.container}>
-        <Sidebar title="Классы" newItemHref='/classes/new/'>
-          {classes.map(({id, title}) => (
-            <SidebarItem key={id} href={`/classes/${id}/`}>{title}</SidebarItem>)
-          )}
-        </Sidebar>
-        <div className={styles.content}>
-          {children}
-        </div>
-      </div>
-    </AppLayout>
-  );
-}
-
-function CodeBlock(props) {
-  let code = props.code;
-
-  return (<div className={styles.classCodeBlock} onClick={() => navigator.clipboard.writeText(code)}>
-    {code.toString().split('').map((letter, i) => (
-      <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>
-    ))}
-  </div>);
-}
-
-function generateStudentsData(studentsList) {
-  return studentsList.map(
-    ({firstName, lastName, email, average, rating}, i) => ([i + 1, `${firstName} ${lastName}`, email, average, rating])
-  )
-}
-
 
 export default function ClassDetail({groups, profile, group = {}}) {
   let {id, code, title, students, teacherName} = group;
@@ -78,6 +45,45 @@ export default function ClassDetail({groups, profile, group = {}}) {
   const router = useRouter();
 
   const [classes, setClasses] = useState(groups);
+
+  function Layout({children, classes, profile}) {
+    return (
+      <AppLayout profile={profile}>
+        <div className={styles.container}>
+          <Sidebar title="Классы" newItemHref='/classes/new/'>
+            {classes.map(({id, title}) => (
+              <SidebarItem key={id} href={`/classes/${id}/`}>{title}</SidebarItem>)
+            )}
+          </Sidebar>
+          <div className={styles.content}>
+            {children}
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  function CodeBlock(props) {
+    let code = props.code;
+
+    return (<div className={styles.classCodeBlock} onClick={() => navigator.clipboard.writeText(code)}>
+      {code.toString().split('').map((letter, i) => (
+        <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>
+      ))}
+    </div>);
+  }
+
+  function generateStudentsData(studentsList) {
+    return studentsList.map(
+      ({
+         firstName,
+         lastName,
+         email,
+         average,
+         rating
+       }, i) => ([i + 1, `${firstName} ${lastName}`, email, average, rating])
+    )
+  }
 
   const onFormSubmit = async (e) => {
     e.preventDefault()
@@ -108,7 +114,7 @@ export default function ClassDetail({groups, profile, group = {}}) {
             <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
             <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
                        disabled={!editMode}/>
-            {!!editMode && <SaveChangesField/>}
+            {!!editMode && <SubmitButton/>}
           </form>
         </div>
       </ContentBlock>

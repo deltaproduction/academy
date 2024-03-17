@@ -9,8 +9,8 @@ import { getTeacherServerSideProps } from "@/lib/utils";
 import AppLayout                  from "@/layouts/AppLayout";
 import { CharField, SelectField } from "@/components/Fields";
 import { Sidebar, SidebarItem }   from "@/components/Sidebar";
-import ContentBlock               from "@/components/ContentBlock";
-import SaveChangesField           from "@/components/SaveChangesField";
+import ContentBlock from "@/components/ContentBlock";
+import SubmitButton from "@/components/SaveChangesField";
 
 
 import styles from "./index.module.scss";
@@ -99,7 +99,7 @@ const Course = (props) => {
               <option value="0">Черновик</option>
               <option value="1">Опубликован</option>
             </SelectField>
-            {!!editMode && <SaveChangesField/>}
+            {!!editMode && <SubmitButton/>}
           </form>
         </div>
       </ContentBlock>
