@@ -133,6 +133,9 @@ SIMPLE_JWT = {
     "USER_ID_CLAIM": "user_id",
 }
 
+TCS_FILES_PATH = BASE_DIR / "media/tcs_files/"
+CODE_FILES_PATH = BASE_DIR / "media/code_files/"
+
 ACCESS_TOKEN_COOKIE_NAME = 'access_token'
 REFRESH_TOKEN_COOKIE_NAME = 'refresh_token'
 

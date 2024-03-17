@@ -15,22 +15,3 @@
     margin: 0;
   }
 }
-
-.title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 20px 0 30px 0;
-
-  h1 {
-    display: flex;
-    gap: 16px;
-    font-size: 1.3em;
-    font-weight: 600;
-  }
-
-  h1 &Action {
-    all: unset;
-    height: 24px;
-  }
-}

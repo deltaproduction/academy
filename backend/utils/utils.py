@@ -8,19 +8,16 @@ from django.conf import settings
 
 from courses.models import Task
 
-TCS_FILES_PATH = "courses/code_test/tcs_files/"
-CODE_FILES_PATH = "courses/code_test/code_files/"
-
 
 def put_code_in_created_file(code: str):
-    code_file_path = os.path.join(CODE_FILES_PATH, f"code_{uuid.uuid4()}.py")
-    with open(code_file_path, "w") as code_file:
+    code_file_path = os.path.join(settings.CODE_FILES_PATH, f"code_{uuid.uuid4()}.py")
+    with open(code_file_path, "a+") as code_file:
         code_file.write(code)
     return code_file_path
 
 
 def get_tcs_file_path():
-    tcs_files_path = os.path.join(settings.BASE_DIR, TCS_FILES_PATH)
+    tcs_files_path = os.path.join(settings.BASE_DIR, settings.TCS_FILES_PATH)
 
     tcs_token = str(random.randint(1000000, 9999999))
     while tcs_token in os.listdir(tcs_files_path):
@@ -28,7 +25,7 @@ def get_tcs_file_path():
     return os.path.join(tcs_files_path, tcs_token)
 
 
-def run_code(code, stdin, max_time, max_ram=None):
+def run_code(code, stdin=None, max_time=2):
     code_file_path = put_code_in_created_file(code)
 
     process = subprocess.Popen(
@@ -42,7 +39,6 @@ def run_code(code, stdin, max_time, max_ram=None):
             proc.wait(timeout=max_time)
             output = process.communicate()[0].decode()
             return output
-
         except subprocess.TimeoutExpired:
             proc.terminate()
             proc.wait()
