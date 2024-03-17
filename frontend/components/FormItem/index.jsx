@@ -1,16 +1,27 @@
-import ExplanationIcon from "@/components/ExplanationIcon";
-
 import styles from "./index.module.scss";
+import classNames from "classnames";
 
-export default function FormItem(props) {
+export default function FormItem({title, name, type, errors, ...props}) {
+    let error;
+
+    if (errors) {
+        let errorsArray = JSON.parse(errors);
+        error = errorsArray[name];
+    }
+
     return (
         <div className={styles.formItem}>
             <div className={styles.formItemTitle}>
-                <div>{props.title}</div>
-                <ExplanationIcon />
+                <div>{title}</div>
             </div>
             <div className={styles.formItemInputBlock}>
-                <input name={props.name} type={props.type} className={styles.formItemInput}/>
+                <input
+                    name={name}
+                    type={type}
+                    className={classNames(
+                        styles.formItemInput,
+                        error ? styles.errorField : null)}
+                />
             </div>
         </div>
     )
