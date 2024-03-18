@@ -1,11 +1,17 @@
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from djangorestframework_camel_case.util import camelize
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from classes.models import Group
 from courses.models import Course, Topic, Task, TestCase, Attempt
 from courses.serializers import (
     CourseListSerializer, CourseDetailSerializer, TopicSerializer,
     TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer
 )
+from users.serializers import StudentSerializer
 
 User = get_user_model()
 
@@ -157,3 +163,26 @@ class AttemptsViewSet(ModelViewSet):
             return queryset
 
         return queryset.none()
+
+
+@api_view()
+@permission_classes([IsAuthenticated])
+def get_class_topic_ratings(request, class_id, topic_id):
+    group = Group.objects.get(id=class_id)
+    topic = Topic.objects.get(id=topic_id)
+
+    result = []
+
+    for student in group.students.all():
+        studentResult = {
+            'student': dict(StudentSerializer(student).data),
+            'tasks': {}
+        }
+        for task in topic.tasks.all():
+            attempt = Attempt.objects.filter(student=student, task=task)
+            if attempt.exists():
+                attempt = attempt.first()
+                studentResult['tasks'][task.id] = dict(id=attempt.id, status=attempt.status)
+        result.append(studentResult)
+
+    return JsonResponse(camelize(result), safe=False)

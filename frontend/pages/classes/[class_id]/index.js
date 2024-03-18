@@ -134,6 +134,9 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
         </form>
       </div>
     </ContentBlock>
+    <div>
+      <a href={`/classes/${id}/ratings/`}>Успеваемость</a>
+    </div>
     {id ?
       <ContentBlock title="Список класса" value="Учеников:" data={students.length}>
         {
