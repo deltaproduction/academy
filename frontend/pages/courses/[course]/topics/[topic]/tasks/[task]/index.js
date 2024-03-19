@@ -140,7 +140,7 @@ const Task = ({
     </ContentBlock>
     {
       !!autoreview && <ContentBlock title="Тест кейсы">
-        {testCases.map(({id, stdin, stdout}) => (
+        {!!testCases && testCases.map(({id, stdin, stdout}) => (
           <div key={id}>
             <div style={{display: 'flex', gap: '20px', alignItems: 'center'}}>
               <pre>{stdin}</pre>
