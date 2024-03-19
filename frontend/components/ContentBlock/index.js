@@ -4,7 +4,7 @@ import { Edit, Undo } from "@mui/icons-material";
 export const DataTitle = (props) => {
   if (props.data)
     return <div className={styles.contentBlockDataTitle}>
-      <div>{props.value}</div>
+      {props.value ? <div>{props.value}</div> : null}
       <div>{props.data}</div>
     </div>;
 

@@ -3,6 +3,7 @@ import { getStudentServerSideProps, getTeacherServerSideProps }  from "@/lib/uti
 import AppLayout                                                 from "@/layouts/AppLayout";
 import styles                                                    from "@/pages/classes/[class_id]/index.module.scss";
 import { Sidebar, SidebarItem }                                  from "@/components/Sidebar";
+import ContentBlock from "@/components/ContentBlock";
 
 export async function getServerSideProps({query: {class_id, topic_id}, req, res}) {
   try {
@@ -54,7 +55,130 @@ export default function Index({profile, group, tasks, ratings, topics}) {
         )}
       </Sidebar>
       <div className={styles.content}>
-        <table>
+
+        <ContentBlock title="Успеваемости учеников" data={"Самостоятельная 1"}>
+          <div className={styles.ratingsWrapper}>
+          <div className={styles.ratingsContent}>
+
+            <div className={styles.students}>
+              <div className={styles.studentsHeader}>Ученики</div>
+
+              <div className={styles.studentsList}>
+                <div className={styles.item}>
+                  Иванов А.
+                </div>
+                <div className={styles.item}>
+                  Артемий Л.
+                </div>
+                <div className={styles.item}>
+                  Путин В.
+                </div>
+                <div className={styles.item}>
+                  Михайлов С.
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.ratings}>
+              <div className={styles.ratingsHeader}>
+
+                <div className={styles.taskField}>Привет, мир!</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Сумасшедший бариста</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Треугольники</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Существует?</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Сложи, если сможешь</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Набережная</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Числатан</div>
+                <div className={styles.fieldsSeparator}></div>
+                <div className={styles.taskField}>Последний</div>
+
+              </div>
+
+              <div className={styles.ratingsList}>
+
+                <div className={styles.row}>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                </div>
+
+                <div className={styles.row}>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                </div>
+                <div className={styles.row}>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                </div>
+
+                <div className={styles.row}>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                  <div className={styles.fieldsSeparator}></div>
+                  <div className={styles.item}>10</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </ContentBlock>
+
+        {/*<!--table>
           <thead>
           <tr>
             <td>Ученик</td>
@@ -67,7 +191,8 @@ export default function Index({profile, group, tasks, ratings, topics}) {
             {tasks.map(task => <td key={task.id}>{rating.tasks[task.id] ? statuses[rating.tasks[task.id].status] : '-'}</td>)}
           </tr>)}
           </tbody>
-        </table>
+        </table-->*/}
+
       </div>
     </div>
 

@@ -33,7 +33,7 @@ export default function ClassCourse({profile}) {
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
       <a href="/classes/">Назад к классам</a>
       <div>
-        В этом классе еще нет активных тем для изучения
+        В этом классе еще нет активных тем для изучения.
       </div>
     </div>
   </AppLayout>

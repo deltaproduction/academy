@@ -14,6 +14,7 @@ import SubmitButton from "@/components/SaveChangesField";
 
 
 import styles from "./index.module.scss";
+import Table from "@/components/Table";
 
 
 export async function getServerSideProps({query: {course}, req, res}) {
@@ -86,6 +87,19 @@ const Course = (props) => {
     await router.push(`/courses/${id}/`)
   }
 
+  function generateTopicsData(topics) {
+    let data = [];
+
+    for (let i = 0; i < topics.length; i ++) {
+      let topic = topics[i];
+      let id = topic.id;
+
+      data.push([i + 1, [topic.title, `/courses/${course.id}/topics/${id}`], topic.type, topic.state])
+    }
+
+    return data;
+  }
+
   return (
     <Layout courses={courses} profile={profile}>
       <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
@@ -103,14 +117,30 @@ const Course = (props) => {
           </form>
         </div>
       </ContentBlock>
+
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-      <a href={`/courses/${course.id}/topics/`}>Раздел уроков</a>
-      <a href={`/courses/${course.id}/topics/new/`}>Добавить тему</a>
-      {
-        topics.map(({id, title}) => <div key={id}>
-          <a href={`/courses/${course.id}/topics/${id}`}>{title}</a>
-        </div>)
-      }
+
+      <ContentBlock title="Список уроков" value="Количество:" data={topics.length}>
+
+        <div className={styles.links}>
+          <a href={`/courses/${course.id}/topics/`}>Перейти в раздел уроков</a>
+          <a href={`/courses/${course.id}/topics/new/`}>Создать новый урок</a>
+        </div>
+
+
+        <Table
+            fields={
+              [
+                ["№", 8, "numberWithDot"],
+                ["Название урока", 62, "link"],
+                ["Тип", 15, "topicType"],
+                ["Откр.", 15, "visibility"]
+              ]
+            }
+
+            data={generateTopicsData(topics)}
+        />
+      </ContentBlock>
     </Layout>);
 }
 
@@ -120,57 +150,3 @@ Course.defaultProps = {
 }
 
 export default Course
-
-
-/*<CoursesLayout {...layoutProps}>
-    <div className={styles.container}>
-      {!id && <h1>Создание нового курса</h1>}
-      <div>
-        <div className={styles.title}>
-          <h1>Информация о курсе {
-            editMode ? <Undo onClick={() => setEditMode(!editMode)}/> : <Edit onClick={() => setEditMode(!editMode)}/>
-          }</h1>
-        </div>
-        <form onSubmit={onCourseFormSubmit}>
-          <CharField label="Название курса" name="title" defaultValue={title} disabled={!editMode}/>
-          <CharField label="Описание курса" name="description" defaultValue={description} disabled={!editMode}/>
-          <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
-            <option value="0">Черновик</option>
-            <option value="1">Опубликован</option>
-          </SelectField>
-          {!!editMode && <button className={styles.titleAction} type="submit">Сохранить</button>}
-        </form>
-      </div>
-      {!!id && <div>
-        {!!topics.length && <div className={styles.title}>
-          <h1>Список тем</h1>
-        </div>}
-        {
-          topics.map(({id, title}) => <div key={id}>
-            <a href={`/courses/${topics.id}/topics/${id}`}>{title}</a>
-          </div>)
-        }
-        {
-          !addTopicMode
-            ? <button onClick={() => setAddTopicMode(true)}>Добавить тему</button>
-            : <form onSubmit={onTopicFormSubmit}>
-              <h2>Новая тема</h2>
-              <CharField label="Название" name="title"/>
-              <CharField label="Описание" name="descripiton"/>
-              <SelectField label="Тип" name="type" defaultValue={0}>
-                <option value="0">Учебная тема</option>
-                <option value="1">Классная работа</option>
-                <option value="2">Самостоятельная работа</option>
-              </SelectField>
-              <SelectField label="Состояние" name="state" defaultValue="0">
-                <option value="0">Закрыта</option>
-                <option value="1">Открыта</option>
-              </SelectField>
-              <button onClick={() => setAddTopicMode(false)}>Отменить</button>
-              <button type="submit">Сохранить</button>
-            </form>
-        }
-
-      </div>}
-    </div>
-  </CoursesLayout>*/

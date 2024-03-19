@@ -52,14 +52,21 @@ const Layout = ({profile, tasks, topic, children}) => {
   return <AppLayout profile={profile}>
     <div className={styles.container}>
       <Sidebar
-        title="Задачи"
+        title="Раздел задач"
         newItemHref={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}
         backLink={`/courses/${topic.course}/topics/${topic.id}/`}
         backTitle={`< ${topic.title}`}
       >
-        {tasks.map(({id, title}) => (
-          <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
-        )}
+        {
+          tasks.length ?
+              tasks.map(({id, title}) => (
+                  <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
+              )
+
+              : <SidebarItem href={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}>Новая задача</SidebarItem>
+        }
+
+
       </Sidebar>
       <div className={styles.content}>
         {children}
@@ -123,7 +130,7 @@ const Task = ({
   }
 
   return <Layout profile={profile} topic={topic} tasks={tasks}>
-    <ContentBlock title="Информация о задаче">
+    <ContentBlock title={id ? "Информация о задаче" : "Новая задача"}>
       <form onSubmit={onTaskFormSubmit}>
         <CharField label="Заголовок" name="title" defaultValue={title}/>
         <CharField label="Описание" name="text" defaultValue={text}/>

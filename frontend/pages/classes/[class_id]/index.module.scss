@@ -9,10 +9,31 @@
   gap: 40px;
   margin: 0;
   padding: 18px 46px;
-  width: 50%;
+  width: 60%;
+  overflow-y: auto;
 
   h1 {
     margin: 0;
+  }
+}
+
+.links {
+  margin: 30px 0;
+  display: flex;
+  gap: 30px;
+
+  a {
+    text-decoration-style: dotted;
+    text-decoration-color: #8a8a8a;
+    color: #3d3d3d;
+
+    &:hover {
+      color: #7c7c7c;
+    }
+
+    &:active {
+      color: #838383;
+    }
   }
 }
 
@@ -109,3 +130,130 @@
   gap: 15px;
   height: 10px;
 }
+
+.ratingsWrapper {
+  border: 1px solid #ececec;
+  border-radius: 10px 10px 5px 5px;
+
+  .ratingsContent {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .ratingsHeader, .studentsHeader {
+    background: #f8f8f8;
+    padding: 12px 18px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ececec;
+  }
+
+  .ratingsHeader {
+    display: flex;
+    gap: 10px;
+    border-radius: 0 10px 0 0;
+    width: max-content;
+  }
+
+  .studentsHeader {
+    border-radius: 10px 0 0 0;
+  }
+}
+
+.students {
+  width: 30%;
+  border-right: 1px solid #e8e8e8;
+  margin-bottom: 3px;
+}
+
+.ratings {
+  width: 70%;
+  margin-bottom: 3px;
+  overflow-x: auto;
+  opacity: .7;
+}
+
+.studentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  z-index: 20;
+  box-shadow: 18px 0px 10px -10px #f1f1f1;
+  position: relative;
+
+
+  .item {
+    padding: 12px 18px;
+    border-radius: 10px 0 0 10px;
+    background: white;
+    font-size: .9em;
+
+    &:hover, &:nth-child(even):hover {
+      background: #fafafa;
+    }
+
+    &:first-of-type {
+      border-radius: 0 0 0 10px;
+    }
+
+    &:nth-child(even) {
+      background: #fdfdfd;
+    }
+
+
+  }
+}
+
+.ratingsList {
+  display: flex;
+  flex-direction: column;
+  background: #fcfcfc;
+  gap: 5px;
+  z-index: -1;
+  width: max-content;
+
+  .row {
+    display: flex;
+    gap: 10px;
+    padding: 12px 18px;
+    font-size: .9em;
+
+    .item {
+      width: 120px;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+
+      &:hover {
+        color: blue;
+      }
+    }
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+}
+
+.taskField {
+  width: 120px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+  font-size: .8em;
+  flex-shrink: 0;
+}
+
+.fieldsSeparator {
+  width: 2px;
+  height: 18px;
+  border-radius: 100px;
+  background: #ececec;
+  flex-shrink: 0;
+}
+

@@ -1,15 +1,39 @@
 import styles from "@/components/Table/index.module.scss";
 import React from "react";
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 export const tableTypes = {
     "text": TextHandler,
     "rating": RatingHandler,
-    "number": NumberHandler,
-    "numberWithDot": NumberWithDotHandler
+    "link": LinkHandler,
+    "numberWithDot": NumberWithDotHandler,
+    "visibility": VisibilityHandler,
+    "topicType": TopicTypeHandler
 }
 
 function TextHandler(string) {
     return string;
+}
+
+function TopicTypeHandler(type) {
+    let types = ["учебный", "с/р", "к/р"];
+
+    return types[type];
+}
+
+
+function VisibilityHandler(visible) {
+    if (visible)
+        return <Visibility />;
+
+    return <VisibilityOff />
+}
+
+function LinkHandler(data) {
+    let text = data[0];
+    let address = data[1];
+
+    return <a href={address} className={styles.link}>{text}</a>;
 }
 
 function RatingHandler(string) {

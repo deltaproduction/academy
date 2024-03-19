@@ -134,30 +134,32 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
         </form>
       </div>
     </ContentBlock>
-    <div>
-      <a href={`/classes/${id}/ratings/`}>Успеваемость</a>
-    </div>
-    {id ?
-      <ContentBlock title="Список класса" value="Учеников:" data={students.length}>
-        {
-          students.length ?
-            <Table
-              fields={
-                [
-                  ["№", 8, "numberWithDot"],
-                  ["Фамилия и имя", 40, "text"],
-                  ["E-mail", 26, "text"],
-                  ["Ср. усп.", 13, "rating"],
-                  ["Баллы", 13, "number"]
-                ]
-              }
-              data={generateStudentsData(students)}
-            />
-            : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
-        }
 
-      </ContentBlock>
-      : null
+    {id ?
+        <ContentBlock title="Список класса" value="Количество:" data={students.length}>
+          <div className={styles.links}>
+            <a href={`/classes/${id}/ratings/`}>Открыть успеваемости учеников</a>
+          </div>
+
+          {
+            students.length ?
+                <Table
+                    fields={
+                      [
+                        ["№", 8, "numberWithDot"],
+                        ["Фамилия и имя", 40, "text"],
+                        ["E-mail", 26, "text"],
+                        ["Ср. усп.", 13, "rating"],
+                        ["Баллы", 13, "text"]
+                      ]
+                    }
+                    data={generateStudentsData(students)}
+                />
+                : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
+          }
+
+        </ContentBlock>
+        : null
     }
   </Layout>);
 }

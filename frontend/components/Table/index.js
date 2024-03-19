@@ -22,6 +22,39 @@ const TableField = (props) => {
     );
 }
 
+function getTableRow(row, columnsWidths) {
+    let result = [];
+
+    for (let i = 0; i < row.length; i ++) {
+        let element = row[i];
+
+        result.push(<TableField key={i} title={element} width={columnsWidths[i]} />);
+
+        if (i < row.length - 1) {
+            result.push(<div key={i + row.length} className={styles.fieldsSeparator}></div>);
+        }
+    }
+
+    return result;
+}
+
+function getFieldsRow(fields, sm) {
+    let result = [];
+
+    for (let i = 0; i < fields.length; i ++) {
+        let field = fields[i];
+
+        result.push(<TableField key={i} number={i} title={field[0]} width={field[1]} sortMethod={sm} sort bold />);
+
+        if (i < fields.length - 1) {
+            result.push(<div key={i + fields.length} className={styles.fieldsSeparator}></div>);
+        }
+    }
+
+    return result;
+}
+
+
 const TableRows = (props) => {
     let data = props.data;
     let columnsWidths = props.columnsWidths;
@@ -32,14 +65,10 @@ const TableRows = (props) => {
         data.forEach((row, index) => {
             rowsElements.push(
                 <div className={styles.tableRow} key={index}>
-                    {
-                        row.map((i, x) => <TableField key={x} title={i} width={columnsWidths[x]} />)
-                    }
+                    {getTableRow(row, columnsWidths)}
                 </div>
             );
         });
-    } else {
-        rowsElements.push("Загрузочка...");
     }
 
     return rowsElements;
@@ -60,13 +89,7 @@ const TableFieldsRow = (props) => {
 
     return <div className={styles.tableFirstRow}>
         {
-            fields.map((i, x) => <TableField
-                key={x}
-                number={x}
-                title={i[0]}
-                width={i[1]}
-                sortMethod={props.sortMethod}
-                sort bold/>)
+            getFieldsRow(fields, props.sortMethod)
         }
     </div>;
 }
@@ -111,7 +134,7 @@ export default function Table(props) {
     let [sortInfo, setSortInfo] = useState([null, false]);
 
     return (
-        <>
+        <div>
             <TableFieldsRow
                 fields={fields}
                 sortMethod={(by) => sortList(tableData, setTableData, sortInfo, setSortInfo, by)}
@@ -120,7 +143,7 @@ export default function Table(props) {
                 data={handleTableData(fields, tableData)}
                 columnsWidths={columnsWidths}
             />
-        </>
+        </div>
     );
 }
 
