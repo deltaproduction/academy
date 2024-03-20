@@ -9,6 +9,9 @@ export async function getProfileServerSideProps({req, res, role}) {
       throw {notFound: true}
     }
 
+    profile.isTeacher = profile.role === 'teacher'
+    profile.isStudent = profile.role === 'student'
+
     return {
       props: {profile}
     }
@@ -23,4 +26,8 @@ export async function getTeacherServerSideProps({req, res}) {
 
 export async function getStudentServerSideProps({req, res}) {
   return getProfileServerSideProps({req, res, role: 'student'})
+}
+
+export function formatDateTime(str) {
+  return (new Date(str)).toLocaleString("ru")
 }

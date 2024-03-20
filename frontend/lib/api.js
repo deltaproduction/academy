@@ -72,6 +72,13 @@ class ModelApi {
       body: formData
     })
   }
+
+  delete = async (id, formData, options) => {
+    return await fetchApi(`${this.url}${id}/`, {
+      ...options,
+      method: 'DELETE'
+    })
+  }
 }
 
 export const ClassesApi = new ModelApi('/api/groups/')
@@ -81,3 +88,6 @@ export const CoursesApi = new ModelApi('/api/courses/')
 export const TopicsApi = new ModelApi('/api/topics/')
 
 export const TasksApi = new ModelApi('/api/tasks/')
+export const TestCasesApi = new ModelApi('/api/test_cases/')
+
+export const AttemptsApi = new ModelApi('/api/attempts/')

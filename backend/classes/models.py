@@ -8,7 +8,10 @@ class Group(models.Model):
     teacher_name = models.CharField('ФИО Учителя', max_length=150, blank=True)
 
     students = models.ManyToManyField('users.Student', through='classes.GroupStudent', related_name='student_groups')
-    courses = models.ManyToManyField('courses.Course', through='classes.GroupCourse', related_name='course_groups')
+    course = models.ForeignKey('courses.Course', related_name='groups', on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.title} {self.code}'
 
     class Meta:
         verbose_name = 'Класс'
@@ -20,6 +23,9 @@ class GroupStudent(models.Model):
     student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
     main = models.BooleanField("Основной", default=False)
 
+    def __str__(self):
+        return f'{self.student} {self.group}'
+
     class Meta:
         verbose_name = 'Ученик класса'
         verbose_name_plural = 'Ученики классов'
@@ -27,9 +33,12 @@ class GroupStudent(models.Model):
 
 
 class GroupCourse(models.Model):
-    group = models.ForeignKey('classes.Group', on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    group = models.ForeignKey('classes.Group', on_delete=models.CASCADE, related_name='group_courses')
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE, related_name='group_courses')
     active = models.BooleanField('Активен')
+
+    def __str__(self):
+        return f'{self.group} {self.course}'
 
     class Meta:
         verbose_name = 'Курс класса'

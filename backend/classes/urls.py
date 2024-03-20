@@ -7,7 +7,7 @@ router = routers.SimpleRouter()
 router.register(r'groups', GroupViewSet)
 
 urlpatterns = [
-    path("group-student/create/", create_group_student)
+    path("group_student/create/", create_group_student)
 ]
 
 urlpatterns += router.urls

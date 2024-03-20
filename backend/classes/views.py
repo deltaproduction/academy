@@ -33,11 +33,7 @@ class GroupViewSet(ModelViewSet):
 @permission_classes([IsAuthenticated])
 def create_group_student(request):
     student = request.user.student
-    group_student = GroupStudentCreateSerializer(data={
-        "group": get_object_or_404(Group, code=request.data.get("code")).pk,
-        "student": student.pk,
-        "main": True,
-    })
+    group_student = GroupStudentCreateSerializer(data=request.data, context=dict(request=request))
     group_student.is_valid(raise_exception=True)
     student.groupstudent_set.update(main=False)
     group_student.save()

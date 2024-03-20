@@ -25,11 +25,10 @@ class StudentSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(source='user.last_name')
     middle_name = serializers.CharField(source='user.middle_name')
     email = serializers.CharField(source='user.email')
-    groups = serializers.CharField(source='user.groups')
 
     class Meta:
         model = Student
-        fields = ['id', 'first_name', 'last_name', 'middle_name', 'email', 'groups']
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'email']
 
 
 class SignUpSerializer(serializers.ModelSerializer):

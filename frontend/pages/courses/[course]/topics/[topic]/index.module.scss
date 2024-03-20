@@ -10,6 +10,7 @@
   margin: 0;
   padding: 18px 46px;
   width: 50%;
+  overflow-y: auto;
 
   h1 {
     margin: 0;
@@ -32,5 +33,25 @@
   h1 &Action {
     all: unset;
     height: 24px;
+  }
+}
+
+.links {
+  margin: 30px 0;
+  display: flex;
+  gap: 30px;
+
+  a {
+    text-decoration-style: dotted;
+    text-decoration-color: #8a8a8a;
+    color: #3d3d3d;
+
+    &:hover {
+      color: #7c7c7c;
+    }
+
+    &:active {
+      color: #838383;
+    }
   }
 }

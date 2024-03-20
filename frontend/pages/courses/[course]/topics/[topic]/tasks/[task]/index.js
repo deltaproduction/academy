@@ -1,5 +1,5 @@
-import { TasksApi, TopicsApi }       from "@/lib/api";
-import { getTeacherServerSideProps } from "@/lib/utils";
+import { TasksApi, TestCasesApi, TopicsApi } from "@/lib/api";
+import { getTeacherServerSideProps }         from "@/lib/utils";
 
 import AppLayout                from "@/layouts/AppLayout";
 import { Sidebar, SidebarItem } from "@/components/Sidebar";
@@ -7,11 +7,11 @@ import { Sidebar, SidebarItem } from "@/components/Sidebar";
 import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
 
 
-import styles           from "./index.module.scss";
-import { CharField }    from "@/components/Fields";
-import SaveChangesField from "@/components/SaveChangesField";
-import { useState }     from "react";
-import ContentBlock     from "@/components/ContentBlock";
+import styles                                from "./index.module.scss";
+import { CharField, SelectField, TextField } from "@/components/Fields";
+import SubmitButton                          from "@/components/SaveChangesField";
+import { useState }                          from "react";
+import ContentBlock                          from "@/components/ContentBlock";
 
 
 export async function getServerSideProps({query: {topic, task}, req, res}) {
@@ -36,6 +36,10 @@ export async function getServerSideProps({query: {topic, task}, req, res}) {
 
     if (props.task.topic !== parseInt(topic)) return {notFound: true}
 
+    response = await TestCasesApi.list({queryParams: {task}, req, res})
+
+    props.testCases = await response.json()
+
 
     return {props}
   } catch (e) {
@@ -48,14 +52,21 @@ const Layout = ({profile, tasks, topic, children}) => {
   return <AppLayout profile={profile}>
     <div className={styles.container}>
       <Sidebar
-        title="Задачи"
+        title="Раздел задач"
         newItemHref={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}
         backLink={`/courses/${topic.course}/topics/${topic.id}/`}
         backTitle={`< ${topic.title}`}
       >
-        {tasks.map(({id, title}) => (
-          <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
-        )}
+        {
+          tasks.length ?
+              tasks.map(({id, title}) => (
+                  <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
+              )
+
+              : <SidebarItem href={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}>Новая задача</SidebarItem>
+        }
+
+
       </Sidebar>
       <div className={styles.content}>
         {children}
@@ -64,9 +75,16 @@ const Layout = ({profile, tasks, topic, children}) => {
   </AppLayout>
 }
 
-const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, formatOutText} = {}}) => {
-  const [editMode, setEditMode] = useState(!id);
+const Task = ({
+                profile,
+                tasks,
+                topic,
+                testCases: testCases_,
+                task: {id, title, text, formatInText, formatOutText, autoreview: autoreview_} = {}
+              }) => {
 
+  const [testCases, setTestCases] = useState(testCases_)
+  const [autoreview, setAutoreview] = useState(autoreview_)
   const onTaskFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -90,18 +108,65 @@ const Task = ({profile, tasks, topic, task: {id, title, text, formatInText, form
     }
   }
 
+  const onTestCaseFormSubmit = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+
+    formData.append('task', id)
+
+    const response = await TestCasesApi.create(formData)
+    if (response.ok) {
+      const testCase = await response.json()
+      setTestCases(testCases.concat([testCase]))
+      e.target.reset()
+    }
+  }
+
+  const onTestCaseDelete = async (id) => {
+    const response = await TestCasesApi.delete(id)
+    if (response.ok) {
+      setTestCases(testCases.filter((testCase) => testCase.id !== id))
+    }
+  }
+
   return <Layout profile={profile} topic={topic} tasks={tasks}>
-    <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о задаче">
+    <ContentBlock title={id ? "Информация о задаче" : "Новая задача"}>
       <form onSubmit={onTaskFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode}/>
-        <CharField label="Описание" name="text" defaultValue={text} disabled={!editMode}/>
-        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
-                   disabled={!editMode}/>
-        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
-                   disabled={!editMode}/>
-        {!!editMode && <SaveChangesField/>}
+        <CharField label="Заголовок" name="title" defaultValue={title}/>
+        <CharField label="Описание" name="text" defaultValue={text}/>
+        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}/>
+        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}/>
+        <SelectField label="Автоматическая проверка" name="autoreview"
+                     onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
+          <option value="0">Нет</option>
+          <option value="1">Да</option>
+        </SelectField>
+        <SubmitButton/>
       </form>
+
     </ContentBlock>
+    {
+      !!autoreview && <ContentBlock title="Тест кейсы">
+        {!!testCases && testCases.map(({id, stdin, stdout}) => (
+          <div key={id}>
+            <div style={{display: 'flex', gap: '20px', alignItems: 'center'}}>
+              <pre>{stdin}</pre>
+              {"->"}
+              <pre>{stdout}</pre>
+              <SubmitButton onClick={() => onTestCaseDelete(id)} text="Удалить"/>
+            </div>
+
+          </div>
+        ))}
+        <form onSubmit={onTestCaseFormSubmit}>
+          <TextField label="Входные аргументы" name="stdin"/>
+          <TextField label="Ожидаемый результат" name="stdout"/>
+          <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)" name="timelimit"/>
+          <SubmitButton text="Добавить"/>
+        </form>
+      </ContentBlock>
+    }
+
   </Layout>
 }
 
