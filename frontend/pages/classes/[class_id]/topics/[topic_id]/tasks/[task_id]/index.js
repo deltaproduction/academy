@@ -32,7 +32,10 @@ export async function getServerSideProps({query: {topic_id, task_id}, req, res})
 
     response = await AttemptsApi.list({queryParams: {task: task_id}, req, res})
     if (response.ok) {
-      props.attempt = (await response.json())[0]
+      const attempts = await response.json()
+      if (attempts.length){
+        props.attempt = attempts[0]
+      }
     }
 
     return {props}
@@ -52,7 +55,7 @@ const Layout = ({profile, tasks, topic, children}) => {
         backTitle={`< ${topic.title}`}
       >
         {tasks.map(({id, title}) => (
-          <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
+          <SidebarItem key={id} href={`/classes/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
         )}
       </Sidebar>
       <div className={styles.content}>

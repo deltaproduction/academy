@@ -69,6 +69,7 @@ class AttemptSerializer(serializers.ModelSerializer):
                 self.instance = attempt.first()
 
             kwargs['student'] = student
+            kwargs['task'] = task
             kwargs['status'] = Attempt.ON_REVIEW
             kwargs['output'] = ''
             kwargs['test_case'] = None
