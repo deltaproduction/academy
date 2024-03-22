@@ -85,6 +85,8 @@ const Task = ({
 
   const [testCases, setTestCases] = useState(testCases_)
   const [autoreview, setAutoreview] = useState(autoreview_)
+  const [errors, setErrors] = useState('')
+
   const onTaskFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -105,6 +107,8 @@ const Task = ({
       } else {
         location.reload()
       }
+    } else {
+      setErrors(await response.json())
     }
   }
 
@@ -132,14 +136,14 @@ const Task = ({
   return <Layout profile={profile} topic={topic} tasks={tasks}>
     <ContentBlock title={id ? "Информация о задаче" : "Новая задача"}>
       <form onSubmit={onTaskFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title}/>
-        <CharField label="Описание" name="text" defaultValue={text}/>
-        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}/>
-        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}/>
-        <SelectField label="Автоматическая проверка" name="autoreview"
+        <CharField label="Заголовок" name="title" defaultValue={title} error={errors ? errors["title"] : null} />
+        <CharField label="Описание" name="text" defaultValue={text} error={errors ? errors["text"] : null}/>
+        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText} error={errors ? errors["formatInText"] : null}/>
+        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText} error={errors ? errors["formatOutText"] : null}/>
+        <SelectField label="Способ проверки" name="autoreview"
                      onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
-          <option value="0">Нет</option>
-          <option value="1">Да</option>
+          <option value="0">Ручная проверка</option>
+          <option value="1">Автоматическая проверка</option>
         </SelectField>
         <SubmitButton/>
       </form>

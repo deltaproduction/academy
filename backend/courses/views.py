@@ -146,9 +146,13 @@ class AttemptsViewSet(ModelViewSet):
             queryset = queryset.filter(status__in=statuses.split(','))
 
         task = self.request.query_params.get('task')
+        topic = self.request.query_params.get('topic')
 
         if task:
             queryset = queryset.filter(task_id=task)
+
+        if topic:
+            queryset = queryset.filter(task__topic=topic)
 
         try:
             queryset = queryset.filter(

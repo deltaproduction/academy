@@ -9,6 +9,10 @@ import FormRowSided from "@/components/FormRowSided";
 import Button       from "@/components/Button";
 import AuthLayout   from "@/layouts/AuthLayout";
 
+import {CharField} from "@/components/Fields";
+
+import styles from "./login.module.scss";
+
 export async function getServerSideProps({query: {next = '/'}, req, res}) {
   const response = await getProfileData({req, res})
   if (response.ok) {
@@ -29,7 +33,7 @@ export default function LoginPage({next}) {
     if (response.ok) {
       location.href = next
     } else {
-      setErrors(JSON.stringify(await response.json()))
+      setErrors(await response.json());
     }
   }
 
@@ -37,12 +41,14 @@ export default function LoginPage({next}) {
     <AuthLayout>
       <h1 className="h3">Вход</h1>
       <form onSubmit={onFormSubmit}>
-        <FormItem title="E-mail:" name="email" type="email"/>
-        <FormItem title="Пароль:" name="password" type="password"/>
-        {!!errors && errors}
+        <div className={styles.formFieldsWrapper}>
+          <CharField label="E-mail" name="email" type="email" error={errors ? errors["email"] : null} />
+          <CharField label="Пароль" name="password" type="password" error={errors ? errors["password"] : null} />
+        </div>
+
         <FormRowSided
-          leftSide={<Links type="login"/>}
-          rightSide={<Button type="submit" text="Войти"/>}
+            leftSide={<Links type="login"/>}
+            rightSide={<Button type="submit" text="Войти"/>}
         />
       </form>
     </AuthLayout>

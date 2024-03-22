@@ -9,6 +9,7 @@ import AuthLayout from "@/layouts/AuthLayout";
 
 import styles from "./register.module.scss";
 import { getProfileData } from "@/lib/api";
+import {CharField} from "@/components/Fields";
 
 
 export async function getServerSideProps({req, res}) {
@@ -20,17 +21,23 @@ export async function getServerSideProps({req, res}) {
 }
 
 export default function RegisterPage() {
+  const [errors, setErrors] = useState('');
   let [isTeacherActive, setIsTeacherActive] = useState(false);
 
   const onFormSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    formData.append('role', isTeacherActive ? 'teacher' : 'student')
-    await fetch('/api/sign_up/', {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    formData.append('role', isTeacherActive ? 'teacher' : 'student');
+    const response = await fetch('/api/sign_up/', {
       method: 'POST',
       body: formData
-    })
-    location.reload()
+    });
+
+    if (response.ok) {
+      location.reload();
+    } else {
+      setErrors(await response.json());
+    }
   }
 
   return (
@@ -49,20 +56,21 @@ export default function RegisterPage() {
         </div>
       </div>
       <form onSubmit={onFormSubmit}>
-        <FormItem title="Имя:" name="first_name" type="text"/>
-        <FormItem title="Фамилия:" name="last_name" type="text"/>
-        <FormItem title="Отчество:" name="middle_name" type="text"/>
-        <FormItem title="E-mail:" name="email" type="email"/>
-        <FormItem title="Пароль:" name="password" type="password"/>
-        <FormItem title={
-          <>Повторите<br/>пароль:</>
-        } name="confirm_password" type="password"/>
-        <FormRowSided
-          leftSide={<Links type="register"/>}
-          rightSide={<Button type="submit" text="Создать"/>}
-        />
+        <div className={styles.formFieldsWrapper}>
+          <CharField label="Имя" name="first_name" type="text" error={errors ? errors["firstName"] : null}/>
+          <CharField label="Фамилия" name="last_name" type="text" error={errors ? errors["lastName"] : null}/>
+          <CharField label="Отчество" name="middle_name" type="text" error={errors ? errors["middleName"] : null}/>
+          <CharField label="E-mail" name="email" type="email" error={errors ? errors["email"] : null}/>
+          <CharField label="Пароль" name="password" type="password" error={errors ? errors["password"] : null}/>
+          <CharField label="Повторите" name="confirm_password" type="password" error={errors ? errors["confirmPassword"] : null}/>
+        </div>
+
+          <FormRowSided
+              leftSide={<Links type="register"/>}
+              rightSide={<Button type="submit" text="Создать"/>}
+          />
       </form>
     </AuthLayout>
-  );
+);
 }
 

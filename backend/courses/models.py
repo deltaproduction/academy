@@ -63,9 +63,18 @@ class Topic(models.Model):
 class Task(models.Model):
     NO = 0
     YES = 1
+    SIMPLE = 0
+    HOMEWORK = 1
+    HARD = 2
     AUTOREVIEW_CHOICES = (
         (NO, 'нет'),
         (YES, 'да'),
+    )
+
+    TYPE_CHOICES = (
+        (SIMPLE, 'Классная'),
+        (HOMEWORK, 'Домашняя'),
+        (HARD, 'Дополнительная'),
     )
     topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE, related_name='tasks')
 
@@ -77,6 +86,9 @@ class Task(models.Model):
 
     autoreview = models.PositiveSmallIntegerField('Авто-проверка', choices=AUTOREVIEW_CHOICES,
                                                   default=NO)
+
+    type = models.PositiveSmallIntegerField('Тип', choices=TYPE_CHOICES,
+                                                  default=SIMPLE)
 
     def __str__(self):
         return f'{self.title} {self.topic}'
