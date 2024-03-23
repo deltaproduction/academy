@@ -1,5 +1,6 @@
 import { API_HOST } from "@/lib/constants";
 
+export const apiUrl = url => `${url.startsWith('http') ? '' : API_HOST}${url.startsWith('/') ? '' : '/'}${url}`
 
 export const fetchApi = async (url, options = {}) => {
   const {req, res, ...init} = options
@@ -8,7 +9,7 @@ export const fetchApi = async (url, options = {}) => {
     init.headers = req.headers;
   }
 
-  url = `${url.startsWith('http') ? '' : API_HOST}${url.startsWith('/') ? '' : '/'}${url}`
+  url = apiUrl(url)
 
   const response = await fetch(url, init)
 
@@ -24,7 +25,7 @@ export const fetchApi = async (url, options = {}) => {
     })
 
     setCookie.forEach(cookie => {
-      const [key, value] = cookie.split(';')[0].split('=');
+      const [key, _] = cookie.split(';')[0].split('=');
       if (existsSetCookies.hasOwnProperty(key)) {
         res.getHeaders('Set-Cookie')[existsSetCookies[key]] = cookie
       } else {
