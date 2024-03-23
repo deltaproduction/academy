@@ -70,7 +70,7 @@ const Topic = ({
   const [editMode, setEditMode] = useState(!id);
   const [files, setFiles] = useState(files_);
   const [errors, setErrors] = useState('');
-  const [type, setType] = useState(type_);
+  const [type, setType] = useState(type_ || 0);
 
 
   const onTopicFormSubmit = async (e) => {
