@@ -43,7 +43,7 @@ class TopicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Topic
-        fields = ['id', 'course', 'title', 'tasks', 'type', 'description', 'state', 'start', 'end']
+        fields = ['id', 'course', 'title', 'tasks', 'type', 'description', 'duration', 'state', 'start', 'end']
         read_only_fields = ['id']
 
 

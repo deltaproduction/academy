@@ -31,3 +31,11 @@ export async function getStudentServerSideProps({req, res}) {
 export function formatDateTime(str) {
   return (new Date(str)).toLocaleString("ru")
 }
+
+export function isPlainObject(value) {
+  if (Object.prototype.toString.call(value) !== "[object Object]") {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === null || prototype.hasOwnProperty("isPrototypeOf");
+}

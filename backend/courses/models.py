@@ -47,6 +47,8 @@ class Topic(models.Model):
     type = models.PositiveSmallIntegerField('Тип', choices=TYPE_CHOICES, default=EDUCATIONAL)
     description = models.TextField('Описание', null=True, blank=True)
 
+    duration = models.PositiveIntegerField('Длительность (мин.)', null=True, blank=True)
+
     state = models.PositiveSmallIntegerField('Опубликован', choices=STATE_CHOICES, default=CLOSED)
 
     start = models.DateTimeField('Дата окончания', null=True, blank=True)

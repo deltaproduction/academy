@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {isPlainObject} from "next/dist/shared/lib/is-plain-object";
+import {isPlainObject} from "@/lib/utils";
 import {python} from '@codemirror/lang-python';
 import CodeMirror from '@uiw/react-codemirror';
 

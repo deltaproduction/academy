@@ -1,18 +1,16 @@
-import { CoursesApi, TopicsApi }     from "@/lib/api";
-import { getTeacherServerSideProps } from "@/lib/utils";
+import { useState } from "react";
 
-import AppLayout                from "@/layouts/AppLayout";
-import { Sidebar, SidebarItem } from "@/components/Sidebar";
+import { CoursesApi, TopicsApi }                    from "@/lib/api";
+import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 
-import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
+import AppLayout                               from "@/layouts/AppLayout";
+import Table                                   from "@/components/Table";
+import { CharField, NumberField, SelectField } from "@/components/Fields";
+import { Sidebar, SidebarItem }                from "@/components/Sidebar";
+import ContentBlock                            from "@/components/ContentBlock";
+import SubmitButton                            from "@/components/SaveChangesField";
 
-
-import styles                     from "./index.module.scss";
-import { CharField, SelectField } from "@/components/Fields";
-import SubmitButton               from "@/components/SaveChangesField";
-import { useState }               from "react";
-import ContentBlock               from "@/components/ContentBlock";
-import Table from "@/components/Table";
+import styles from "./index.module.scss";
 
 
 export async function getServerSideProps({query: {topic, course}, req, res}) {
@@ -63,9 +61,16 @@ const Layout = ({topics, profile, children, course}) => {
   </AppLayout>
 }
 
-const Topic = ({profile, topics, course, topic: {id, title, type, description, tasks, state} = {}}) => {
+const Topic = ({
+                 profile,
+                 topics,
+                 course,
+                 topic: {id, title, type: type_, description, duration, tasks, state} = {}
+               }) => {
   const [editMode, setEditMode] = useState(!id);
   const [errors, setErrors] = useState('');
+  const [type, setType] = useState(type_);
+
 
   const onTopicFormSubmit = async (e) => {
     e.preventDefault()
@@ -93,28 +98,26 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
   }
 
   function generateTasksData(tasks) {
-    let result = [];
-
-    for (let i = 0; i < tasks.length; i ++) {
-      let task = tasks[i];
-
-      result.push([i + 1, [task.title, `/courses/${course.id}/topics/${task.topic}/tasks/${task.id}/`], task.autoreview]);
-    }
-
-    return result;
+    return tasks.map(({id, topic, title, autoreview}, i) => (
+      [i + 1, [title, `/courses/${course.id}/topics/${topic}/tasks/${id}/`], autoreview]
+    ))
   }
 
   return <Layout profile={profile} topics={topics} course={course}>
     <ContentBlock setEditMode={setEditMode} editMode={editMode} title={id ? "Информация об уроке" : "Новый урок"}>
       <form onSubmit={onTopicFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode} error={errors ? errors["title"] : null} />
-        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode} error={errors ? errors["description"] : null} />
-        <SelectField label="Тип урока" name="type" defaultValue={type} disabled={!editMode} >
+        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode} error={errors["title"]}/>
+        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode}
+                   error={errors["description"]}/>
+        <SelectField label="Тип урока" name="type" value={type} disabled={!editMode}
+                     onChange={({target: {value}}) => setType(parseInt(value))}>
           <option value="0">Учебная тема</option>
           <option value="1">Самостоятельная</option>
           <option value="2">Контрольная</option>
         </SelectField>
-        <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode} >
+        {(type !== 0) && <NumberField label="Длительность" name="duration" defaultValue={duration}
+                                      disabled={!editMode} error={errors["duration"]}/>}
+        <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
           <option value="0">Закрыт</option>
           <option value="1">Опубликован</option>
         </SelectField>
@@ -123,33 +126,27 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
     </ContentBlock>
 
     {!!id && <>
-
       <ContentBlock title="Список задач" value="Количество:" data={tasks.length}>
-
         <div className={styles.links}>
           <a href={`/courses/${course.id}/topics/${id}/tasks/`}>Перейти в раздел задач</a>
-          <a href={`/courses/${course.id}/topics/${id}/tasks/new/`}>{tasks.length ? "Создать новую задачу" : "Создать первую задачу"}</a>
+          <a
+            href={`/courses/${course.id}/topics/${id}/tasks/new/`}>{tasks.length ? "Создать новую задачу" : "Создать первую задачу"}</a>
         </div>
 
-        { tasks.length ?
-            <Table
-                fields={
-                  [
-                    ["№", 7, "numberWithDot"],
-                    ["Название задачи", 77, "link"],
-                    ["Проверка", 16, "taskCheckType"]
-                  ]
-                }
-
-                data={generateTasksData(tasks)}
-            /> : <p>Ещё не создано ни одной задачи.</p>
+        {tasks.length ?
+          <Table
+            fields={
+              [
+                ["№", 7, "numberWithDot"],
+                ["Название задачи", 77, "link"],
+                ["Проверка", 16, "taskCheckType"]
+              ]
+            }
+            data={generateTasksData(tasks)}
+          /> : <p>Ещё не создано ни одной задачи.</p>
         }
-
-
       </ContentBlock>
-    </>
-
-    }
+    </>}
   </Layout>
 }
 

@@ -1,17 +1,15 @@
-import { TasksApi, TestCasesApi, TopicsApi } from "@/lib/api";
-import { getTeacherServerSideProps }         from "@/lib/utils";
+import { useState } from "react";
 
-import AppLayout                from "@/layouts/AppLayout";
-import { Sidebar, SidebarItem } from "@/components/Sidebar";
+import { TasksApi, TestCasesApi, TopicsApi }        from "@/lib/api";
+import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 
-import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
-
-
-import styles                                from "./index.module.scss";
+import AppLayout                             from "@/layouts/AppLayout";
 import { CharField, SelectField, TextField } from "@/components/Fields";
-import SubmitButton                          from "@/components/SaveChangesField";
-import { useState }                          from "react";
+import { Sidebar, SidebarItem }              from "@/components/Sidebar";
 import ContentBlock                          from "@/components/ContentBlock";
+import SubmitButton                          from "@/components/SaveChangesField";
+
+import styles from "./index.module.scss";
 
 
 export async function getServerSideProps({query: {topic, task}, req, res}) {
@@ -59,11 +57,12 @@ const Layout = ({profile, tasks, topic, children}) => {
       >
         {
           tasks.length ?
-              tasks.map(({id, title}) => (
-                  <SidebarItem key={id} href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
-              )
+            tasks.map(({id, title}) => (
+              <SidebarItem key={id}
+                           href={`/courses/${topic.course}/topics/${topic.id}/tasks/${id}/`}>{title}</SidebarItem>)
+            )
 
-              : <SidebarItem href={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}>Новая задача</SidebarItem>
+            : <SidebarItem href={`/courses/${topic.course}/topics/${topic.id}/tasks/new/`}>Новая задача</SidebarItem>
         }
 
 
@@ -136,10 +135,12 @@ const Task = ({
   return <Layout profile={profile} topic={topic} tasks={tasks}>
     <ContentBlock title={id ? "Информация о задаче" : "Новая задача"}>
       <form onSubmit={onTaskFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} error={errors ? errors["title"] : null} />
+        <CharField label="Заголовок" name="title" defaultValue={title} error={errors ? errors["title"] : null}/>
         <CharField label="Описание" name="text" defaultValue={text} error={errors ? errors["text"] : null}/>
-        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText} error={errors ? errors["formatInText"] : null}/>
-        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText} error={errors ? errors["formatOutText"] : null}/>
+        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
+                   error={errors ? errors["formatInText"] : null}/>
+        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
+                   error={errors ? errors["formatOutText"] : null}/>
         <SelectField label="Способ проверки" name="autoreview"
                      onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
           <option value="0">Ручная проверка</option>
@@ -162,12 +163,16 @@ const Task = ({
 
           </div>
         ))}
-        <form onSubmit={onTestCaseFormSubmit}>
-          <TextField label="Входные аргументы" name="stdin"/>
-          <TextField label="Ожидаемый результат" name="stdout"/>
-          <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)" name="timelimit"/>
-          <SubmitButton text="Добавить"/>
-        </form>
+        {id ?
+          <form onSubmit={onTestCaseFormSubmit}>
+            <TextField label="Входные аргументы" name="stdin"/>
+            <TextField label="Ожидаемый результат" name="stdout"/>
+            <CharField type="number" min="1" max="3" defaultValue={1} label="Ограничение по времени (с)"
+                       name="timelimit"/>
+            <SubmitButton text="Добавить"/>
+          </form> :
+          <div>Сохраните изменения для добавления тест-кейсов</div>
+        }
       </ContentBlock>
     }
 

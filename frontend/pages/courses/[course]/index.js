@@ -1,6 +1,6 @@
 import { useState }      from "react";
 import { useRouter }     from "next/router";
-import { isPlainObject } from "next/dist/shared/lib/is-plain-object";
+import { isPlainObject } from "@/lib/utils";
 
 
 import { CoursesApi, TopicsApi }     from "@/lib/api";
