@@ -89,9 +89,9 @@ const Topic = ({
     if (response.ok) {
       const topic = await response.json()
       if (id) {
-        location.href = `/courses/${course.id}/topics/${topic.id}/`
-      } else {
         location.reload()
+      } else {
+        location.href = `/courses/${course.id}/topics/${topic.id}/`
       }
     } else {
       setErrors(await response.json())
