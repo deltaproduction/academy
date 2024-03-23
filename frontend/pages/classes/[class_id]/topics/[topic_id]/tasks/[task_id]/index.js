@@ -383,7 +383,10 @@ const Task = ({
             {test ? <div className={classNames(styles.tabPageContent, styles.testContent)}>
               <textarea rows="10" onChange={({target: {value}}) => setStdin(value)} value={stdin}
                         placeholder="Входные данные (вводятся вручную)"></textarea>
-              <textarea readOnly={true} rows="10" className={classNames({[styles.codeResultError]: !runCodeResult.successm,[styles.codeResultSuccess]: runCodeResult.success})} value={runCodeResult.output}
+              <textarea readOnly={true} rows="10" className={classNames({
+                [styles.codeResultError]: runCodeResult && !runCodeResult.success,
+                [styles.codeResultSuccess]: runCodeResult.success
+              })} value={runCodeResult.output}
                         placeholder="Выходные данные (заполняются автоматически, нажмите на кнопку запуска над полем для ввода кода)"></textarea>
             </div> : <VerdictTabPage result={result}/>}
           </div>
