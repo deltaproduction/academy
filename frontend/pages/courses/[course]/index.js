@@ -6,9 +6,9 @@ import { isPlainObject } from "@/lib/utils";
 import { CoursesApi, TopicsApi }     from "@/lib/api";
 import { getTeacherServerSideProps } from "@/lib/utils";
 
-import AppLayout                  from "@/layouts/AppLayout";
-import { CharField, SelectField } from "@/components/Fields";
-import { Sidebar, SidebarItem }   from "@/components/Sidebar";
+import AppLayout                             from "@/layouts/AppLayout";
+import { CharField, SelectField, TextField } from "@/components/Fields";
+import { Sidebar, SidebarItem }              from "@/components/Sidebar";
 import ContentBlock from "@/components/ContentBlock";
 import SubmitButton from "@/components/SubmitButton";
 
@@ -113,9 +113,9 @@ const Course = (props) => {
         <div>
           <form onSubmit={onCourseFormSubmit}>
             <CharField label="Название курса" name="title" defaultValue={course.title} disabled={!editMode}
-                       error={errors ? errors["title"] : null} />
-            <CharField label="Описание курса" name="description" defaultValue={course.description}
-                       error={errors ? errors["description"] : null} disabled={!editMode}/>
+                       error={errors["title"]} />
+            <TextField label="Описание курса" name="description" defaultValue={course.description}
+                       error={errors["description"]} disabled={!editMode}/>
 
             <SelectField label="Статус" name="state" defaultValue={course.state} disabled={!editMode}>
               <option value="0">Черновик</option>
