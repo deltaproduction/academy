@@ -44,7 +44,7 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
 }
 
 
-export default function ClassDetail({groups, profile, courses, group:group_ = {}}) {
+export default function ClassDetail({groups, profile, courses, group: group_ = {}}) {
   const [group, setGroup] = useState(group_)
 
   const {id, code, title, course, students, teacherName} = group;
@@ -55,10 +55,9 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
 
   const [classes, setClasses] = useState(groups);
 
-  const [errors, setErrors] = useState('')
+  const [errors, setErrors] = useState({})
 
   function Layout({children, classes, profile}) {
-
     return (
       <AppLayout profile={profile}>
         <div className={styles.container}>
@@ -75,10 +74,7 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
     );
   }
 
-  function CodeBlock(props) {
-
-    let code = props.code;
-
+  function CodeBlock({code}) {
     return (<div className={styles.classCodeBlock} onClick={() => navigator.clipboard.writeText(code)}>
       {code.toString().split('').map((letter, i) => (
         <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>
@@ -100,27 +96,30 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
 
   const onFormSubmit = async (e) => {
     e.preventDefault()
+    setErrors({})
     const formData = new FormData(e.target)
-    if (group.id) {
-      const response = await ClassesApi.update(group.id, formData)
+
+    const response = await (group.id ?
+        ClassesApi.update(group.id, formData) :
+        ClassesApi.create(formData)
+    )
+
+    if (response.status === 200) {
       const updatedClass = await response.json()
       setGroup(updatedClass)
       setClasses(classes.map(({id, title}) => group.id === id ? updatedClass : {id, title}))
-      setEditMode(!response.ok)
-      return
+      setEditMode(false)
     }
-    const response = await ClassesApi.create(formData)
 
-    if (response.ok) {
+    if (response.status === 201) {
       const {id, title} = await response.json()
-
       setClasses([...classes, {id, title}])
-
       await router.push(`/classes/${id}/`)
-    } else {
+    }
+
+    if (response.status === 400) {
       setErrors(await response.json());
     }
-
   }
 
   return (<Layout classes={groups} profile={profile}>
@@ -131,10 +130,12 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
       data={!!code && <CodeBlock code={code}/>}>
       <div>
         <form onSubmit={onFormSubmit}>
-          <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode} error={errors ? errors["title"] : null}  />
+          <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}
+                     error={errors["title"]}/>
           <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
-                     disabled={!editMode}  error={errors ? errors["teacherName"] : null} />
-          <SelectField label="Курс обучения" name="course" defaultValue={course} disabled={!editMode}  error={errors ? errors["course"] : null} >
+                     disabled={!editMode} error={errors["teacher_name"]}/>
+          <SelectField label="Курс обучения" name="course" defaultValue={course} disabled={!editMode}
+                       error={errors["course"]}>
             <option value="">
               Выберите курс
             </option>
@@ -146,30 +147,29 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
     </ContentBlock>
 
     {id ?
-        <ContentBlock title="Список класса" value="Количество:" data={students.length}>
-          <div className={styles.links}>
-            <a href={`/classes/${id}/ratings/`}>Открыть успеваемости учеников</a>
-          </div>
+      <ContentBlock title="Список класса" value="Количество:" data={students.length}>
+        <div className={styles.links}>
+          <a href={`/classes/${id}/ratings/`}>Открыть успеваемости учеников</a>
+        </div>
+        {
+          students.length ?
+            <Table
+              fields={
+                [
+                  ["№", 8, "numberWithDot"],
+                  ["Фамилия и имя", 40, "text"],
+                  ["E-mail", 26, "text"],
+                  ["Ср. усп.", 13, "rating"],
+                  ["Баллы", 13, "text"]
+                ]
+              }
+              data={generateStudentsData(students)}
+            />
+            : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
+        }
 
-          {
-            students.length ?
-                <Table
-                    fields={
-                      [
-                        ["№", 8, "numberWithDot"],
-                        ["Фамилия и имя", 40, "text"],
-                        ["E-mail", 26, "text"],
-                        ["Ср. усп.", 13, "rating"],
-                        ["Баллы", 13, "text"]
-                      ]
-                    }
-                    data={generateStudentsData(students)}
-                />
-                : "Пока ни один ученик не присоединился к группе. Сообщите ученикам код класса."
-          }
-
-        </ContentBlock>
-        : null
+      </ContentBlock>
+      : null
     }
   </Layout>);
 }
