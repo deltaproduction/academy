@@ -99,6 +99,14 @@ class TopicsApi_ extends ModelApi {
   }
 }
 
+export const runCodeApi = async (formData, options) => {
+  return await fetchApi('/api/run_code/', {
+    ...options,
+    method: 'POST',
+    body: formData
+  })
+}
+
 export const ClassesApi = new ModelApi('/api/groups/')
 
 export const CoursesApi = new ModelApi('/api/courses/')

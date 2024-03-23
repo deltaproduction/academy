@@ -146,7 +146,9 @@ export default function ClassCourse({profile, group, topic, topics}) {
           </div>
           <div className={styles.materials}>
             <h1 className={styles.blockTitle}>Материалы</h1>
-            <p>К этому уроку материалов нет.</p>
+            {topic.files.length ?
+              topic.files.map(({id, file}) => <a key={id} target="_blank" href={file}>{file.split('/').pop()}</a>) :
+              <p>К этому уроку материалов нет.</p>}
           </div>
         </div>
 

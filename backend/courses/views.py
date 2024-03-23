@@ -13,6 +13,7 @@ from courses.serializers import (
     TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer, TopicAttachmentSerializer
 )
 from users.serializers import StudentSerializer
+from utils.code_runner import run_code_with_timeout
 
 User = get_user_model()
 
@@ -207,3 +208,12 @@ def get_class_topic_ratings(request, class_id, topic_id):
         result.append(studentResult)
 
     return JsonResponse(camelize(result), safe=False)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def run_code(request):
+    success, output = run_code_with_timeout(
+        request.POST.get('code'), request.POST.get('stdin'), 2
+    )
+    return JsonResponse({"success": success, "output": output}, safe=False)
