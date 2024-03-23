@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 
 class Course(models.Model):
@@ -62,6 +61,15 @@ class Topic(models.Model):
         verbose_name_plural = 'Темы'
 
 
+def topic_attachment_path(instance, filename):
+    return f'topics/{instance.topic.id}/attachments/{filename}'
+
+
+class TopicAttachment(models.Model):
+    file = models.FileField('Файл', upload_to=topic_attachment_path)
+    topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE, related_name='files')
+
+
 class Task(models.Model):
     NO = 0
     YES = 1
@@ -90,7 +98,7 @@ class Task(models.Model):
                                                   default=NO)
 
     type = models.PositiveSmallIntegerField('Тип', choices=TYPE_CHOICES,
-                                                  default=SIMPLE)
+                                            default=SIMPLE)
 
     def __str__(self):
         return f'{self.title} {self.topic}'

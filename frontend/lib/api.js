@@ -81,11 +81,28 @@ class ModelApi {
   }
 }
 
+class TopicsApi_ extends ModelApi {
+  uploadFile = async (id, formData, options) => {
+    return await fetchApi(`${this.url}${id}/upload_file/`, {
+      ...options,
+      method: 'POST',
+      body: formData
+    })
+  }
+
+  deleteFile = async (fileId, formData, options) => {
+    return await fetchApi(`/api/topic_attachments/${fileId}/`, {
+      ...options,
+      method: 'DELETE'
+    })
+  }
+}
+
 export const ClassesApi = new ModelApi('/api/groups/')
 
 export const CoursesApi = new ModelApi('/api/courses/')
 
-export const TopicsApi = new ModelApi('/api/topics/')
+export const TopicsApi = new TopicsApi_('/api/topics/')
 
 export const TasksApi = new ModelApi('/api/tasks/')
 export const TestCasesApi = new ModelApi('/api/test_cases/')

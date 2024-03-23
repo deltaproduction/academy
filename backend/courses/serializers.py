@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers
 
-from courses.models import Course, Task, Topic, TestCase, Attempt
+from courses.models import Course, Task, Topic, TestCase, Attempt, TopicAttachment
 from users.serializers import StudentSerializer
 from utils.code_runner import run_code_with_timeout, TimeoutExpired
 
@@ -38,12 +39,23 @@ class TaskListSerializer(serializers.ModelSerializer):
         fields = ['id', 'topic', 'type', 'title', 'autoreview']
 
 
+class TopicAttachmentSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        validated_data['topic'] = get_object_or_404(Topic, pk=self.context['topic'])
+        return super().create(validated_data)
+
+    class Meta:
+        model = TopicAttachment
+        fields = ['id', 'file']
+
+
 class TopicSerializer(serializers.ModelSerializer):
     tasks = TaskListSerializer(many=True, read_only=True)
+    files = TopicAttachmentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Topic
-        fields = ['id', 'course', 'title', 'tasks', 'type', 'description', 'duration', 'state', 'start', 'end']
+        fields = ['id', 'course', 'files', 'title', 'tasks', 'type', 'description', 'duration', 'state', 'start', 'end']
         read_only_fields = ['id']
 
 

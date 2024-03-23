@@ -19,6 +19,6 @@ location /admin {
 location /static/ {
     alias /opt/academy/src/backend/collected_static/;
 }
-location /media {
-    proxy_pass http://backend;
+location /media/ {
+    alias /opt/academy/src/backend/media/;
 }

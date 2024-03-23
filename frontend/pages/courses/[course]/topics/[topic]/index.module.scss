@@ -55,3 +55,15 @@
     }
   }
 }
+
+.files {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}

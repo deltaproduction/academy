@@ -3,12 +3,12 @@ import { useState } from "react";
 import { CoursesApi, TopicsApi }                    from "@/lib/api";
 import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 
-import AppLayout                               from "@/layouts/AppLayout";
-import Table                                   from "@/components/Table";
-import { CharField, NumberField, SelectField } from "@/components/Fields";
-import { Sidebar, SidebarItem }                from "@/components/Sidebar";
-import ContentBlock                            from "@/components/ContentBlock";
-import SubmitButton                            from "@/components/SaveChangesField";
+import AppLayout                                          from "@/layouts/AppLayout";
+import Table                                              from "@/components/Table";
+import { CharField, FileField, NumberField, SelectField } from "@/components/Fields";
+import { Sidebar, SidebarItem }                           from "@/components/Sidebar";
+import ContentBlock from "@/components/ContentBlock";
+import SubmitButton from "@/components/SubmitButton";
 
 import styles from "./index.module.scss";
 
@@ -65,9 +65,10 @@ const Topic = ({
                  profile,
                  topics,
                  course,
-                 topic: {id, title, type: type_, description, duration, tasks, state} = {}
+                 topic: {id, title, type: type_, files: files_, description, duration, tasks, state} = {}
                }) => {
   const [editMode, setEditMode] = useState(!id);
+  const [files, setFiles] = useState(files_);
   const [errors, setErrors] = useState('');
   const [type, setType] = useState(type_);
 
@@ -103,6 +104,27 @@ const Topic = ({
     ))
   }
 
+  const onUploadFile = async (e) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const response = await TopicsApi.uploadFile(id, formData)
+    if (response.ok) {
+      setFiles(files.concat(await response.json()))
+      e.target.reset()
+    } else {
+      setErrors(await response.json())
+    }
+  }
+
+  const onDestroyFile = async (id) => {
+    const response = await TopicsApi.deleteFile(id)
+    if (response.ok) {
+      setFiles(files.filter(({id: id_}) => id !== id_))
+    } else {
+      setErrors(await response.json())
+    }
+  }
+
   return <Layout profile={profile} topics={topics} course={course}>
     <ContentBlock setEditMode={setEditMode} editMode={editMode} title={id ? "Информация об уроке" : "Новый урок"}>
       <form onSubmit={onTopicFormSubmit}>
@@ -121,32 +143,46 @@ const Topic = ({
           <option value="0">Закрыт</option>
           <option value="1">Опубликован</option>
         </SelectField>
+
         {!!editMode && <SubmitButton/>}
       </form>
     </ContentBlock>
+    {!!id && <ContentBlock title="Материалы" value="Количество:" data={files.length}>
+      <div className={styles.files}>
+        {files.map(({id, file}) => <div className={styles.fileRow} key={id}>
+          <a href={file} target="_blank">{file.split('/').pop()}</a>
+          <SubmitButton onClick={() => onDestroyFile(id)} text="Удалить"/>
+        </div>)}
+      </div>
 
-    {!!id && <>
-      <ContentBlock title="Список задач" value="Количество:" data={tasks.length}>
-        <div className={styles.links}>
-          <a href={`/courses/${course.id}/topics/${id}/tasks/`}>Перейти в раздел задач</a>
-          <a
-            href={`/courses/${course.id}/topics/${id}/tasks/new/`}>{tasks.length ? "Создать новую задачу" : "Создать первую задачу"}</a>
-        </div>
+      <form onSubmit={onUploadFile}>
+        <FileField label="Файл" name="file" defaultValue={title} error={errors["file"]}/>
+        <SubmitButton text="Добавить"/>
+      </form>
+    </ContentBlock>
+    }
 
-        {tasks.length ?
-          <Table
-            fields={
-              [
-                ["№", 7, "numberWithDot"],
-                ["Название задачи", 77, "link"],
-                ["Проверка", 16, "taskCheckType"]
-              ]
-            }
-            data={generateTasksData(tasks)}
-          /> : <p>Ещё не создано ни одной задачи.</p>
-        }
-      </ContentBlock>
-    </>}
+    {!!id && <ContentBlock title="Список задач" value="Количество:" data={tasks.length}>
+      <div className={styles.links}>
+        <a href={`/courses/${course.id}/topics/${id}/tasks/`}>Перейти в раздел задач</a>
+        <a
+          href={`/courses/${course.id}/topics/${id}/tasks/new/`}>{tasks.length ? "Создать новую задачу" : "Создать первую задачу"}</a>
+      </div>
+
+      {tasks.length ?
+        <Table
+          fields={
+            [
+              ["№", 7, "numberWithDot"],
+              ["Название задачи", 77, "link"],
+              ["Проверка", 16, "taskCheckType"]
+            ]
+          }
+          data={generateTasksData(tasks)}
+        /> : <p>Ещё не создано ни одной задачи.</p>
+      }
+    </ContentBlock>
+    }
   </Layout>
 }
 

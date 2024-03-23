@@ -1,15 +1,16 @@
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from djangorestframework_camel_case.util import camelize
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from classes.models import Group
-from courses.models import Course, Topic, Task, TestCase, Attempt
+from courses.models import Course, Topic, Task, TestCase, Attempt, TopicAttachment
 from courses.serializers import (
     CourseListSerializer, CourseDetailSerializer, TopicSerializer,
-    TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer
+    TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer, TopicAttachmentSerializer
 )
 from users.serializers import StudentSerializer
 
@@ -52,6 +53,13 @@ class TopicsViewSet(ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
 
+    @action(detail=True, methods=['POST'])
+    def upload_file(self, request, pk, *args, **kwargs):
+        serializer = TopicAttachmentSerializer(data=request.data, context=dict(topic=pk))
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return JsonResponse(serializer.data)
+
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -75,6 +83,10 @@ class TopicsViewSet(ModelViewSet):
             return queryset
 
         return queryset.none()
+
+
+class TopicAttachmentsViewSet(GenericViewSet, DestroyModelMixin):
+    queryset = TopicAttachment.objects.all()
 
 
 class TestCasesViewSet(ModelViewSet):

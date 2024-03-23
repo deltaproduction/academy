@@ -9,6 +9,7 @@ services:
       - ./.deploy/nginx/dev/nginx.conf:/etc/nginx/conf.d/academy.conf
       - ./.deploy/nginx/conf.d/nginx_server_extra:/etc/nginx/conf.d/nginx_server_extra
       - ./backend/collected_static:/opt/academy/src/backend/collected_static
+      - ./backend/media:/opt/academy/src/backend/media
     ports:
       - "80:80"
   mysql:

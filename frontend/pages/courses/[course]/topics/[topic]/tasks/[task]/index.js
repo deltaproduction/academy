@@ -6,8 +6,8 @@ import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 import AppLayout                             from "@/layouts/AppLayout";
 import { CharField, SelectField, TextField } from "@/components/Fields";
 import { Sidebar, SidebarItem }              from "@/components/Sidebar";
-import ContentBlock                          from "@/components/ContentBlock";
-import SubmitButton                          from "@/components/SaveChangesField";
+import ContentBlock from "@/components/ContentBlock";
+import SubmitButton from "components/SubmitButton";
 
 import styles from "./index.module.scss";
 

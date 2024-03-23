@@ -22,6 +22,10 @@ export function NumberField({label, name, error, ...props}) {
   return <CharField label={label} name={name} error={error} type="number" {...props}/>
 }
 
+export function FileField({label, name, error, ...props}) {
+  return <CharField label={label} name={name} error={error} type="file" {...props}/>
+}
+
 export function TextField({label, rows = 10, ...props}) {
   return <div className={styles.field}>
     <label>{label}:</label>

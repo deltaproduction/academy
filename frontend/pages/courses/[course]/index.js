@@ -10,7 +10,7 @@ import AppLayout                  from "@/layouts/AppLayout";
 import { CharField, SelectField } from "@/components/Fields";
 import { Sidebar, SidebarItem }   from "@/components/Sidebar";
 import ContentBlock from "@/components/ContentBlock";
-import SubmitButton from "@/components/SaveChangesField";
+import SubmitButton from "components/SubmitButton";
 
 
 import styles from "./index.module.scss";
