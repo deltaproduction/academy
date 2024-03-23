@@ -8,11 +8,18 @@ export const tableTypes = {
     "link": LinkHandler,
     "numberWithDot": NumberWithDotHandler,
     "visibility": VisibilityHandler,
-    "topicType": TopicTypeHandler
+    "topicType": TopicTypeHandler,
+    "taskCheckType": TaskCheckTypeHandler
 }
 
 function TextHandler(string) {
     return string;
+}
+
+function TaskCheckTypeHandler(type) {
+    let types = ["ручная", "автомат."];
+
+    return types[type];
 }
 
 function TopicTypeHandler(type) {

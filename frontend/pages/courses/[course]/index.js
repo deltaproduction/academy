@@ -69,6 +69,8 @@ const Course = (props) => {
 
   const [courses, setCourses] = useState(courses_)
 
+  const [errors, setErrors] = useState('')
+
   const onCourseFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -80,11 +82,16 @@ const Course = (props) => {
       return
     }
     const response = await CoursesApi.create(formData)
-    const {id, title} = await response.json()
 
-    setCourses([...courses, {id, title}])
+    if (response.ok) {
+      const {id, title} = await response.json()
 
-    await router.push(`/courses/${id}/`)
+      setCourses([...courses, {id, title}])
+
+      await router.push(`/courses/${id}/`)
+    } else {
+      setErrors(await response.json())
+    }
   }
 
   function generateTopicsData(topics) {
@@ -102,12 +109,13 @@ const Course = (props) => {
 
   return (
     <Layout courses={courses} profile={profile}>
-      <ContentBlock setEditMode={setEditMode} editMode={editMode} title="Информация о курcе">
+      <ContentBlock setEditMode={setEditMode} editMode={editMode} title={course.id ? "Информация о курcе" : "Новый курс"}>
         <div>
           <form onSubmit={onCourseFormSubmit}>
-            <CharField label="Название курса" name="title" defaultValue={course.title} disabled={!editMode}/>
+            <CharField label="Название курса" name="title" defaultValue={course.title} disabled={!editMode}
+                       error={errors ? errors["title"] : null} />
             <CharField label="Описание курса" name="description" defaultValue={course.description}
-                       disabled={!editMode}/>
+                       error={errors ? errors["description"] : null} disabled={!editMode}/>
 
             <SelectField label="Статус" name="state" defaultValue={course.state} disabled={!editMode}>
               <option value="0">Черновик</option>
@@ -119,6 +127,7 @@ const Course = (props) => {
       </ContentBlock>
 
       {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+      {course.id ?
 
       <ContentBlock title="Список уроков" value="Количество:" data={topics.length}>
 
@@ -127,7 +136,7 @@ const Course = (props) => {
           <a href={`/courses/${course.id}/topics/new/`}>Создать новый урок</a>
         </div>
 
-
+        {Object.keys(topics).length ?
         <Table
             fields={
               [
@@ -140,7 +149,11 @@ const Course = (props) => {
 
             data={generateTopicsData(topics)}
         />
+            : <p>В этом курсе пока нет уроков.</p>
+        }
       </ContentBlock>
+
+      : null}
     </Layout>);
 }
 

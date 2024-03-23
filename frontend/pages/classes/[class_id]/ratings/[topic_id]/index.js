@@ -4,6 +4,9 @@ import AppLayout                                                 from "@/layouts
 import styles                                                    from "@/pages/classes/[class_id]/index.module.scss";
 import { Sidebar, SidebarItem }                                  from "@/components/Sidebar";
 import ContentBlock from "@/components/ContentBlock";
+import {Fragment} from "react";
+import * as PropTypes from "prop-types";
+import {Clear, Done} from "@mui/icons-material";
 
 export async function getServerSideProps({query: {class_id, topic_id}, req, res}) {
   try {
@@ -37,12 +40,73 @@ export async function getServerSideProps({query: {class_id, topic_id}, req, res}
 }
 
 const statuses = {
-  0: 'Успешно',
-  1: 'Неверно',
+  0: <Done />,
+  1: <Clear />,
+  2: <Clear />,
+  3: <Clear />,
   4: 'На проверке'
 }
 
-export default function Index({profile, group, tasks, ratings, topics}) {
+const studentsRatings = [];
+
+function checkIfIdInTasks(id, tasks) {
+    for (let j = 0; j < tasks.length; j ++) {
+      if (parseInt(id) === tasks[j].id) {
+        return true
+      }
+    }
+    return false
+}
+
+function Ratings({rating, tasks}) {
+  let result = [];
+  let tasks_ids = Object.keys(rating).map((id) => parseInt(id));
+
+
+  for (let i = 0; i < tasks.length; i ++) {
+    let task = tasks[i];
+    let task_id = task.id;
+
+    result.push(<Fragment key={task_id}>
+      <div className={styles.item}>{tasks_ids.includes(task_id) ? statuses[rating[task_id].status] : null}</div>
+      <div className={styles.fieldsSeparator}></div>
+    </Fragment>)
+  }
+
+  return result;
+}
+
+function RelativeRating({rating, tasks}) {
+  let tasks_ids = Object.keys(rating).map((id) => parseInt(id));
+
+  let solvedTasksCount = 0;
+  let tasksCount = 0;
+
+  for (let i = 0; i < tasks.length; i ++) {
+    let task = tasks[i];
+    let task_id = task.id;
+    let type = task.type;
+
+    if ([0, 1].includes(type)) {
+      tasksCount += 1;
+
+      if (tasks_ids.includes(task_id)) {
+        let status = rating[task_id].status;
+
+        if (status === 0) {
+          solvedTasksCount += 1;
+        }
+      }
+    }
+
+  }
+
+  return Math.floor((solvedTasksCount / tasksCount) * 1000) / 10;
+}
+
+
+export default function Index({profile, group, tasks, topic, ratings, topics}) {
+  console.log(ratings)
   return <AppLayout profile={profile}>
     <div className={styles.container}>
       <Sidebar
@@ -56,142 +120,52 @@ export default function Index({profile, group, tasks, ratings, topics}) {
       </Sidebar>
       <div className={styles.content}>
 
-        <ContentBlock title="Успеваемости учеников" data={"Самостоятельная 1"}>
-          <div className={styles.ratingsWrapper}>
-          <div className={styles.ratingsContent}>
+        <ContentBlock title="Успеваемости учеников" data={topic.title}>
+          {tasks.length ?
 
-            <div className={styles.students}>
-              <div className={styles.studentsHeader}>Ученики</div>
+            <><div className={styles.ratingsWrapper}><div className={styles.ratingsContent}>
 
-              <div className={styles.studentsList}>
-                <div className={styles.item}>
-                  Иванов А.
+              <div className={styles.students}>
+                <div className={styles.studentsHeader}>
+                  <div>Ученик</div>
+                  <div>Успеваемость</div>
                 </div>
-                <div className={styles.item}>
-                  Артемий Л.
+
+                <div className={styles.studentsList}>
+
+
+                  {ratings.map((rating) => <div key={rating.student.id} className={styles.item}>
+                    <div>{rating.student.lastName} {rating.student.firstName[0]}.</div>
+                    <div><b>{<RelativeRating rating={rating.tasks} tasks={tasks}  />}%</b></div>
+                  </div>)}
+
                 </div>
-                <div className={styles.item}>
-                  Путин В.
+              </div>
+
+              <div className={styles.ratings}>
+                <div className={styles.ratingsHeader}>
+
+                  {tasks.map((task) => <Fragment key={task.id}>
+                    <div className={styles.taskField}>{task.title}</div>
+                    <div className={styles.fieldsSeparator}></div>
+                  </Fragment>)}
+
                 </div>
-                <div className={styles.item}>
-                  Михайлов С.
+
+                <div className={styles.ratingsList}>
+
+                  {ratings.map((rating) => <div key={rating.id} className={styles.row}>
+                    <Ratings rating={rating.tasks} tasks={tasks}/>
+                  </div>)}
+
                 </div>
               </div>
             </div>
+              </div></> :
+          <p>В этой теме ещё нет задач для оценки успеваемости.</p>}
 
-            <div className={styles.ratings}>
-              <div className={styles.ratingsHeader}>
-
-                <div className={styles.taskField}>Привет, мир!</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Сумасшедший бариста</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Треугольники</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Существует?</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Сложи, если сможешь</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Набережная</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Числатан</div>
-                <div className={styles.fieldsSeparator}></div>
-                <div className={styles.taskField}>Последний</div>
-
-              </div>
-
-              <div className={styles.ratingsList}>
-
-                <div className={styles.row}>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                </div>
-
-                <div className={styles.row}>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                </div>
-                <div className={styles.row}>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                </div>
-
-                <div className={styles.row}>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                  <div className={styles.fieldsSeparator}></div>
-                  <div className={styles.item}>10</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </div>
         </ContentBlock>
 
-        {/*<!--table>
-          <thead>
-          <tr>
-            <td>Ученик</td>
-            {tasks.map(task => <td key={task.id}>{task.title}</td>)}
-          </tr>
-          </thead>
-          <tbody>
-          {ratings.map((rating) => <tr key={rating.student.id}>
-            <td>{rating.student.firstName}</td>
-            {tasks.map(task => <td key={task.id}>{rating.tasks[task.id] ? statuses[rating.tasks[task.id].status] : '-'}</td>)}
-          </tr>)}
-          </tbody>
-        </table-->*/}
 
       </div>
     </div>

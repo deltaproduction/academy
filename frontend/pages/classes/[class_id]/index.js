@@ -55,7 +55,10 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
 
   const [classes, setClasses] = useState(groups);
 
+  const [errors, setErrors] = useState('')
+
   function Layout({children, classes, profile}) {
+
     return (
       <AppLayout profile={profile}>
         <div className={styles.container}>
@@ -73,6 +76,7 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
   }
 
   function CodeBlock(props) {
+
     let code = props.code;
 
     return (<div className={styles.classCodeBlock} onClick={() => navigator.clipboard.writeText(code)}>
@@ -106,11 +110,17 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
       return
     }
     const response = await ClassesApi.create(formData)
-    const {id, title} = await response.json()
 
-    setClasses([...classes, {id, title}])
+    if (response.ok) {
+      const {id, title} = await response.json()
 
-    await router.push(`/classes/${id}/`)
+      setClasses([...classes, {id, title}])
+
+      await router.push(`/classes/${id}/`)
+    } else {
+      setErrors(await response.json());
+    }
+
   }
 
   return (<Layout classes={groups} profile={profile}>
@@ -121,10 +131,10 @@ export default function ClassDetail({groups, profile, courses, group:group_ = {}
       data={!!code && <CodeBlock code={code}/>}>
       <div>
         <form onSubmit={onFormSubmit}>
-          <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode}/>
+          <CharField label="Название класса" name="title" defaultValue={title} disabled={!editMode} error={errors ? errors["title"] : null}  />
           <CharField label="Классный руководитель" name="teacher_name" defaultValue={teacherName}
-                     disabled={!editMode}/>
-          <SelectField label="Курс обучения" name="course" defaultValue={course} disabled={!editMode}>
+                     disabled={!editMode}  error={errors ? errors["teacherName"] : null} />
+          <SelectField label="Курс обучения" name="course" defaultValue={course} disabled={!editMode}  error={errors ? errors["course"] : null} >
             <option value="">
               Выберите курс
             </option>

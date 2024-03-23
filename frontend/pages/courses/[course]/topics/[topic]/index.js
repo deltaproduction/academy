@@ -65,6 +65,7 @@ const Layout = ({topics, profile, children, course}) => {
 
 const Topic = ({profile, topics, course, topic: {id, title, type, description, tasks, state} = {}}) => {
   const [editMode, setEditMode] = useState(!id);
+  const [errors, setErrors] = useState('');
 
   const onTopicFormSubmit = async (e) => {
     e.preventDefault()
@@ -86,6 +87,8 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
       } else {
         location.reload()
       }
+    } else {
+      setErrors(await response.json())
     }
   }
 
@@ -104,14 +107,14 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
   return <Layout profile={profile} topics={topics} course={course}>
     <ContentBlock setEditMode={setEditMode} editMode={editMode} title={id ? "Информация об уроке" : "Новый урок"}>
       <form onSubmit={onTopicFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode}/>
-        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode}/>
-        <SelectField label="Тип урока" name="type" defaultValue={type} disabled={!editMode}>
+        <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode} error={errors ? errors["title"] : null} />
+        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode} error={errors ? errors["description"] : null} />
+        <SelectField label="Тип урока" name="type" defaultValue={type} disabled={!editMode} >
           <option value="0">Учебная тема</option>
           <option value="1">Самостоятельная</option>
           <option value="2">Контрольная</option>
         </SelectField>
-        <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode}>
+        <SelectField label="Статус" name="state" defaultValue={state} disabled={!editMode} >
           <option value="0">Закрыт</option>
           <option value="1">Опубликован</option>
         </SelectField>
@@ -132,9 +135,9 @@ const Topic = ({profile, topics, course, topic: {id, title, type, description, t
             <Table
                 fields={
                   [
-                    ["№", 8, "numberWithDot"],
-                    ["Название задачи", 66, "link"],
-                    ["Проверка", 16, "text"]
+                    ["№", 7, "numberWithDot"],
+                    ["Название задачи", 77, "link"],
+                    ["Проверка", 16, "taskCheckType"]
                   ]
                 }
 

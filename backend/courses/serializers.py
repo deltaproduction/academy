@@ -35,7 +35,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class TaskListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'topic', 'title', 'autoreview']
+        fields = ['id', 'topic', 'type', 'title', 'autoreview']
 
 
 class TopicSerializer(serializers.ModelSerializer):

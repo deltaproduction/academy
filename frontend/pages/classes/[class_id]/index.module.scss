@@ -159,6 +159,7 @@
 
   .studentsHeader {
     border-radius: 10px 0 0 0;
+    justify-content: space-between;
   }
 }
 
@@ -185,6 +186,9 @@
 
 
   .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 12px 18px;
     border-radius: 10px 0 0 10px;
     background: white;
@@ -257,3 +261,105 @@
   flex-shrink: 0;
 }
 
+.subtitle {
+  font-weight: 300;
+  font-size: 1.3em;
+}
+
+.tasksWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+
+  a:first-of-type .taskWrapper {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top: 1px solid #ececec;
+  }
+
+  a:last-of-type .taskWrapper {
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+
+  .taskWrapper {
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    flex-flow: row wrap;
+    background: #ffffff;
+    padding: 15px 22px;
+    gap: 15px;
+    border-left: 1px solid #ececec;
+    border-right: 1px solid #ececec;
+    border-bottom: 1px solid #ececec;
+
+
+    .number {
+      font-size: 1.2em;
+      font-weight: 400;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .taskTitle {
+        font-size: 1.2em;
+      }
+    }
+
+    .status {
+      margin-left: auto;
+
+      &.green svg {
+        fill: green;
+      }
+
+      &.red svg {
+        fill: red;
+      }
+
+      &.grey svg {
+        fill: grey;
+      }
+
+    }
+  }
+}
+
+.topicInfo {
+  margin-top: 12px;
+
+  h1 {
+    font-weight: 500;
+  }
+
+  .description {
+
+  }
+}
+
+.topicContent {
+  display: flex;
+  gap: 70px;
+
+  .tasks {
+    width: 60%;
+  }
+
+  .materials {
+    width: 35%;
+  }
+}
+
+.blockTitle {
+  font-size: 1.7em;
+  font-weight: 500;
+}
+
+.link {
+  text-decoration: none;
+  color: black;
+}
