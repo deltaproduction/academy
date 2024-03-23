@@ -26,10 +26,10 @@ export function FileField({label, name, error, ...props}) {
   return <CharField label={label} name={name} error={error} type="file" {...props}/>
 }
 
-export function TextField({label, rows = 10, ...props}) {
+export function TextField({label, rows = 5, cols= 5, ...props}) {
   return <div className={styles.field}>
     <label>{label}:</label>
-    <textarea rows={rows} className={styles.text} {...props}/>
+    <textarea rows={rows} cols={cols} className={styles.text} {...props}/>
   </div>
 }
 

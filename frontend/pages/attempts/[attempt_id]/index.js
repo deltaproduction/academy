@@ -2,7 +2,7 @@ import { AttemptsApi }                               from "@/lib/api";
 import { formatDateTime, getTeacherServerSideProps } from "@/lib/utils";
 import AppLayout                                     from "@/layouts/AppLayout";
 import { SelectField } from "@/components/Fields";
-import SubmitButton    from "components/SubmitButton";
+import SubmitButton    from "@/components/SubmitButton";
 import { useState }    from "react";
 
 

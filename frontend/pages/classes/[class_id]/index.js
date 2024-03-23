@@ -8,7 +8,7 @@ import AppLayout from "@/layouts/AppLayout";
 
 import { Sidebar, SidebarItem }   from "@/components/Sidebar";
 import ContentBlock from "@/components/ContentBlock";
-import SubmitButton from "components/SubmitButton";
+import SubmitButton from "@/components/SubmitButton";
 import Table        from "@/components/Table";
 import { CharField, SelectField } from "@/components/Fields";
 

@@ -4,7 +4,7 @@ import AppLayout                     from "@/layouts/AppLayout";
 import { CharField }                 from "@/components/Fields";
 
 import styles       from './index.module.scss'
-import SubmitButton from "components/SubmitButton";
+import SubmitButton from "@/components/SubmitButton";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {

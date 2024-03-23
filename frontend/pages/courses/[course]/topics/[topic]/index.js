@@ -4,11 +4,11 @@ import { CoursesApi, TopicsApi }                    from "@/lib/api";
 import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 
 import AppLayout                                          from "@/layouts/AppLayout";
-import Table                                              from "@/components/Table";
-import { CharField, FileField, NumberField, SelectField } from "@/components/Fields";
-import { Sidebar, SidebarItem }                           from "@/components/Sidebar";
-import ContentBlock from "@/components/ContentBlock";
-import SubmitButton from "@/components/SubmitButton";
+import Table                                                         from "@/components/Table";
+import { CharField, FileField, NumberField, SelectField, TextField } from "@/components/Fields";
+import { Sidebar, SidebarItem }                                      from "@/components/Sidebar";
+import ContentBlock                                       from "@/components/ContentBlock";
+import SubmitButton                                       from "@/components/SubmitButton";
 
 import styles from "./index.module.scss";
 
@@ -65,7 +65,7 @@ const Topic = ({
                  profile,
                  topics,
                  course,
-                 topic: {id, title, type: type_, files: files_, description, duration, tasks, state} = {}
+                 topic: {id, title, type: type_, files: files_ = [], description, duration, tasks, state} = {}
                }) => {
   const [editMode, setEditMode] = useState(!id);
   const [files, setFiles] = useState(files_);
@@ -129,7 +129,7 @@ const Topic = ({
     <ContentBlock setEditMode={setEditMode} editMode={editMode} title={id ? "Информация об уроке" : "Новый урок"}>
       <form onSubmit={onTopicFormSubmit}>
         <CharField label="Заголовок" name="title" defaultValue={title} disabled={!editMode} error={errors["title"]}/>
-        <CharField label="Описание" name="description" defaultValue={description} disabled={!editMode}
+        <TextField label="Описание" name="description" defaultValue={description} disabled={!editMode}
                    error={errors["description"]}/>
         <SelectField label="Тип урока" name="type" value={type} disabled={!editMode}
                      onChange={({target: {value}}) => setType(parseInt(value))}>
@@ -147,20 +147,24 @@ const Topic = ({
         {!!editMode && <SubmitButton/>}
       </form>
     </ContentBlock>
-    {!!id && <ContentBlock title="Материалы" value="Количество:" data={files.length}>
+    <ContentBlock title="Материалы" value="Количество:" data={files.length}>
       <div className={styles.files}>
         {files.map(({id, file}) => <div className={styles.fileRow} key={id}>
           <a href={file} target="_blank">{file.split('/').pop()}</a>
           <SubmitButton onClick={() => onDestroyFile(id)} text="Удалить"/>
         </div>)}
       </div>
-
-      <form onSubmit={onUploadFile}>
-        <FileField label="Файл" name="file" defaultValue={title} error={errors["file"]}/>
-        <SubmitButton text="Добавить"/>
-      </form>
+      {!id ?
+        <div>
+          Сохраните изменения чтобы добавить материалы к уроку
+        </div> :
+        <form onSubmit={onUploadFile}>
+          <FileField label="Файл" name="file" defaultValue={title} error={errors["file"]}/>
+          <SubmitButton text="Добавить"/>
+        </form>
+      }
     </ContentBlock>
-    }
+
 
     {!!id && <ContentBlock title="Список задач" value="Количество:" data={tasks.length}>
       <div className={styles.links}>

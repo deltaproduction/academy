@@ -5,8 +5,9 @@
   margin: 10px 0 10px 0;
   gap: 32px;
 
-  input {
+  input, textarea {
     width: 70%;
+    max-width: 600px;
   }
 
   select {

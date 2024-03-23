@@ -6,8 +6,8 @@ import { getTeacherServerSideProps, isPlainObject } from "@/lib/utils";
 import AppLayout                             from "@/layouts/AppLayout";
 import { CharField, SelectField, TextField } from "@/components/Fields";
 import { Sidebar, SidebarItem }              from "@/components/Sidebar";
-import ContentBlock from "@/components/ContentBlock";
-import SubmitButton from "components/SubmitButton";
+import ContentBlock                          from "@/components/ContentBlock";
+import SubmitButton                          from "@/components/SubmitButton";
 
 import styles from "./index.module.scss";
 
@@ -135,12 +135,12 @@ const Task = ({
   return <Layout profile={profile} topic={topic} tasks={tasks}>
     <ContentBlock title={id ? "Информация о задаче" : "Новая задача"}>
       <form onSubmit={onTaskFormSubmit}>
-        <CharField label="Заголовок" name="title" defaultValue={title} error={errors ? errors["title"] : null}/>
-        <CharField label="Описание" name="text" defaultValue={text} error={errors ? errors["text"] : null}/>
+        <CharField label="Заголовок" name="title" defaultValue={title} error={errors["title"]}/>
+        <TextField label="Условие задачи" name="text" defaultValue={text} error={errors["text"]}/>
         <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
-                   error={errors ? errors["formatInText"] : null}/>
+                   error={errors["format_in_text"]}/>
         <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
-                   error={errors ? errors["formatOutText"] : null}/>
+                   error={errors["format_out_text"]}/>
         <SelectField label="Способ проверки" name="autoreview"
                      onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
           <option value="0">Ручная проверка</option>
