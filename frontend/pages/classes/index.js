@@ -1,10 +1,11 @@
-import { ClassesApi }                from "@/lib/api";
-import { getProfileServerSideProps } from "@/lib/utils";
-import AppLayout                     from "@/layouts/AppLayout";
-import { CharField }                 from "@/components/Fields";
+import {ClassesApi} from "@/lib/api";
+import {getProfileServerSideProps} from "@/lib/utils";
+import AppLayout from "@/layouts/AppLayout";
+import {CharField} from "@/components/Fields";
 
-import styles       from './index.module.scss'
+import styles from './index.module.scss'
 import SubmitButton from "@/components/SubmitButton";
+import {useState} from "react";
 
 export async function getServerSideProps({query: {id}, req, res}) {
   try {
@@ -30,7 +31,35 @@ export async function getServerSideProps({query: {id}, req, res}) {
   }
 }
 
+function CodeBlock({code}) {
+  return (<div className={styles.classCodeBlock} onClick={() => navigator.clipboard.writeText(code)}>
+    {code.toString().split('').map((letter, i) => (
+        <div key={i} className={styles.classCodeBlockDigit}>{letter}</div>
+    ))}
+  </div>);
+}
+
+function ClassCard({id, title, code}) {
+  return <a href={`/classes/${id}/`} key={id} className={styles.classCardLink}>
+    <div className={styles.classCardWrapper}>
+      <div className={styles.leftSide}>
+        <h1>{title}</h1>
+        <div>
+          <p>Учитель: Самедова З. Д.</p>
+          <p>Кл.рук.: Самедова З. Д.</p>
+        </div>
+      </div>
+      <div className={styles.rightSide}>
+        <CodeBlock code={code}/>
+        <p>Рейтинг: 12.4 из 50</p>
+      </div>
+    </div>
+  </a>;
+}
+
 function StudentClasses({profile, groups}) {
+  const [errors, setErrors] = useState('')
+
   const onAddClassFormSubmit = async (e) => {
     e.preventDefault()
     const formData = new FormData(e.target)
@@ -41,18 +70,20 @@ function StudentClasses({profile, groups}) {
     })
     if (response.ok) {
       location.reload();
+    } else {
+      setErrors(await response.json())
     }
   }
 
   return <AppLayout profile={profile}>
     <div className="container">
       <form className={styles.addClassForm} onSubmit={onAddClassFormSubmit}>
-        <CharField label="Код класса" name="group" type="number"/>
+        <CharField label="Код класса" name="group" type="number" error={errors ? errors["group"] : null}/>
         <SubmitButton text="Добавить"/>
       </form>
-      {groups.map(({id, title, code}) => <div key={id}>
-        <a href={`/classes/${id}/`}>{title}</a> {code}
-      </div>)}
+      <div className={styles.classCards}>
+        {groups.map(({id, title, code}) => <ClassCard key={id} id={id} title={title} code={code} />)}
+      </div>
     </div>
   </AppLayout>
 }

@@ -5,6 +5,7 @@ import { SelectField } from "@/components/Fields";
 import SubmitButton    from "@/components/SubmitButton";
 import { useState }    from "react";
 
+import styles                                        from "./index.module.scss";
 
 export async function getServerSideProps({query: {attempt_id}, req, res}) {
   try {
@@ -36,17 +37,30 @@ export default function Page({profile, attempt: attempt_}) {
 
   return <AppLayout profile={profile}>
     <div className="container">
-      <form onSubmit={onStatusSubmit}>
-        <SelectField label="Статус" name="status" defaultValue={status}>
-          <option value="0">Успешно</option>
-          <option value="1">Неверно</option>
-          <option value="4">На проверке</option>
-        </SelectField>
-        <SubmitButton/>
-      </form>
-      {lastName} {firstName}
-      {formatDateTime(createdAt)}
-      <pre>{code}</pre>
+      <div className={styles.attemptPage}>
+        <div className={styles.header}>
+          <h1>{attempt.task.title}</h1>
+          <p><b>{lastName} {firstName}</b> от <span>{formatDateTime(createdAt)}</span></p>
+        </div>
+        <hr/>
+
+        <p>Решение:</p>
+        <pre>{code}</pre>
+
+        <hr/>
+
+        <div className={styles.setVerdict}>
+          <form onSubmit={onStatusSubmit}>
+            <SelectField label="Вердикт" name="status" defaultValue={status}>
+              <option value="0">Успешно</option>
+              <option value="1">Неверно</option>
+              <option value="4">На проверке</option>
+            </SelectField>
+            <SubmitButton/>
+          </form>
+        </div>
+
+      </div>
     </div>
   </AppLayout>
 }

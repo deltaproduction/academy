@@ -1,26 +1,23 @@
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse
 from djangorestframework_camel_case.util import camelize
-from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 
 from classes.models import Group
-from courses.models import Course, Topic, Task, TestCase, Attempt, TopicAttachment, StudentTopic
+from courses.models import Course, Topic, Task, TestCase, Attempt
 from courses.serializers import (
     CourseListSerializer, CourseDetailSerializer, TopicSerializer,
-    TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer, TopicAttachmentSerializer
+    TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer
 )
 from users.serializers import StudentSerializer
-from utils.code_runner import run_code_with_timeout
 
 User = get_user_model()
 
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -54,20 +51,6 @@ class CourseViewSet(ModelViewSet):
 class TopicsViewSet(ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
-    permission_classes = [IsAuthenticated]
-
-    @action(detail=True, methods=['POST'])
-    def upload_file(self, request, pk, *args, **kwargs):
-        serializer = TopicAttachmentSerializer(data=request.data, context=dict(topic=pk))
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return JsonResponse(serializer.data)
-
-    @action(detail=True, methods=['POST'])
-    def start_task(self, request, pk, *args, **kwargs):
-        student = request.user.student
-        student_topic, created = StudentTopic.objects.get_or_create(topic_id=pk, student=student)
-        return JsonResponse(dict(started_at=student_topic.started_at), status=201 if created else 200)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -94,15 +77,9 @@ class TopicsViewSet(ModelViewSet):
         return queryset.none()
 
 
-class TopicAttachmentsViewSet(GenericViewSet, DestroyModelMixin):
-    queryset = TopicAttachment.objects.all()
-    permission_classes = [IsAuthenticated]
-
-
 class TestCasesViewSet(ModelViewSet):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -125,7 +102,6 @@ class TestCasesViewSet(ModelViewSet):
 class TasksViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -160,7 +136,6 @@ class TasksViewSet(ModelViewSet):
 class AttemptsViewSet(ModelViewSet):
     queryset = Attempt.objects.all()
     serializer_class = AttemptSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -172,6 +147,7 @@ class AttemptsViewSet(ModelViewSet):
 
         task = self.request.query_params.get('task')
         topic = self.request.query_params.get('topic')
+        only_manual = self.request.query_params.get('only_manual')
 
         if task:
             queryset = queryset.filter(task_id=task)
@@ -180,10 +156,15 @@ class AttemptsViewSet(ModelViewSet):
             queryset = queryset.filter(task__topic=topic)
 
         try:
-            queryset = queryset.filter(
-                task__topic__course__author=self.request.user.teacher,
-                task__autoreview=Task.NO
-            )
+            if only_manual:
+                queryset = queryset.filter(
+                    task__topic__course__author=self.request.user.teacher,
+                    task__autoreview=Task.NO
+                )
+            else:
+                queryset = queryset.filter(
+                    task__topic__course__author=self.request.user.teacher
+                )
         except User.teacher.RelatedObjectDoesNotExist:
             pass
         else:
@@ -220,12 +201,3 @@ def get_class_topic_ratings(request, class_id, topic_id):
         result.append(studentResult)
 
     return JsonResponse(camelize(result), safe=False)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def run_code(request):
-    success, output = run_code_with_timeout(
-        request.POST.get('code'), request.POST.get('stdin'), 2
-    )
-    return JsonResponse({"success": success, "output": output}, safe=False)

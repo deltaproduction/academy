@@ -225,12 +225,23 @@
     font-size: .9em;
 
     .item {
+      a {
+        color: black;
+
+        &:hover {
+          color: blue;
+        }
+
+        &:active {
+          opacity: .4;
+        }
+      }
+
       width: 120px;
       flex-shrink: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: pointer;
 
       &:hover {
         color: blue;
@@ -311,6 +322,9 @@
     }
 
     .status {
+      display: flex;
+      height: 30px;
+      align-items: center;
       margin-left: auto;
 
       &.green svg {
@@ -369,4 +383,9 @@
 .link {
   text-decoration: none;
   color: black;
+
+  &Disabled .taskWrapper{
+    background: #e6e6e6;
+    cursor: not-allowed;
+  }
 }

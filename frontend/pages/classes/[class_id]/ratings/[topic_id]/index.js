@@ -47,28 +47,21 @@ const statuses = {
   4: 'На проверке'
 }
 
-const studentsRatings = [];
-
-function checkIfIdInTasks(id, tasks) {
-    for (let j = 0; j < tasks.length; j ++) {
-      if (parseInt(id) === tasks[j].id) {
-        return true
-      }
-    }
-    return false
-}
-
-function Ratings({rating, tasks}) {
+function Status({rating, tasks}) {
   let result = [];
   let tasks_ids = Object.keys(rating).map((id) => parseInt(id));
-
 
   for (let i = 0; i < tasks.length; i ++) {
     let task = tasks[i];
     let task_id = task.id;
+    let attempt = rating[task_id];
 
     result.push(<Fragment key={task_id}>
-      <div className={styles.item}>{tasks_ids.includes(task_id) ? statuses[rating[task_id].status] : null}</div>
+      <div className={styles.item}>
+        {tasks_ids.includes(task_id) ?
+            <a href={`/attempts/${attempt.id}`}>{statuses[attempt.status]}</a>
+            : null}
+      </div>
       <div className={styles.fieldsSeparator}></div>
     </Fragment>)
   }
@@ -155,7 +148,7 @@ export default function Index({profile, group, tasks, topic, ratings, topics}) {
                 <div className={styles.ratingsList}>
 
                   {ratings.map((rating) => <div key={rating.id} className={styles.row}>
-                    <Ratings rating={rating.tasks} tasks={tasks}/>
+                    <Status rating={rating.tasks} tasks={tasks}/>
                   </div>)}
 
                 </div>

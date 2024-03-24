@@ -66,7 +66,7 @@ class SignInSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = authenticate(self.context.get('request'), **attrs)
         if not user:
-            raise serializers.ValidationError({'password': 'Неверный логин или пароль'})
+            raise serializers.ValidationError({'email': 'Неверный логин или пароль', 'password': 'Неверный логин или пароль'})
         self.user = user
         return attrs
 
