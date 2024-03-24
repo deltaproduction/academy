@@ -1,10 +1,12 @@
-import { ClassesApi, CoursesApi, TopicsApi }  from "@/lib/api";
-import { getStudentServerSideProps }          from "@/lib/utils";
-import AppLayout                              from "@/layouts/AppLayout";
-import styles                                 from "@/pages/classes/[class_id]/index.module.scss";
-import { Sidebar, SidebarItem }               from "@/components/Sidebar";
-import { CheckCircle, Clear, Done, Schedule } from "@mui/icons-material";
-import classNames                             from "classnames";
+import classNames                    from "classnames";
+import { Clear, Done, Schedule }     from "@mui/icons-material";
+
+import { ClassesApi, TopicsApi }     from "@/lib/api";
+import { getStudentServerSideProps } from "@/lib/utils";
+import AppLayout                     from "@/layouts/AppLayout";
+import { Sidebar, SidebarItem }      from "@/components/Sidebar";
+
+import styles                        from "./index.module.scss";
 
 export async function getServerSideProps({query: {class_id, topic_id}, req, res}) {
   try {
@@ -51,7 +53,7 @@ export default function ClassCourse({profile, group, topic, topics}) {
   let homeTasks = topic.tasks.filter((task) => task.type === 1);
   let hardTasks = topic.tasks.filter((task) => task.type === 2);
 
-  function getSimpleTasks(start) {
+  function getSimpleTasks() {
     let result = [];
 
     for (let i = 0; i < simpleTasks.length; i++) {
@@ -66,7 +68,7 @@ export default function ClassCourse({profile, group, topic, topics}) {
     return result;
   }
 
-  function getHomeTasks(start) {
+  function getHomeTasks() {
     let result = [];
 
     for (let i = 0; i < homeTasks.length; i++) {
@@ -81,7 +83,7 @@ export default function ClassCourse({profile, group, topic, topics}) {
     return result;
   }
 
-  function getHardTasks(start) {
+  function getHardTasks() {
     let result = [];
 
     for (let i = 0; i < hardTasks.length; i++) {
