@@ -351,6 +351,13 @@
 
   .materials {
     width: 35%;
+
+    &List {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
   }
 }
 

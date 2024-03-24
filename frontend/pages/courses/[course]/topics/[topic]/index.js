@@ -150,7 +150,7 @@ const Topic = ({
     <ContentBlock title="Материалы" value="Количество:" data={files.length}>
       <div className={styles.files}>
         {files.map(({id, file}) => <div className={styles.fileRow} key={id}>
-          <a href={file} target="_blank">{file.split('/').pop()}</a>
+          <a href={file} target="_blank">{decodeURI(file.split('/').pop())}</a>
           <SubmitButton onClick={() => onDestroyFile(id)} text="Удалить"/>
         </div>)}
       </div>
