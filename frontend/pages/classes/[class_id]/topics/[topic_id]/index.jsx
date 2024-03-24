@@ -2,10 +2,10 @@ import _                         from "lodash";
 import classNames                from "classnames";
 import { Clear, Done, Schedule } from "@mui/icons-material";
 
-import { ClassesApi, TopicsApi }     from "@/lib/api";
-import { getStudentServerSideProps } from "@/lib/utils";
-import AppLayout                     from "@/layouts/AppLayout";
-import { Sidebar, SidebarItem }      from "@/components/Sidebar";
+import { ClassesApi, TopicsApi }                     from "@/lib/api";
+import { formatDateTime, getStudentServerSideProps } from "@/lib/utils";
+import AppLayout                                     from "@/layouts/AppLayout";
+import { Sidebar, SidebarItem }                      from "@/components/Sidebar";
 
 import styles from "./index.module.scss";
 
@@ -53,6 +53,14 @@ const taskTypes = {
 export default function ClassCourse({profile, group, topic, topics}) {
   const groupedTasks = _.groupBy(topic.tasks, 'type')
 
+  const onStartSubmit = async e => {
+    e.preventDefault()
+    const response = await TopicsApi.startTask(topic.id)
+    if (response.ok) {
+      location.reload()
+    }
+  }
+
   return <AppLayout profile={profile}>
     <div className={styles.container}>
       <Sidebar
@@ -69,6 +77,12 @@ export default function ClassCourse({profile, group, topic, topics}) {
           <h1>{topic.title}</h1>
           <p>{topic.description}</p>
         </div>
+        {topic.type === 2 && <div>
+          {topic.startedAt ?
+            <div>Начато: {formatDateTime(topic.startedAt)}</div> :
+            <button onClick={onStartSubmit}>Начать задание</button>}
+
+        </div>}
 
         <div className={styles.topicContent}>
           <div className={styles.tasks}>
@@ -79,8 +93,8 @@ export default function ClassCourse({profile, group, topic, topics}) {
                 <h2 className={styles.subtitle}>{taskTypes[group] || 'Задачи'}</h2>
                 {groupedTasks[group].map((task) => {
                   taskNumber++
-                  return <a href={`/classes/${group.id}/topics/${topic.id}/tasks/${task.id}`} key={task.id}
-                            className={styles.link}>
+                  const props = topic.startedAt ? {href: `/classes/${group.id}/topics/${topic.id}/tasks/${task.id}`} : {}
+                  return <a {...props} key={task.id} className={classNames(styles.link, {[styles.linkDisabled]: !topic.startedAt})}>
                     <Task number={taskNumber} key={task.id} title={task.title}/>
                   </a>
                 })}

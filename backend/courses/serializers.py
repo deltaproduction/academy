@@ -3,7 +3,8 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers
 
-from courses.models import Course, Task, Topic, TestCase, Attempt, TopicAttachment
+from courses.models import Course, Task, Topic, TestCase, Attempt, TopicAttachment, StudentTopic
+from users.models import Student
 from users.serializers import StudentSerializer
 from utils.code_runner import run_code_with_timeout, TimeoutExpired
 
@@ -52,11 +53,24 @@ class TopicAttachmentSerializer(serializers.ModelSerializer):
 class TopicSerializer(serializers.ModelSerializer):
     tasks = TaskListSerializer(many=True, read_only=True)
     files = TopicAttachmentSerializer(many=True, read_only=True)
+    started_at = serializers.SerializerMethodField(method_name='get_started_at')
+
+    def get_fields(self):
+        fields = super().get_fields()
+        student = Student.objects.filter(user=self.context['request'].user).first()
+        if not student:
+            del fields['started_at']
+        return fields
+
+    def get_started_at(self, topic):
+        student_topic = StudentTopic.objects.filter(student__user=self.context['request'].user, topic=topic).first()
+        return student_topic and student_topic.started_at
 
     class Meta:
         model = Topic
-        fields = ['id', 'course', 'files', 'title', 'tasks', 'type', 'description', 'duration', 'state', 'start', 'end']
-        read_only_fields = ['id']
+        fields = ['id', 'course', 'files', 'started_at', 'title', 'tasks', 'type', 'description', 'duration', 'state',
+                  'start', 'end']
+        read_only_fields = ['id', 'started_at']
 
 
 class TestCaseSerializer(serializers.ModelSerializer):

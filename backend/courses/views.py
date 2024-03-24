@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from classes.models import Group
-from courses.models import Course, Topic, Task, TestCase, Attempt, TopicAttachment
+from courses.models import Course, Topic, Task, TestCase, Attempt, TopicAttachment, StudentTopic
 from courses.serializers import (
     CourseListSerializer, CourseDetailSerializer, TopicSerializer,
     TaskSerializer, TaskListSerializer, TestCaseSerializer, AttemptSerializer, TopicAttachmentSerializer
@@ -20,6 +20,7 @@ User = get_user_model()
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -53,6 +54,7 @@ class CourseViewSet(ModelViewSet):
 class TopicsViewSet(ModelViewSet):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['POST'])
     def upload_file(self, request, pk, *args, **kwargs):
@@ -60,6 +62,12 @@ class TopicsViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return JsonResponse(serializer.data)
+
+    @action(detail=True, methods=['POST'])
+    def start_task(self, request, pk, *args, **kwargs):
+        student = request.user.student
+        student_topic, created = StudentTopic.objects.get_or_create(topic_id=pk, student=student)
+        return JsonResponse(dict(started_at=student_topic.started_at), status=201 if created else 200)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -88,11 +96,13 @@ class TopicsViewSet(ModelViewSet):
 
 class TopicAttachmentsViewSet(GenericViewSet, DestroyModelMixin):
     queryset = TopicAttachment.objects.all()
+    permission_classes = [IsAuthenticated]
 
 
 class TestCasesViewSet(ModelViewSet):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -115,6 +125,7 @@ class TestCasesViewSet(ModelViewSet):
 class TasksViewSet(ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -149,6 +160,7 @@ class TasksViewSet(ModelViewSet):
 class AttemptsViewSet(ModelViewSet):
     queryset = Attempt.objects.all()
     serializer_class = AttemptSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()

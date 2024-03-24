@@ -61,6 +61,12 @@ class Topic(models.Model):
         verbose_name_plural = 'Темы'
 
 
+class StudentTopic(models.Model):
+    topic = models.ForeignKey('courses.Topic', on_delete=models.CASCADE)
+    student = models.ForeignKey('users.Student', on_delete=models.CASCADE)
+    started_at = models.DateTimeField(auto_now_add=True)
+
+
 def topic_attachment_path(instance, filename):
     return f'topics/{instance.topic.id}/attachments/{filename}'
 

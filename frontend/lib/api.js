@@ -82,7 +82,14 @@ class ModelApi {
   }
 }
 
-class TopicsApi_ extends ModelApi {
+class TopicsApi_ extends ModelApi
+{
+  startTask = async (id, options) => {
+    return await fetchApi(`${this.url}${id}/start_task/`, {
+      ...options,
+      method: 'POST'
+    })
+  }
   uploadFile = async (id, formData, options) => {
     return await fetchApi(`${this.url}${id}/upload_file/`, {
       ...options,

@@ -165,7 +165,6 @@ const Topic = ({
       }
     </ContentBlock>
 
-
     {!!id && <ContentBlock title="Список задач" value="Количество:" data={tasks.length}>
       <div className={styles.links}>
         <a href={`/courses/${course.id}/topics/${id}/tasks/`}>Перейти в раздел задач</a>
