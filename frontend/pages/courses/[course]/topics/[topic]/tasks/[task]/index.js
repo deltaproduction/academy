@@ -79,7 +79,7 @@ const Task = ({
                 tasks,
                 topic,
                 testCases: testCases_,
-                task: {id, title, text, formatInText, formatOutText, autoreview: autoreview_} = {}
+                task: {id, title, text, formatInText,type, formatOutText, autoreview: autoreview_} = {}
               }) => {
 
   const [testCases, setTestCases] = useState(testCases_)
@@ -102,9 +102,9 @@ const Task = ({
     if (response.ok) {
       const task = await response.json()
       if (id) {
-        location.href = `/courses/${topic.course}/topics/${topic.id}/tasks/${task.id}`
-      } else {
         location.reload()
+      } else {
+        location.href = `/courses/${topic.course}/topics/${topic.id}/tasks/${task.id}`
       }
     } else {
       setErrors(await response.json())
@@ -145,6 +145,11 @@ const Task = ({
                      onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>
           <option value="0">Ручная проверка</option>
           <option value="1">Автоматическая проверка</option>
+        </SelectField>
+        <SelectField label="Тип задачи" name="type" defaultValue={type}>
+          <option value="0">Классная</option>
+          <option value="1">Домашняя</option>
+          <option value="2">Дополнительная</option>
         </SelectField>
         <SubmitButton/>
       </form>

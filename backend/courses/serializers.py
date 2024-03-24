@@ -30,7 +30,7 @@ class CourseDetailSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id', 'topic', 'title', 'text', 'format_in_text', 'format_out_text', 'autoreview']
+        fields = ['id', 'topic', 'title', 'type', 'text', 'format_in_text', 'format_out_text', 'autoreview']
 
 
 class TaskListSerializer(serializers.ModelSerializer):
