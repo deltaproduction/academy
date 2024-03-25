@@ -180,11 +180,13 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
           <div className={styles.materials}>
             <h1 className={styles.blockTitle}>Материалы</h1>
             <div className={styles.materialsList}>
-              {topic.files.length ?
-                  topic.files.map(({id, file}) => <div key={id}>
-                    <a target="_blank" href={file}>{decodeURI(file.split('/').pop())}</a>
-                  </div>) :
-                  <p>К этому уроку материалов нет.</p>}
+              {topic.files.length ? <>
+                <p>Нажмите на файл для скачивания.</p>
+                {topic.files.map(({id, file}) => <div key={id}>
+                <a target="_blank" href={file} className={styles.materialCard}>
+                  <div>{decodeURI(file.split('/').pop())}</div>
+                </a>
+              </div>)}</> : <p>К этому уроку материалов нет.</p>}
             </div>
 
           </div>

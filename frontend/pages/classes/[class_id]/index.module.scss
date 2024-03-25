@@ -349,9 +349,16 @@
   h1 {
     font-weight: 500;
   }
+}
 
-  .description {
-
+.materialCard {
+  color: black;
+  text-decoration: none;
+  div {
+    background: #FAFAFA;
+    border: 1px solid #E7E7E7;
+    border-radius: 5px;
+    padding: 13px 18px;
   }
 }
 

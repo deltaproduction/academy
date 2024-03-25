@@ -99,6 +99,7 @@ function RelativeRating({rating, tasks}) {
 
 
 export default function Index({profile, group, tasks, topic, ratings, topics}) {
+  console.log("cid", topics);
   console.log(ratings)
   return <AppLayout profile={profile}>
     <div className={styles.container}>

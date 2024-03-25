@@ -1,7 +1,7 @@
 import { useState }  from "react";
 import { useRouter } from "next/router";
 
-import { ClassesApi, CoursesApi }    from "@/lib/api";
+import {ClassesApi, CoursesApi, getStudentRatingApi, runCodeApi} from "@/lib/api";
 import { getProfileServerSideProps } from "@/lib/utils";
 
 import AppLayout from "@/layouts/AppLayout";
@@ -37,6 +37,8 @@ export async function getServerSideProps({query: {class_id}, req, res}) {
     }
     props.group = await classRes.json()
 
+    await getStudentRatingApi();
+
     return {props}
   } catch (e) {
     return e
@@ -48,6 +50,8 @@ export default function ClassDetail({groups, profile, courses, group: group_ = {
   const [group, setGroup] = useState(group_)
 
   const {id, code, title, course, students, teacherName} = group;
+
+  console.log("group", group)
 
   const [editMode, setEditMode] = useState(!id);
 

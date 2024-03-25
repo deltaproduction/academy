@@ -1,13 +1,12 @@
 from django.urls import path
 from rest_framework import routers
 
-from classes.views import create_group_student, GroupViewSet
+from classes.views import create_group_student, GroupViewSet, get_group_rating
 
 router = routers.SimpleRouter()
 router.register(r'groups', GroupViewSet)
 
-urlpatterns = [
-    path("group_student/create/", create_group_student)
+urlpatterns = router.urls + [
+    path("group_student/create/", create_group_student),
+    path("get_student_rating/", get_group_rating)
 ]
-
-urlpatterns += router.urls

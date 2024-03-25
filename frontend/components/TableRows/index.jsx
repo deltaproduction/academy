@@ -14,7 +14,7 @@ export default function TableRows(props) {
         <div className={styles.tableRow} key={index}>
           {
             row.map((i, x) => <TableField key={x} title={i} width={columnsWidths[x]}/>)
-          }x
+          }
         </div>
       );
     });

@@ -73,9 +73,13 @@ class TopicsViewSet(ModelViewSet):
         queryset = super().get_queryset()
 
         course = self.request.query_params.get('course')
+        group = self.request.query_params.get('group')
 
         if course:
             queryset = queryset.filter(course=course)
+
+        if group:
+            queryset = queryset.filter(course__groups=group)
 
         try:
             queryset = queryset.filter(course__author=self.request.user.teacher)
@@ -169,6 +173,7 @@ class AttemptsViewSet(ModelViewSet):
 
         if statuses:
             queryset = queryset.filter(status__in=statuses.split(','))
+            print(1, queryset)
 
         task = self.request.query_params.get('task')
         topic = self.request.query_params.get('topic')
@@ -176,20 +181,25 @@ class AttemptsViewSet(ModelViewSet):
 
         if task:
             queryset = queryset.filter(task_id=task)
+            print(2, queryset)
 
         if topic:
             queryset = queryset.filter(task__topic=topic)
+            print(2, queryset)
 
         try:
+            print(4)
             if only_manual:
                 queryset = queryset.filter(
                     task__topic__course__author=self.request.user.teacher,
                     task__autoreview=Task.NO
                 )
+                print(5, queryset)
             else:
                 queryset = queryset.filter(
                     task__topic__course__author=self.request.user.teacher
                 )
+                print(6, queryset)
         except User.teacher.RelatedObjectDoesNotExist:
             pass
         else:
@@ -197,6 +207,7 @@ class AttemptsViewSet(ModelViewSet):
 
         try:
             queryset = queryset.filter(student=self.request.user.student)
+            print(7, queryset)
         except User.student.RelatedObjectDoesNotExist:
             pass
         else:

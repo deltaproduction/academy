@@ -121,6 +121,17 @@ export const CoursesApi = new ModelApi('/api/courses/')
 export const TopicsApi = new TopicsApi_('/api/topics/')
 
 export const TasksApi = new ModelApi('/api/tasks/')
+
 export const TestCasesApi = new ModelApi('/api/test_cases/')
 
 export const AttemptsApi = new ModelApi('/api/attempts/')
+
+export const getStudentRatingApi = async (formData, options) => {
+  return await fetchApi('/api/get_student_rating/', {
+    ...options,
+    method: 'POST',
+    body: formData
+  })
+}
+
+

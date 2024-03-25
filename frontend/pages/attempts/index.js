@@ -3,13 +3,13 @@ import { formatDateTime, getTeacherServerSideProps } from "@/lib/utils";
 import AppLayout                                     from "@/layouts/AppLayout";
 import Table from "@/components/Table";
 import ContentBlock from "@/components/ContentBlock";
-
+import {Clear, Schedule} from "@mui/icons-material";
 
 export async function getServerSideProps({req, res}) {
   try {
     const {props} = await getTeacherServerSideProps({req, res})
 
-    const response = await AttemptsApi.list({queryParams: {statuses: '0,1,4', only_manual: true}, req, res})
+    const response = await AttemptsApi.list({queryParams: {statuses: '1,4'}, req, res})
 
     props.attempts = await response.json()
 
@@ -20,9 +20,8 @@ export async function getServerSideProps({req, res}) {
 }
 
 const statuses = {
-  0: 'Успешно',
-  1: 'Неверно',
-  4: 'На проверке'
+  1: <Clear/>,
+  4: <Schedule/>
 }
 
 export default function Page({profile, attempts}) {
@@ -55,10 +54,10 @@ export default function Page({profile, attempts}) {
                 fields={
                   [
                     ["№", 6, "numberWithDot"],
-                    ["Название задачи", 52, "link"],
-                    ["Ученик", 13, "text"],
+                    ["Название задачи", 51, "link"],
+                    ["Ученик", 17, "text"],
                     ["Дата", 16, "text"],
-                    ["Статус", 13, "text"],
+                    ["Статус", 10, "text"],
                   ]
                 }
 
