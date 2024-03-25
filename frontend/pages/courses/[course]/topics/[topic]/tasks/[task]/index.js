@@ -79,7 +79,7 @@ const Task = ({
                 tasks,
                 topic,
                 testCases: testCases_,
-                task: {id, title, text, formatInText,type, formatOutText, autoreview: autoreview_} = {}
+                task: {id, title, text, formatInText, type, formatOutText, autoreview: autoreview_} = {}
               }) => {
 
   const [testCases, setTestCases] = useState(testCases_)
@@ -137,9 +137,9 @@ const Task = ({
       <form onSubmit={onTaskFormSubmit}>
         <CharField label="Заголовок" name="title" defaultValue={title} error={errors["title"]}/>
         <TextField label="Условие задачи" name="text" defaultValue={text} error={errors["text"]}/>
-        <CharField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
+        <TextField label="Формат входных данных" name="format_in_text" defaultValue={formatInText}
                    error={errors["format_in_text"]}/>
-        <CharField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
+        <TextField label="Формат выходных данных" name="format_out_text" defaultValue={formatOutText}
                    error={errors["format_out_text"]}/>
         <SelectField label="Способ проверки" name="autoreview"
                      onChange={({target: {value}}) => setAutoreview(parseInt(value))} defaultValue={autoreview}>

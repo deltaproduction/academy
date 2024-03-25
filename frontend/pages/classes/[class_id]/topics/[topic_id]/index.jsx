@@ -1,5 +1,5 @@
 import {AttemptsApi, ClassesApi, CoursesApi, fetchApi, TasksApi, TopicsApi} from "@/lib/api";
-import { getStudentServerSideProps }         from "@/lib/utils";
+import {formatDateTime, getStudentServerSideProps} from "@/lib/utils";
 import AppLayout                             from "@/layouts/AppLayout";
 import styles                                from "@/pages/classes/[class_id]/index.module.scss";
 import { Sidebar, SidebarItem }              from "@/components/Sidebar";
@@ -67,7 +67,7 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
     tasksAttemptsStatuses[attempt.task.id] = attempt.status;
   }
 
-  function getSimpleTasks(start) {
+  function getSimpleTasks() {
     let result = [];
 
     for (let i = 0; i < simpleTasks.length; i ++) {
@@ -82,7 +82,7 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
     return result;
   }
 
-  function getHomeTasks(start) {
+  function getHomeTasks() {
     let result = [];
 
     for (let i = 0; i < homeTasks.length; i ++) {
@@ -97,7 +97,7 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
     return result;
   }
 
-  function getHardTasks(start) {
+  function getHardTasks() {
     let result = [];
 
     for (let i = 0; i < hardTasks.length; i ++) {
@@ -111,6 +111,14 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
     }
 
     return result;
+  }
+
+  const onStartSubmit = async e => {
+    e.preventDefault()
+    const response = await TopicsApi.startTask(topic.id)
+    if (response.ok) {
+      location.reload()
+    }
   }
 
   return <AppLayout profile={profile}>
@@ -130,6 +138,15 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
           <h1>{topic.title}</h1>
           <p>{topic.description}</p>
         </div>
+
+
+        {topic.type === 2 && <div>
+          {topic.startedAt ?
+              <div>Начато: {formatDateTime(topic.startedAt)}</div> :
+              <button onClick={onStartSubmit}>Начать задание</button>}
+
+        </div>}
+
 
         <div className={styles.topicContent}>
           <div className={styles.tasks}>
@@ -162,7 +179,14 @@ export default function ClassCourse({profile, group, topic, topics, tasks, attem
           </div>
           <div className={styles.materials}>
             <h1 className={styles.blockTitle}>Материалы</h1>
-            <p>К этому уроку материалов нет.</p>
+            <div className={styles.materialsList}>
+              {topic.files.length ?
+                  topic.files.map(({id, file}) => <div key={id}>
+                    <a target="_blank" href={file}>{decodeURI(file.split('/').pop())}</a>
+                  </div>) :
+                  <p>К этому уроку материалов нет.</p>}
+            </div>
+
           </div>
         </div>
 
