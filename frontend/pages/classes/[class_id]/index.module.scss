@@ -193,6 +193,7 @@
     border-radius: 10px 0 0 10px;
     background: white;
     font-size: .9em;
+    height: 30px;
 
     &:hover, &:nth-child(even):hover {
       background: #fafafa;
@@ -223,6 +224,7 @@
     gap: 10px;
     padding: 12px 18px;
     font-size: .9em;
+    height: 30px;
 
     .item {
       a {
